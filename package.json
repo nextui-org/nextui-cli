@@ -45,7 +45,8 @@
     "link:remove": "pnpm uninstall --global nextui-cli",
     "build": "tsup",
     "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . -max-warnings=0 --fix"
+    "lint:fix": "eslint . -max-warnings=0 --fix",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@commitlint/cli": "17.7.1",

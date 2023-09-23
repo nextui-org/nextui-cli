@@ -1,0 +1,43 @@
+# output
+/dist
+
+# ide
+/.idea
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/.swc
+/coverage
+__snapshots__
+
+
+# misc
+.DS_Store
+*.pem
+
+# logs
+*.log
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# typescript
+*.tsbuildinfo
+
+# lock
+yarn.lock
+package-lock.json

@@ -1,0 +1,32 @@
+name: Script
+
+on:
+  push:
+    branches: [main, next]
+  pull_request:
+    branches: [main, next]
+
+jobs:
+  next:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        script: [build]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          run_install: false
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          cache: 'pnpm'
+          check-latest: true
+          node-version-file: '.nvmrc'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run script
+        run: pnpm ${{ matrix.script }}

@@ -1,0 +1,10 @@
+.DS_Store
+.husky
+dist
+node_modules
+pnpm-lock.yaml
+!.vscode
+!.*.js
+!.*.cjs
+!.*.mjs
+!.*.ts

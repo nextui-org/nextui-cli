@@ -4,36 +4,36 @@
 
 - [ ] Add `nextui` command
 
-  > `nextui` command will be used to manage the NextUI CLI
+  > Manage the NextUI CLI.
 
 - [ ] Add `nextui init` command
 
-  > `nextui init` command will be used to initialize a NextUI project
+  > Initialize a NextUI project.
 
-  > `nextui init` command will be provided with a `-t, --template` flag to initialize a project with a template
+  > Provided with a `-t, --template` flag to initialize a project with a template.
 
-  > `nextui init` command will be provided with a `-ts, --typesctipt` flag to initialize a project with typescript
+  > Provided with a `-ts, --typesctipt` flag to initialize a project with typescript.
 
 - [ ] Add `nextui add` command
 
-  > `nextui add` command will be used to add component(s) to a NextUI project by selecting from a list of components
+  > Add component(s) to a NextUI project by selecting from a list of components.
 
 - [ ] Add `nextui remove` command
 
-  > `nextui remove` command will be used to remove component(s) from a NextUI project by selecting from a list of components
+  > Remove component(s) from a NextUI project by selecting from a list of components.
 
 - [ ] Add `nextui upgrade` command
 
-  > `nextui upgrade` command will be used to upgrade a NextUI project to the latest version
+  > Upgrade NextUI Components by selecting from a list of components.
 
 - [ ] Add `nextui list` command
 
-  > `nextui list` command will be used to list all the NextUI components
+  > List all the NextUI components.
 
-  > `nextui list` command will be show the components version, docs link, and the component's status
+  > Display the components version, docs link and the component's status.
 
 - [ ] Add `nextui env` command
 
-  > `nextui env` command will be used to manage the NextUI CLI environment
+  > Display the local environment information, such as os, system, node, components versions, etc.
 
-  > `nextui env` command will be usefull to fill the NextUI Issue Template
+  > Will format and can be used to report issues.

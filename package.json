@@ -46,6 +46,8 @@
     "build": "tsup",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . -max-warnings=0 --fix",
+    "check:prettier": "prettier --check .",
+    "check:types": "tsc --noEmit",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -76,7 +78,7 @@
   },
   "engines": {
     "pnpm": ">=8.7.x",
-    "node": ">=18.17.x"
+    "node": ">=18.16.x"
   },
   "packageManager": "pnpm@8.7.6"
 }

@@ -1,11 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    "module": "Node16",
     "baseUrl": ".",
     "lib": ["ESNext"],
     "target": "ES2019",
     "moduleDetection": "auto",
-    "moduleResolution": "Node",
+    "moduleResolution": "Node16",
     "allowJs": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

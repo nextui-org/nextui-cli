@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 
-import { default as gradientString } from 'gradient-string';
+import { default as _gradientString } from 'gradient-string';
+
+export const defaultColors = ['#FF1CF7', '#B249F8'] as const;
+
+export const gradientString = _gradientString;
 
 export class Logger {
   constructor() {}
@@ -22,12 +26,10 @@ export class Logger {
   }
 
   static gradient(
-    conent: string | number | boolean,
+    content: string | number | boolean,
     options?: { colors?: tinycolor.ColorInput[] }
   ) {
-    const defaultColors = ['#FF1CF7', '#B249F8'] as const;
-
-    this.log(gradientString(...(options?.colors ?? defaultColors))(String(conent)));
+    this.log(gradientString(...(options?.colors ?? defaultColors))(String(content)));
   }
 
   static newLine(lines?: number) {

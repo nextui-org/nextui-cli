@@ -2,6 +2,7 @@ import { default as chalk } from 'chalk';
 import { Command } from 'commander';
 
 import { Logger } from '@helpers/logger';
+import { getCommandDescAndLog } from '@helpers/utils';
 
 import pkg from '../package.json';
 
@@ -11,14 +12,18 @@ import { NextUIComponents } from './constants/component';
 const nextui = new Command();
 
 nextui
-  .name(chalk.bold(Logger.gradient('NextUI CLI')))
-  .description(pkg.description)
+  .name('nextui')
+  .usage('[command]')
+  .description(
+    `${chalk.blue(
+      getCommandDescAndLog(
+        `\nNextUI CLI\n\n${pkg.description}\n`,
+        'NextUI ---- 🚀 Beautiful, fast and modern React UI library.'
+      )
+    )}`
+  )
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
-  .option('-n, --use-npm', 'Explicitly tell the CLI to install the dependencies using npm')
-  .option('-y, --use-yarn', 'Explicitly tell the CLI to install the dependencies using yarn')
-  .option('-p, --use-pnpm', 'Explicitly tell the CLI to install the dependencies using pnpm')
-  .option('-b, --use-bun', 'Explicitly tell the CLI to install the dependencies using bun')
   .allowUnknownOption()
   .action(action);
 

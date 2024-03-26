@@ -2,7 +2,6 @@ import { default as chalk } from 'chalk';
 import { Command } from 'commander';
 
 import { Logger } from '@helpers/logger';
-import { getPackageManager } from '@helpers/package-manager';
 
 import pkg from '../package.json';
 
@@ -58,7 +57,3 @@ nextui.parseAsync(process.argv).catch(async (reason) => {
 // Logger.log(chalk.bold('Hello, world!'));
 // Logger.gradient('Beautiful, fast and modern React UI library.');
 // Logger.gradient(chalk.bold('Beautiful, fast and modern React UI library.'));
-
-const packageManager = getPackageManager();
-
-console.log('package manager:', packageManager);

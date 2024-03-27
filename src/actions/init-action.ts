@@ -3,9 +3,10 @@ import { oraPromise } from 'ora';
 
 import { downloadTemplate } from '@helpers/fetch';
 import { Logger } from '@helpers/logger';
-import { ROOT } from 'src/constants/path';
-import { APP_REPO, PAGES_REPO } from 'src/constants/templates';
-import { getSelect } from 'src/prompts';
+
+import { ROOT } from '../../src/constants/path';
+import { APP_REPO, PAGES_REPO } from '../../src/constants/templates';
+import { getSelect } from '../../src/prompts';
 
 export interface InitActionOptions {
   template?: 'app' | 'pages';

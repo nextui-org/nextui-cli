@@ -31,7 +31,7 @@ nextui
   .description('Initialize a new NextUI project')
   .argument('[projectName]', 'The name of the new project')
   .option('-t --template [string]', 'The template to use for the new project e.g. app, pages')
-  /** ======================== temporary use npm with default value ======================== */
+  /** ======================== Temporary use npm with default value ======================== */
   // .option('-p --package [string]', 'The package manager to use for the new project')
   .action(initAction);
 

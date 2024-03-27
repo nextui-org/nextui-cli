@@ -1,3 +1,5 @@
+import { rename } from 'fs';
+
 import chalk from 'chalk';
 import { oraPromise } from 'ora';
 
@@ -13,7 +15,7 @@ export interface InitActionOptions {
   package?: 'npm' | 'yarn' | 'pnpm';
 }
 
-export async function initAction(_, options: InitActionOptions) {
+export async function initAction(projectName: string, options: InitActionOptions) {
   let { package: packageName, template } = options;
 
   if (!template) {
@@ -33,7 +35,7 @@ export async function initAction(_, options: InitActionOptions) {
     ]);
   }
   if (!packageName) {
-    /** ======================== temporary use npm with default value ======================== */
+    /** ======================== Temporary use npm with default value ======================== */
     packageName = 'npm';
     // packageName = await getSelect('Select a package manager', [
     //   {
@@ -51,10 +53,20 @@ export async function initAction(_, options: InitActionOptions) {
     // ]);
   }
 
+  /** ======================== Generate template ======================== */
   if (template === 'app') {
     await generateTemplate(APP_REPO);
   } else if (template === 'pages') {
     await generateTemplate(PAGES_REPO);
+  }
+
+  /** ======================== Change project name ======================== */
+  if (projectName) {
+    rename(`${ROOT}/next-app-template-main`, `${ROOT}/${projectName}`, (err) => {
+      if (err) {
+        Logger.warn(`NextUI CLI rename Error: ${err}`);
+      }
+    });
   }
 }
 

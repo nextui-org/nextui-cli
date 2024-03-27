@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import chalk from 'chalk';
 import { default as _gradientString } from 'gradient-string';
 
 export const defaultColors = ['#FF1CF7', '#B249F8'] as const;
@@ -14,15 +15,15 @@ export class Logger {
   }
 
   static info(...args: Parameters<typeof console.info>) {
-    console.info(...args);
+    console.info(...args.map((item) => chalk.blue(item)));
   }
 
   static warn(...args: Parameters<typeof console.warn>) {
-    console.warn(...args);
+    console.warn(...args.map((item) => chalk.yellow(item)));
   }
 
   static error(...args: Parameters<typeof console.error>) {
-    console.error(...args);
+    console.error(...args.map((item) => chalk.red(item)));
   }
 
   static gradient(

@@ -1,4 +1,4 @@
-import { default as chalk } from 'chalk';
+import chalk from 'chalk';
 import { Command } from 'commander';
 
 import { Logger } from '@helpers/logger';
@@ -6,7 +6,7 @@ import { getCommandDescAndLog } from '@helpers/utils';
 
 import pkg from '../package.json';
 
-import { action } from './action';
+import { initAction } from './actions/init-action';
 import { NextUIComponents } from './constants/component';
 
 const nextui = new Command();
@@ -24,8 +24,16 @@ nextui
   )
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
-  .allowUnknownOption()
-  .action(action);
+  .allowUnknownOption();
+
+nextui
+  .command('init')
+  .description('Initialize a new NextUI project')
+  .argument('[projectName]', 'The name of the new project')
+  .option('-t --template [string]', 'The template to use for the new project e.g. app, pages')
+  /** ======================== Temporary use npm with default value ======================== */
+  // .option('-p --package [string]', 'The package manager to use for the new project')
+  .action(initAction);
 
 nextui
   .command('list')
@@ -57,8 +65,3 @@ nextui.parseAsync(process.argv).catch(async (reason) => {
   Logger.newLine();
   process.exit(1);
 });
-
-// Logger.log('Hello, world!');
-// Logger.log(chalk.bold('Hello, world!'));
-// Logger.gradient('Beautiful, fast and modern React UI library.');
-// Logger.gradient(chalk.bold('Beautiful, fast and modern React UI library.'));

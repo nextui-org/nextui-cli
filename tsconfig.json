@@ -29,6 +29,7 @@
     "sourceMap": true,
     "strict": true,
     "verbatimModuleSyntax": true,
+    "noImplicitAny": false,
     "paths": {
       "@helpers/*": ["src/helpers/*"]
     }

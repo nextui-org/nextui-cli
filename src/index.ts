@@ -7,7 +7,7 @@ import { getCommandDescAndLog } from '@helpers/utils';
 import pkg from '../package.json';
 
 import { initAction } from './actions/init-action';
-import { NextUIComponents } from './constants/component';
+import { listAction } from './actions/list-action';
 
 const nextui = new Command();
 
@@ -31,18 +31,16 @@ nextui
   .description('Initialize a new NextUI project')
   .argument('[projectName]', 'The name of the new project')
   .option('-t --template [string]', 'The template to use for the new project e.g. app, pages')
-  /** ======================== Temporary use npm with default value ======================== */
+  /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
   // .option('-p --package [string]', 'The package manager to use for the new project')
   .action(initAction);
 
 nextui
   .command('list')
-  .description('List all the components')
-  .action(() => {
-    NextUIComponents.map((component) => {
-      Logger.log(`- ${component.name}`);
-    });
-  });
+  .description('List all the components status, description, version, etc.')
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .option('-c --current', 'List the current installed components')
+  .action(listAction);
 
 nextui
   .command('env')

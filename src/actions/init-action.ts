@@ -7,7 +7,7 @@ import { downloadTemplate } from '@helpers/fetch';
 import { Logger } from '@helpers/logger';
 
 import { ROOT } from '../../src/constants/path';
-import { APP_REPO, PAGES_REPO } from '../../src/constants/templates';
+import { APP_DIR, APP_REPO, PAGES_DIR, PAGES_REPO } from '../../src/constants/templates';
 import { getSelect } from '../../src/prompts';
 
 export interface InitActionOptions {
@@ -56,17 +56,10 @@ export async function initAction(projectName: string, options: InitActionOptions
   /** ======================== Generate template ======================== */
   if (template === 'app') {
     await generateTemplate(APP_REPO);
+    renameTemplate(APP_DIR, projectName);
   } else if (template === 'pages') {
     await generateTemplate(PAGES_REPO);
-  }
-
-  /** ======================== Change project name ======================== */
-  if (projectName) {
-    rename(`${ROOT}/next-app-template-main`, `${ROOT}/${projectName}`, (err) => {
-      if (err) {
-        Logger.warn(`NextUI CLI rename Error: ${err}`);
-      }
-    });
+    renameTemplate(PAGES_DIR, projectName);
   }
 }
 
@@ -82,5 +75,13 @@ async function generateTemplate(url: string) {
       return chalk.greenBright('Template created successfully!');
     })(),
     text: 'Creating template...'
+  });
+}
+
+function renameTemplate(originName: string, projectName: string) {
+  rename(`${ROOT}/${originName}`, `${ROOT}/${projectName}`, (err) => {
+    if (err) {
+      Logger.warn(`NextUI CLI rename Error: ${err}`);
+    }
   });
 }

@@ -56,10 +56,10 @@ export async function initAction(projectName: string, options: InitActionOptions
   /** ======================== Generate template ======================== */
   if (template === 'app') {
     await generateTemplate(APP_REPO);
-    renameTemplate(APP_DIR, projectName);
+    projectName && renameTemplate(APP_DIR, projectName);
   } else if (template === 'pages') {
     await generateTemplate(PAGES_REPO);
-    renameTemplate(PAGES_DIR, projectName);
+    projectName && renameTemplate(PAGES_DIR, projectName);
   }
 }
 

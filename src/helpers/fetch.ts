@@ -1,6 +1,7 @@
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
+import retry from 'async-retry';
 import tar from 'tar';
 
 async function fetchTarStream(url: string) {
@@ -14,10 +15,21 @@ async function fetchTarStream(url: string) {
 }
 
 export async function downloadTemplate(root: string, url: string) {
-  await pipeline(
-    await fetchTarStream(url),
-    tar.x({
-      cwd: root
-    })
+  await retry(
+    async (bail) => {
+      try {
+        await pipeline(
+          await fetchTarStream(url),
+          tar.x({
+            cwd: root
+          })
+        );
+      } catch (error) {
+        bail(new Error(`Failed to download ${url} Error: ${error}`));
+      }
+    },
+    {
+      retries: 3
+    }
   );
 }

@@ -2,17 +2,15 @@
 
 ## 🏗️ Under Construction
 
-- [ ] Add `nextui` command
+- [x] Add `nextui` command
 
   > Manage the NextUI CLI.
 
-- [ ] Add `nextui init` command
+- [x] Add `nextui init` command
 
   > Initialize a NextUI project.
 
   > Provided with a `-t, --template` flag to initialize a project with a template.
-
-  > Provided with a `-ts, --typesctipt` flag to initialize a project with typescript.
 
 - [ ] Add `nextui add` command
 
@@ -26,7 +24,7 @@
 
   > Upgrade NextUI Components by selecting from a list of components.
 
-- [ ] Add `nextui list` command
+- [x] Add `nextui list` command
 
   > List all the NextUI components.
 

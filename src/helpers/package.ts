@@ -21,7 +21,7 @@ export async function getPackageInfo(packagePath: string) {
   const dependenciesKeys = new Set(Object.keys(allDependencies));
 
   const currentComponents = nextUIComponents.filter((component) =>
-    dependenciesKeys.has(component.name)
+    dependenciesKeys.has(component.package)
   ) as NextUIComponents;
 
   return {

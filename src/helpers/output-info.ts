@@ -109,7 +109,7 @@ export function outputComponents(components: NextUIComponents, warnError = true)
     boxFooter
   ];
 
-  Logger.info('Current NextUI Components:\n');
+  Logger.info('Current Installed NextUI Components:\n');
 
   Logger.log(transformComponentsOutput.join('\n'));
 }

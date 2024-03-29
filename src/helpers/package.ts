@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+
 import { type NextUIComponents, nextUIComponents } from 'src/constants/component';
 
 import { Logger } from './logger';
@@ -10,7 +12,7 @@ export async function getPackageInfo(packagePath: string) {
   let pkg;
 
   try {
-    pkg = await import(packagePath);
+    pkg = JSON.parse(readFileSync(packagePath, 'utf-8'));
   } catch (error) {
     Logger.prefix('error', `Error reading package.json file: ${packagePath} \nError: ${error}`);
   }

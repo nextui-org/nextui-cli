@@ -35,7 +35,7 @@ export async function initAction(projectName: string, options: InitActionOptions
     ]);
   }
   if (!packageName) {
-    /** ======================== Temporary use npm with default value ======================== */
+    /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
     packageName = 'npm';
     // packageName = await getSelect('Select a package manager', [
     //   {

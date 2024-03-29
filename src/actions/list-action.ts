@@ -35,27 +35,31 @@ export async function listAction(options: ListActionOptions) {
 
   let components = nextUIComponents as NextUIComponents;
 
-  /** ======================== Get the installed components ======================== */
-  if (current) {
-    const pkg = await import(packagePath);
-    const devDependencies = pkg.devDependencies || {};
-    const dependencies = pkg.dependencies || {};
-    const allDependencies = { ...devDependencies, ...dependencies };
-    const dependenciesKeys = new Set(Object.keys(allDependencies));
+  try {
+    /** ======================== Get the installed components ======================== */
+    if (current) {
+      const pkg = await import(packagePath);
+      const devDependencies = pkg.devDependencies || {};
+      const dependencies = pkg.dependencies || {};
+      const allDependencies = { ...devDependencies, ...dependencies };
+      const dependenciesKeys = new Set(Object.keys(allDependencies));
 
-    components = components.filter((component) => dependenciesKeys.has(component.name));
+      components = components.filter((component) => dependenciesKeys.has(component.name));
+    }
+
+    if (!components.length) {
+      Logger.warn(
+        `No installed NextUI components found, reference package.json path: ${packagePath}`
+      );
+
+      return;
+    }
+
+    /** ======================== Output the components ======================== */
+    outputComponents(components);
+  } catch (error) {
+    Logger.error(`NextUI CLI Error occurred while listing the components: ${error}`);
   }
-
-  if (!components.length) {
-    Logger.warn(
-      `No installed NextUI components found, reference package.json path: ${packagePath}`
-    );
-
-    return;
-  }
-
-  /** ======================== Output the components ======================== */
-  outputComponents(components);
 }
 
 function outputComponents(components: NextUIComponents) {
@@ -78,7 +82,7 @@ function outputComponents(components: NextUIComponents) {
     }
   }
 
-  const transformComponentsOutput = components.reduce((acc, component) => {
+  let transformComponentsOutput = components.reduce((acc, component) => {
     let outputData = padStart;
 
     for (const key of orderNextUIComponentKeys) {
@@ -125,10 +129,13 @@ function outputComponents(components: NextUIComponents) {
 
   boxFooter = boxFooter.slice(0, -2) + rounded.br;
 
-  transformComponentsOutput.unshift(boxHeaderTrd);
-  transformComponentsOutput.unshift(boxHeaderSec);
-  transformComponentsOutput.unshift(boxHeader);
-  transformComponentsOutput.push(boxFooter);
+  transformComponentsOutput = [
+    boxHeader,
+    boxHeaderSec,
+    boxHeaderTrd,
+    ...transformComponentsOutput,
+    boxFooter
+  ];
 
   Logger.info('Current NextUI Components:\n');
 

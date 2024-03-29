@@ -6,6 +6,7 @@ import { getCommandDescAndLog } from '@helpers/utils';
 
 import pkg from '../package.json';
 
+import { envAction } from './actions/env.action';
 import { initAction } from './actions/init-action';
 import { listAction } from './actions/list-action';
 
@@ -18,7 +19,7 @@ nextui
     `${chalk.blue(
       getCommandDescAndLog(
         `\nNextUI CLI\n\n${pkg.description}\n`,
-        'NextUI ---- 🚀 Beautiful, fast and modern React UI library.'
+        'NextUI ---- 🚀 Beautiful, fast and modern React UI library'
       )
     )}`
   )
@@ -37,7 +38,7 @@ nextui
 
 nextui
   .command('list')
-  .description('List all the components status, description, version, etc.')
+  .description('List all the components status, description, version, etc')
   .option('-p --packagePath [string]', 'The path to the package.json file')
   .option('-c --current', 'List the current installed components')
   .action(listAction);
@@ -45,16 +46,8 @@ nextui
 nextui
   .command('env')
   .description('Display debug information about the local environment')
-  .action(() => {
-    Logger.newLine();
-    Logger.log('Environment Info:');
-    Logger.log('  System:');
-    Logger.log('    OS:', process.platform);
-    Logger.log('    CPU:', process.arch);
-    Logger.log('  Binaries:');
-    Logger.log('    Node:', process.version);
-    Logger.newLine();
-  });
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .action(envAction);
 
 nextui.parseAsync(process.argv).catch(async (reason) => {
   Logger.newLine();

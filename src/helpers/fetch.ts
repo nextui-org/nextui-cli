@@ -4,6 +4,10 @@ import { pipeline } from 'stream/promises';
 import retry from 'async-retry';
 import tar from 'tar';
 
+/**
+ * Fetch the tar stream from the specified URL.
+ * @param url
+ */
 async function fetchTarStream(url: string) {
   const res = await fetch(url);
 
@@ -14,6 +18,11 @@ async function fetchTarStream(url: string) {
   return Readable.fromWeb(res.body);
 }
 
+/**
+ * Download the template from the specified URL and extract it to the specified directory.
+ * @param root
+ * @param url
+ */
 export async function downloadTemplate(root: string, url: string) {
   await retry(
     async (bail) => {

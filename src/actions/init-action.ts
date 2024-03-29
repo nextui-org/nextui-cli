@@ -66,7 +66,7 @@ export async function initAction(projectName: string, options: InitActionOptions
 async function generateTemplate(url: string) {
   await oraPromise(downloadTemplate(ROOT, url), {
     failText(error) {
-      Logger.error(`NextUI CLI downloadTemplate Error: ${error}`);
+      Logger.prefix('error', `downloadTemplate Error: ${error}`);
       process.exit(1);
     },
     successText: (() => {
@@ -81,7 +81,7 @@ async function generateTemplate(url: string) {
 function renameTemplate(originName: string, projectName: string) {
   rename(`${ROOT}/${originName}`, `${ROOT}/${projectName}`, (err) => {
     if (err) {
-      Logger.warn(`NextUI CLI rename Error: ${err}`);
+      Logger.prefix('warn', `rename Error: ${err}`);
     }
   });
 }

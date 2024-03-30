@@ -320,12 +320,14 @@ export const nextUIComponents = [
   }
 ];
 
-export const orderNextUIComponentKeys = ['package', 'version', 'status', 'docs'];
+export const orderNextUIComponentKeys = ['package', 'version', 'status', 'docs'] as const;
 
 export const colorNextUIComponentKeys = ['package', 'version', 'status'];
 
 export type NextUIComponentStatus = 'stable' | 'updated' | 'newPost';
 
-export type NextUIComponents = (Omit<(typeof nextUIComponents)[0], 'status'> & {
+type NextUIComponent = (typeof nextUIComponents)[0];
+
+export type NextUIComponents = (Omit<NextUIComponent, 'status'> & {
   status: NextUIComponentStatus;
 })[];

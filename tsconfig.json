@@ -3,6 +3,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "baseUrl": ".",
+    "rootDir": ".",
     "lib": ["ESNext"],
     "target": "ES2019",
     "moduleDetection": "auto",
@@ -32,7 +33,8 @@
     "verbatimModuleSyntax": true,
     "noImplicitAny": false,
     "paths": {
-      "@helpers/*": ["src/helpers/*"]
+      "@helpers/*": ["src/helpers/*"],
+      "src/*": ["src/*"]
     }
   },
   "include": ["**/*.js", "**/*.cjs", "**/*.mjs", "**/*.ts", "**/*.tsx", "**/*.d.ts"],

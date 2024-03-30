@@ -8,6 +8,11 @@ export function getCommandDescAndLog(log: string, desc: string) {
   return desc;
 }
 
+/**
+ * Convert a string to PascalCase.
+ * @example 'test-test' => 'TestTest'
+ * @param str
+ */
 export function PasCalCase<T extends string>(str: T) {
   return str
     .split('-')

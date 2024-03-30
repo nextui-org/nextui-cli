@@ -6,6 +6,7 @@ import { getCommandDescAndLog } from '@helpers/utils';
 
 import pkg from '../package.json';
 
+import { doctorAction } from './actions/doctor-action';
 import { envAction } from './actions/env-action';
 import { initAction } from './actions/init-action';
 import { listAction } from './actions/list-action';
@@ -48,6 +49,12 @@ nextui
   .description('Display debug information about the local environment')
   .option('-p --packagePath [string]', 'The path to the package.json file')
   .action(envAction);
+
+nextui
+  .command('doctor')
+  .description('Check whether exist problem in user project')
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .action(doctorAction);
 
 nextui.parseAsync(process.argv).catch(async (reason) => {
   Logger.newLine();

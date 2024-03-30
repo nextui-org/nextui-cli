@@ -35,3 +35,15 @@
   > Display the local environment information, such as os, system, node, components versions, etc.
 
   > Will format and can be used to report issues.
+
+- [ ] Add `nextui doctor` command
+
+  > Check whether the required dependence has been installed
+
+  > Check tailwind config、provide has been added
+
+  > Check .npmrc correct when use pnpm
+
+  > Warn when tailwindcss intelliSense plugin uninstalled in Vscode
+
+  > …other check

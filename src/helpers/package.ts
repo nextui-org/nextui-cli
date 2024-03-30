@@ -22,8 +22,18 @@ export async function getPackageInfo(packagePath: string) {
   const allDependencies = { ...devDependencies, ...dependencies };
   const dependenciesKeys = new Set(Object.keys(allDependencies));
 
-  const currentComponents = nextUIComponents.filter((component) =>
-    dependenciesKeys.has(component.package)
+  const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(
+    (component) => {
+      if (dependenciesKeys.has(component.package)) {
+        const currentVersion = allDependencies[component.package];
+
+        component.version = `${currentVersion} new: ${component.version}`;
+
+        return true;
+      }
+
+      return false;
+    }
   ) as NextUIComponents;
 
   return {

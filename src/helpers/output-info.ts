@@ -1,3 +1,5 @@
+import type { CommandName } from './type';
+
 import chalk from 'chalk';
 
 import {
@@ -24,9 +26,14 @@ const padEnd = `${space}${rounded.v}${space}`;
 /**
  * Output the components information e.g. status, description, version, etc.
  * @param components
+ * @param commandName
  * @param warnError
  */
-export function outputComponents(components: NextUIComponents, warnError = true) {
+export function outputComponents(
+  components: NextUIComponents,
+  commandName?: CommandName,
+  warnError = true
+) {
   if (!components.length) {
     if (warnError) {
       Logger.prefix('warn', 'No installed NextUI components found');
@@ -49,7 +56,9 @@ export function outputComponents(components: NextUIComponents, warnError = true)
       // Align the length of the version
       componentKeyLengthMap[key] = Math.max(
         componentKeyLengthMap[key],
-        key === 'version' ? 'version'.length : String(component[key]).length
+        key === 'version'
+          ? Math.max(String(component[key]).length, 'version'.length)
+          : String(component[key]).length
       );
     }
   }
@@ -60,6 +69,22 @@ export function outputComponents(components: NextUIComponents, warnError = true)
     for (const key of orderNextUIComponentKeys) {
       let value = component[key].padEnd(componentKeyLengthMap[key]);
 
+      /** ======================== Replace version to new version ======================== */
+      if (commandName !== 'list' && key === 'version') {
+        // Filter list command cause it will list all the latest components
+        const currentVersion = value.match(/([\d.]+)\snew:/)?.[1];
+        const newVersion = value.match(/new:\s([\d.]+)/)?.[1];
+
+        if (currentVersion === newVersion) {
+          value = value.replace(/\snew:\s([\d.]+)/, '');
+          value = `${value} 🚀latest`.padEnd(componentKeyLengthMap[key]);
+          value = value.replace('latest', chalk.magentaBright.underline('latest'));
+        } else if (newVersion) {
+          value = value.replace(newVersion, chalk.magentaBright.underline(newVersion));
+        }
+      }
+
+      /** ======================== Change the color according to different status ======================== */
       if (component.status === 'stable' && colorNextUIComponentKeys.includes(key)) {
         value = chalk.greenBright(value);
       } else if (component.status === 'newPost') {

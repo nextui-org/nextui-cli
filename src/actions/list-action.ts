@@ -32,7 +32,7 @@ export async function listAction(options: ListActionOptions) {
     }
 
     /** ======================== Output the components ======================== */
-    outputComponents(components);
+    current ? outputComponents(components) : outputComponents(components, 'list');
   } catch (error) {
     Logger.prefix('error', `Error occurred while listing the components: ${error}`);
   }

@@ -6,7 +6,7 @@ import { getCommandDescAndLog } from '@helpers/utils';
 
 import pkg from '../package.json';
 
-import { envAction } from './actions/env.action';
+import { envAction } from './actions/env-action';
 import { initAction } from './actions/init-action';
 import { listAction } from './actions/list-action';
 

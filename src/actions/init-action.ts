@@ -1,14 +1,14 @@
-import { rename } from 'fs';
+import {rename} from 'fs';
 
 import chalk from 'chalk';
-import { oraPromise } from 'ora';
+import {oraPromise} from 'ora';
 
-import { downloadTemplate } from '@helpers/fetch';
-import { Logger } from '@helpers/logger';
+import {downloadTemplate} from '@helpers/fetch';
+import {Logger} from '@helpers/logger';
 
-import { ROOT } from '../../src/constants/path';
-import { APP_DIR, APP_REPO, PAGES_DIR, PAGES_REPO } from '../../src/constants/templates';
-import { getSelect } from '../../src/prompts';
+import {ROOT} from '../../src/constants/path';
+import {APP_DIR, APP_REPO, PAGES_DIR, PAGES_REPO} from '../../src/constants/templates';
+import {getSelect} from '../../src/prompts';
 
 export interface InitActionOptions {
   template?: 'app' | 'pages';
@@ -16,7 +16,7 @@ export interface InitActionOptions {
 }
 
 export async function initAction(projectName: string, options: InitActionOptions) {
-  let { package: packageName, template } = options;
+  let {package: packageName, template} = options;
 
   if (!template) {
     template = await getSelect('Select a template', [

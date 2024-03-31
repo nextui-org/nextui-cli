@@ -1,5 +1,5 @@
-import { Readable } from 'stream';
-import { pipeline } from 'stream/promises';
+import {Readable} from 'stream';
+import {pipeline} from 'stream/promises';
 
 import retry from 'async-retry';
 import tar from 'tar';

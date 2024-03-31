@@ -13,3 +13,12 @@ export type AppendKeyValue<T extends SAFE_ANY, K extends keyof any, V extends SA
 };
 
 export type CommandName = 'init' | 'list' | 'env' | 'upgrade' | 'remove' | 'add';
+
+/**
+ * @example RequiredKey<{a?: 1, b?: 2}, a> => {a: 1, b?: 2}
+ */
+export type RequiredKey<T, Key extends keyof T> = {
+  [K in keyof T as K extends Key ? never : K]?: T[K];
+} & {
+  [K in Key]-?: T[K];
+};

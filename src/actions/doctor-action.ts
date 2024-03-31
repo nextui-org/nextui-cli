@@ -1,19 +1,26 @@
 import chalk from 'chalk';
 
-import {checkApp, checkRequiredContentInstalled, checkTailwind} from '@helpers/check';
+import {
+  checkApp,
+  checkRequiredContentInstalled,
+  checkTailwind,
+  combineProblemRecord
+} from '@helpers/check';
 import {Logger, type PrefixLogType} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {findFiles} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
-import {DOCS_APP_SETUP, DOCS_INSTALLED, DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
+import {DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
 
 interface DoctorActionOptions {
   packagePath?: string;
   tailwindPath?: string;
   appPath?: string;
+  checkApp?: boolean;
+  checkTailwind?: boolean;
 }
 
-interface ProblemRecord {
+export interface ProblemRecord {
   name: string;
   level: Extract<PrefixLogType, 'error' | 'warn'>;
   outputFn: () => void;
@@ -22,6 +29,8 @@ interface ProblemRecord {
 export async function doctorAction(options: DoctorActionOptions) {
   const {
     appPath = findFiles('**/app.tsx')[0],
+    checkApp: enableCheckApp = true,
+    checkTailwind: enableCheckTailwind = true,
     packagePath = resolver('package.json'),
     tailwindPath = findFiles('**/tailwind.config.js')
   } = options;
@@ -60,6 +69,28 @@ export async function doctorAction(options: DoctorActionOptions) {
       }
     });
   }
+  // If there is no tailwind.config.js
+  if (enableCheckTailwind && !tailwindPaths.length) {
+    problemRecord.push({
+      level: 'error',
+      name: 'missingTailwind',
+      outputFn: () => {
+        Logger.error('you have not created the tailwind.config.js');
+        Logger.error(`Please check the detail in the NextUI document: ${DOCS_TAILWINDCSS_SETUP}`);
+      }
+    });
+  }
+  // If there is no app.tsx
+  if (enableCheckApp && !appPath) {
+    problemRecord.push({
+      level: 'error',
+      name: 'missingApp',
+      outputFn: () => {
+        Logger.error('Cannot find the app.tsx file');
+        Logger.error("You should specify appPath through 'doctor --appPath=yourAppPath'");
+      }
+    });
+  }
 
   /** ======================== Check if the allComponents required dependencies installed ======================== */
   if (isAllComponents) {
@@ -70,79 +101,26 @@ export async function doctorAction(options: DoctorActionOptions) {
     );
 
     if (!isCorrectInstalled) {
-      problemRecord.push({
-        level: 'error',
-        name: 'missingDependencies',
-        outputFn: () => {
-          Logger.error('you have not installed the required dependencies');
-          Logger.newLine();
-          Logger.info('The required dependencies are:');
-          missingDependencies.forEach((dependency) => {
-            Logger.info(`- ${dependency}`);
-          });
-          Logger.newLine();
-          Logger.info(`Please check the detail in the NextUI document: ${DOCS_INSTALLED}`);
-        }
-      });
+      problemRecord.push(combineProblemRecord('missingDependencies', {missingDependencies}));
     }
 
     // Check whether tailwind.config.js is correct
-    if (!tailwindPaths.length) {
-      problemRecord.push({
-        level: 'error',
-        name: 'missingTailwind',
-        outputFn: () => {
-          Logger.error('you have not created the tailwind.config.js');
-          Logger.error(`Please check the detail in the NextUI document: ${DOCS_TAILWINDCSS_SETUP}`);
-        }
-      });
-    } else {
+    if (enableCheckTailwind) {
       for (const tailwindPath of tailwindPaths) {
         const [isCorrectTailwind, ...errorInfo] = checkTailwind('all', tailwindPath);
 
         if (!isCorrectTailwind) {
-          problemRecord.push({
-            level: 'error',
-            name: 'incorrectTailwind',
-            outputFn: () => {
-              Logger.error('your tailwind.config.js is incorrect');
-              Logger.info('The missing part is:');
-              errorInfo.forEach((info) => {
-                Logger.info(`- need added ${info}`);
-              });
-              Logger.error(`Please check the detail in the NextUI document: ${DOCS_APP_SETUP}`);
-            }
-          });
+          problemRecord.push(combineProblemRecord('incorrectTailwind', {errorInfo}));
         }
       }
     }
 
     // Check whether the app.tsx is correct
-    if (!appPath) {
-      problemRecord.push({
-        level: 'error',
-        name: 'missingApp',
-        outputFn: () => {
-          Logger.error('Cannot find the app.tsx file');
-          Logger.error("You should specify appPath through 'doctor --appPath=yourAppPath'");
-        }
-      });
-    } else {
+    if (enableCheckApp && appPath) {
       const [isAppCorrect, ...errorInfo] = checkApp('all', appPath);
 
       if (!isAppCorrect) {
-        problemRecord.push({
-          level: 'error',
-          name: 'incorrectApp',
-          outputFn: () => {
-            Logger.error('your app.tsx is incorrect');
-            Logger.info('The missing part is:');
-            errorInfo.forEach((info) => {
-              Logger.info(`- need added ${info}`);
-            });
-            Logger.error(`Please check the detail in the NextUI document: ${DOCS_INSTALLED}`);
-          }
-        });
+        problemRecord.push(combineProblemRecord('incorrectApp', {errorInfo}));
       }
     }
   } else if (currentComponents.length) {
@@ -153,19 +131,31 @@ export async function doctorAction(options: DoctorActionOptions) {
     );
 
     if (!isCorrectInstalled) {
-      problemRecord.push({
-        level: 'error',
-        name: 'missingDependencies',
-        outputFn: () => {
-          Logger.error('you have not installed the required dependencies');
-          Logger.newLine();
-          Logger.info('The required dependencies are:');
-          Logger.newLine();
-          missingDependencies.forEach((dependency) => {
-            Logger.info(`- ${dependency}`);
-          });
+      problemRecord.push(combineProblemRecord('missingDependencies', {missingDependencies}));
+    }
+
+    // Check whether tailwind.config.js is correct
+    if (enableCheckTailwind) {
+      for (const tailwindPath of tailwindPaths) {
+        const [isCorrectTailwind, ...errorInfo] = checkTailwind(
+          'partial',
+          tailwindPath,
+          currentComponents
+        );
+
+        if (!isCorrectTailwind) {
+          problemRecord.push(combineProblemRecord('incorrectTailwind', {errorInfo}));
         }
-      });
+      }
+    }
+
+    // Check whether the app.tsx is correct
+    if (enableCheckApp && appPath) {
+      const [isAppCorrect, ...errorInfo] = checkApp('partial', appPath);
+
+      if (!isAppCorrect) {
+        problemRecord.push(combineProblemRecord('incorrectApp', {errorInfo}));
+      }
     }
   }
 

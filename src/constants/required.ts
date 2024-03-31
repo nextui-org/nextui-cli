@@ -1,3 +1,5 @@
+import type {NextUIComponents} from './component';
+
 export const FRAMER_MOTION = 'framer-motion';
 export const TAILWINDCSS = 'tailwindcss';
 export const NEXT_UI = '@nextui-org/react';
@@ -17,6 +19,22 @@ export const tailwindRequired = {
   plugins: 'nextui()'
 } as const;
 
+export const individualTailwindRequired = {
+  content: (currentComponents: NextUIComponents) => {
+    if (currentComponents.length === 1) {
+      return `@nextui-org/theme/dist/components/${currentComponents[0]!.name}.js`;
+    }
+    const requiredContent = currentComponents
+      .reduce((acc, component) => {
+        return (acc += `${component.name}|`);
+      }, '')
+      .replace(/\|$/, '');
+
+    return `@nextui-org/theme/dist/components/(${requiredContent}).js`;
+  },
+  plugins: 'nextui()'
+} as const;
+
 export const appRequired = {
   import: 'NextUIProvider'
-};
+} as const;

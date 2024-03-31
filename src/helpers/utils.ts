@@ -1,6 +1,6 @@
-import type { PascalCase } from './type';
+import type {PascalCase} from './type';
 
-import { Logger } from './logger';
+import {Logger} from './logger';
 
 export function getCommandDescAndLog(log: string, desc: string) {
   Logger.gradient(log);

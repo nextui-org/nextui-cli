@@ -1,14 +1,14 @@
 import chalk from 'chalk';
-import { Command } from 'commander';
+import {Command} from 'commander';
 
-import { Logger } from '@helpers/logger';
-import { getCommandDescAndLog } from '@helpers/utils';
+import {Logger} from '@helpers/logger';
+import {getCommandDescAndLog} from '@helpers/utils';
 
 import pkg from '../package.json';
 
-import { envAction } from './actions/env-action';
-import { initAction } from './actions/init-action';
-import { listAction } from './actions/list-action';
+import {envAction} from './actions/env-action';
+import {initAction} from './actions/init-action';
+import {listAction} from './actions/list-action';
 
 const nextui = new Command();
 

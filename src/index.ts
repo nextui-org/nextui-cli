@@ -49,6 +49,8 @@ nextui
   .command('doctor')
   .description('Check whether exist problem in user project')
   .option('-p --packagePath [string]', 'The path to the package.json file')
+  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config.js file')
+  .option('-app --appPath [string]', 'The path to the app.tsx file')
   .action(doctorAction);
 
 nextui.parseAsync(process.argv).catch(async (reason) => {

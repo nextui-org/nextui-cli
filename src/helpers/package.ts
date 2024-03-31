@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 
 import { type NextUIComponents, nextUIComponents } from 'src/constants/component';
-import { ALL_COMPONENTS } from 'src/constants/required';
+import { NEXT_UI } from 'src/constants/required';
 
 import { Logger } from './logger';
 
@@ -36,7 +36,7 @@ export async function getPackageInfo(packagePath: string) {
       return false;
     }
   ) as NextUIComponents;
-  const isAllComponents = allDependenciesKeys.has(ALL_COMPONENTS);
+  const isAllComponents = allDependenciesKeys.has(NEXT_UI);
 
   return {
     allDependencies,

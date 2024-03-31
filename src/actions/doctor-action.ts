@@ -87,13 +87,13 @@ export async function doctorAction(options: DoctorActionOptions) {
       }
     });
   }
-  // If there is no app.tsx
+  // If there is no App.tsx
   if (enableCheckApp && !appPath) {
     problemRecord.push({
       level: 'error',
       name: 'missingApp',
       outputFn: () => {
-        Logger.error('Cannot find the app.tsx file');
+        Logger.error('Cannot find the App.tsx file');
         Logger.error("You should specify appPath through 'doctor --appPath=yourAppPath'");
       }
     });
@@ -122,7 +122,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       }
     }
 
-    // Check whether the app.tsx is correct
+    // Check whether the App.tsx is correct
     if (enableCheckApp && appPath) {
       const [isAppCorrect, ...errorInfo] = checkApp('all', appPath);
 
@@ -156,7 +156,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       }
     }
 
-    // Check whether the app.tsx is correct
+    // Check whether the App.tsx is correct
     if (enableCheckApp && appPath) {
       const [isAppCorrect, ...errorInfo] = checkApp('partial', appPath);
 

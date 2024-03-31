@@ -50,7 +50,7 @@ nextui
   .description('Check whether exist problem in user project')
   .option('-p --packagePath [string]', 'The path to the package.json file')
   .option('-tw --tailwindPath [string]', 'The path to the tailwind.config.js file')
-  .option('-app --appPath [string]', 'The path to the app.tsx file')
+  .option('-app --appPath [string]', 'The path to the App.tsx file')
   .option('-ca --checkApp [boolean]', 'Open check App', true)
   .option('-ct --checkTailwind [boolean]', 'Open check tailwind.config.js', true)
   .option('-cp --checkPnpm [boolean]', 'Open check Pnpm', true)

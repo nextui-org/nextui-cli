@@ -62,7 +62,6 @@
     "tar": "6.2.1"
   },
   "devDependencies": {
-    "@nextui-org/button": "2.0.26",
     "@commitlint/cli": "17.7.1",
     "@commitlint/config-conventional": "17.7.0",
     "@types/gradient-string": "1.1.3",

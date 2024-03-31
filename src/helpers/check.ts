@@ -1,6 +1,6 @@
-import type { SAFE_ANY } from './type';
+import type {SAFE_ANY} from './type';
 
-import { readFileSync } from 'fs';
+import {readFileSync} from 'fs';
 
 import {
   FRAMER_MOTION,
@@ -12,7 +12,7 @@ import {
   tailwindRequired
 } from 'src/constants/required';
 
-import { getMatchArray, getMatchImport } from './match';
+import {getMatchArray, getMatchImport} from './match';
 
 export type CheckType = 'all' | 'partial';
 

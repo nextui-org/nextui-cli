@@ -6,7 +6,7 @@
   "useTabs": false,
   "singleQuote": true,
   "editorconfig": true,
-  "bracketSpacing": true,
+  "bracketSpacing": false,
   "jsxSingleQuote": false,
   "bracketSameLine": false,
   "pluginSearchDirs": false,

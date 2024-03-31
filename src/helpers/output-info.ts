@@ -1,4 +1,4 @@
-import type { CommandName } from './type';
+import type {CommandName} from './type';
 
 import chalk from 'chalk';
 
@@ -8,8 +8,8 @@ import {
   orderNextUIComponentKeys
 } from 'src/constants/component';
 
-import { Logger } from './logger';
-import { PasCalCase } from './utils';
+import {Logger} from './logger';
+import {PasCalCase} from './utils';
 
 const rounded = {
   bl: '╰',

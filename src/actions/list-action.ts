@@ -1,9 +1,9 @@
-import { Logger } from '@helpers/logger';
-import { outputComponents } from '@helpers/output-info';
-import { getPackageInfo } from '@helpers/package';
+import {Logger} from '@helpers/logger';
+import {outputComponents} from '@helpers/output-info';
+import {getPackageInfo} from '@helpers/package';
 
-import { type NextUIComponents, nextUIComponents } from '../../src/constants/component';
-import { resolver } from '../../src/constants/path';
+import {type NextUIComponents, nextUIComponents} from '../../src/constants/component';
+import {resolver} from '../../src/constants/path';
 
 interface ListActionOptions {
   current?: boolean;
@@ -11,14 +11,14 @@ interface ListActionOptions {
 }
 
 export async function listAction(options: ListActionOptions) {
-  const { current, packagePath = resolver('package.json') } = options;
+  const {current, packagePath = resolver('package.json')} = options;
 
   let components = nextUIComponents as NextUIComponents;
 
   try {
     /** ======================== Get the installed components ======================== */
     if (current) {
-      const { currentComponents } = await getPackageInfo(packagePath);
+      const {currentComponents} = await getPackageInfo(packagePath);
 
       components = currentComponents;
     }

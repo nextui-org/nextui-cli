@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import prompts from 'prompts';
 
-import { Logger } from '@helpers/logger';
+import {Logger} from '@helpers/logger';
 
 const defaultPromptOptions: prompts.Options = {
   onCancel: () => {
@@ -15,7 +15,7 @@ export async function getInput(message: string, choices?: prompts.Choice[]) {
       message,
       name: 'value',
       type: 'autocomplete',
-      ...(choices ? { choices } : {})
+      ...(choices ? {choices} : {})
     },
     defaultPromptOptions
   );
@@ -29,7 +29,7 @@ export async function getSelect(message: string, choices: prompts.Choice[]) {
       message,
       name: 'value',
       type: 'select',
-      ...(choices ? { choices } : {})
+      ...(choices ? {choices} : {})
     },
     defaultPromptOptions
   );

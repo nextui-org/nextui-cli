@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
-import type { SAFE_ANY } from './type';
+import type {SAFE_ANY} from './type';
 
 import chalk from 'chalk';
-import { default as _gradientString } from 'gradient-string';
+import {default as _gradientString} from 'gradient-string';
 
 export const defaultColors = ['#F54180', '#338EF7'] as const;
 
@@ -38,10 +38,7 @@ export class Logger {
     console.error(...args.map((item) => chalk.red(item)));
   }
 
-  static gradient(
-    content: string | number | boolean,
-    options?: { colors?: tinycolor.ColorInput[] }
-  ) {
+  static gradient(content: string | number | boolean, options?: {colors?: tinycolor.ColorInput[]}) {
     this.log(gradientString(...(options?.colors ?? defaultColors))(String(content)));
   }
 

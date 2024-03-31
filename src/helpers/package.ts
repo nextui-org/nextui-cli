@@ -1,9 +1,9 @@
-import { readFileSync } from 'fs';
+import {readFileSync} from 'fs';
 
-import { type NextUIComponents, nextUIComponents } from 'src/constants/component';
-import { NEXT_UI } from 'src/constants/required';
+import {type NextUIComponents, nextUIComponents} from 'src/constants/component';
+import {NEXT_UI} from 'src/constants/required';
 
-import { Logger } from './logger';
+import {Logger} from './logger';
 
 /**
  * Get the package information
@@ -20,7 +20,7 @@ export async function getPackageInfo(packagePath: string) {
 
   const devDependencies = pkg.devDependencies || {};
   const dependencies = pkg.dependencies || {};
-  const allDependencies = { ...devDependencies, ...dependencies };
+  const allDependencies = {...devDependencies, ...dependencies};
   const allDependenciesKeys = new Set(Object.keys(allDependencies));
 
   const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(

@@ -1,10 +1,10 @@
-import type { PascalCase } from './type';
+import type {PascalCase} from './type';
 
-import fg, { type Options } from 'fast-glob';
+import fg, {type Options} from 'fast-glob';
 
-import { ROOT } from 'src/constants/path';
+import {ROOT} from 'src/constants/path';
 
-import { Logger } from './logger';
+import {Logger} from './logger';
 
 export function getCommandDescAndLog(log: string, desc: string) {
   Logger.gradient(log);

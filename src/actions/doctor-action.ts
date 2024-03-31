@@ -1,11 +1,11 @@
 import chalk from 'chalk';
 
-import { checkApp, checkRequiredContentInstalled, checkTailwind } from '@helpers/check';
-import { Logger, type PrefixLogType } from '@helpers/logger';
-import { getPackageInfo } from '@helpers/package';
-import { findFiles } from '@helpers/utils';
-import { resolver } from 'src/constants/path';
-import { DOCS_APP_SETUP, DOCS_INSTALLED, DOCS_TAILWINDCSS_SETUP } from 'src/constants/required';
+import {checkApp, checkRequiredContentInstalled, checkTailwind} from '@helpers/check';
+import {Logger, type PrefixLogType} from '@helpers/logger';
+import {getPackageInfo} from '@helpers/package';
+import {findFiles} from '@helpers/utils';
+import {resolver} from 'src/constants/path';
+import {DOCS_APP_SETUP, DOCS_INSTALLED, DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
 
 interface DoctorActionOptions {
   packagePath?: string;
@@ -27,7 +27,7 @@ export async function doctorAction(options: DoctorActionOptions) {
   } = options;
   const tailwindPaths = [tailwindPath].flat();
 
-  const { allDependenciesKeys, currentComponents, isAllComponents } =
+  const {allDependenciesKeys, currentComponents, isAllComponents} =
     await getPackageInfo(packagePath);
 
   /** ======================== Output when there is no components installed ======================== */

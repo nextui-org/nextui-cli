@@ -5,7 +5,7 @@ import type { SAFE_ANY } from './type';
 import chalk from 'chalk';
 import { default as _gradientString } from 'gradient-string';
 
-export const defaultColors = ['#FF1CF7', '#B249F8'] as const;
+export const defaultColors = ['#F54180', '#338EF7'] as const;
 
 export const gradientString = _gradientString;
 

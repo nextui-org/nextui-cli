@@ -17,12 +17,7 @@ nextui
   .name('nextui')
   .usage('[command]')
   .description(
-    `${chalk.blue(
-      getCommandDescAndLog(
-        `\nNextUI CLI\n\n${pkg.description}\n`,
-        'NextUI ---- 🚀 Beautiful, fast and modern React UI library'
-      )
-    )}`
+    `${chalk.blue(getCommandDescAndLog(`\nNextUI CLI ${pkg.version}\n\n${pkg.description}\n`, ''))}`
   )
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')

@@ -16,9 +16,9 @@
     "Add Component"
   ],
   "author": {
-    "name": "Tianen Pang",
-    "email": "hi@anen.io",
-    "url": "https://github.com/tianenpang"
+    "name": "NextUI",
+    "email": "support@nextui.org",
+    "url": "https://github.com/nextui-org"
   },
   "repository": {
     "type": "git",
@@ -83,7 +83,7 @@
     "typescript": "5.2.2"
   },
   "engines": {
-    "pnpm": ">=8.7.x",
+    "pnpm": ">=8.x",
     "node": ">=18.17.x"
   },
   "packageManager": "pnpm@8.7.6"

@@ -31,7 +31,7 @@ export interface ProblemRecord {
 
 export async function doctorAction(options: DoctorActionOptions) {
   const {
-    appPath = findFiles('**/app.tsx')[0],
+    appPath = findFiles('**/App.tsx')[0],
     checkApp: _enableCheckApp = true,
     checkPnpm: _enableCheckPnpm = true,
     checkTailwind: _enableCheckTailwind = true,

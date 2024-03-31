@@ -79,7 +79,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'incorrectApp',
       outputFn: () => {
-        Logger.error('Your app.tsx is incorrect');
+        Logger.error('Your App.tsx is incorrect');
         Logger.newLine();
         Logger.info('The missing part is:');
         errorInfo.forEach((info) => {

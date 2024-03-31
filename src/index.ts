@@ -53,6 +53,7 @@ nextui
   .option('-app --appPath [string]', 'The path to the app.tsx file')
   .option('-ca --checkApp [boolean]', 'Open check App', true)
   .option('-ct --checkTailwind [boolean]', 'Open check tailwind.config.js', true)
+  .option('-cp --checkPnpm [boolean]', 'Open check Pnpm', true)
   .action(doctorAction);
 
 nextui.parseAsync(process.argv).catch(async (reason) => {

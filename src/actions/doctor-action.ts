@@ -2,15 +2,17 @@ import chalk from 'chalk';
 
 import {
   checkApp,
+  checkPnpm,
   checkRequiredContentInstalled,
   checkTailwind,
   combineProblemRecord
 } from '@helpers/check';
+import {detect} from '@helpers/detect';
 import {Logger, type PrefixLogType} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {findFiles} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
-import {DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
+import {DOCS_PNPM_SETUP, DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
 
 interface DoctorActionOptions {
   packagePath?: string;
@@ -18,6 +20,7 @@ interface DoctorActionOptions {
   appPath?: string;
   checkApp?: boolean;
   checkTailwind?: boolean;
+  checkPnpm?: boolean;
 }
 
 export interface ProblemRecord {
@@ -30,6 +33,7 @@ export async function doctorAction(options: DoctorActionOptions) {
   const {
     appPath = findFiles('**/app.tsx')[0],
     checkApp: enableCheckApp = true,
+    checkPnpm: enableCheckPnpm = true,
     checkTailwind: enableCheckTailwind = true,
     packagePath = resolver('package.json'),
     tailwindPath = findFiles('**/tailwind.config.js')
@@ -155,6 +159,32 @@ export async function doctorAction(options: DoctorActionOptions) {
 
       if (!isAppCorrect) {
         problemRecord.push(combineProblemRecord('incorrectApp', {errorInfo}));
+      }
+    }
+  }
+
+  /** ======================== Check whether Pnpm setup is correct ======================== */
+  if (enableCheckPnpm) {
+    const currentPkgManager = await detect();
+
+    if (currentPkgManager === 'pnpm') {
+      const [isCorrect, ...errorInfo] = checkPnpm();
+
+      if (!isCorrect) {
+        problemRecord.push({
+          level: 'error',
+          name: 'incorrectPnpm',
+          outputFn: () => {
+            Logger.error('Your pnpm setup is incorrect');
+            Logger.newLine();
+            Logger.info('The missing part is:');
+            errorInfo.forEach((info) => {
+              Logger.info(`- need added ${info}`);
+            });
+            Logger.newLine();
+            Logger.error(`Please check the detail in the NextUI document: ${DOCS_PNPM_SETUP}`);
+          }
+        });
       }
     }
   }

@@ -4,6 +4,7 @@ import type {NextUIComponents} from 'src/constants/component';
 
 import {readFileSync} from 'fs';
 
+import {resolver} from 'src/constants/path';
 import {
   DOCS_APP_SETUP,
   DOCS_INSTALLED,
@@ -14,6 +15,7 @@ import {
   THEME_UI,
   appRequired,
   individualTailwindRequired,
+  pnpmRequired,
   tailwindRequired
 } from 'src/constants/required';
 
@@ -68,6 +70,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
         errorInfo.forEach((info) => {
           Logger.info(`- need added ${info}`);
         });
+        Logger.newLine();
         Logger.error(`Please check the detail in the NextUI document: ${DOCS_APP_SETUP}`);
       }
     };
@@ -82,6 +85,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
         errorInfo.forEach((info) => {
           Logger.info(`- need added ${info}`);
         });
+        Logger.newLine();
         Logger.error(`Please check the detail in the NextUI document: ${DOCS_INSTALLED}`);
       }
     };
@@ -206,6 +210,32 @@ export function checkApp(type: CheckType, appPath: string): CheckResult {
     }
 
     !isAppCorrect && result.push(appRequired.import);
+  }
+
+  return [false, ...result];
+}
+
+export function checkPnpm(): CheckResult {
+  const result = [] as unknown as CheckResult;
+  const npmrcPath = resolver('.npmrc');
+
+  let content: string;
+
+  if (npmrcPath) {
+    try {
+      content = readFileSync(npmrcPath, 'utf-8');
+      const isPnpmCorrect = content.includes(pnpmRequired.content);
+
+      if (isPnpmCorrect) {
+        return [true];
+      }
+
+      !isPnpmCorrect && result.push(pnpmRequired.content);
+    } catch (error) {
+      result.push(`Error reading .npmrc file: ${npmrcPath} \nError: ${error}`);
+    }
+
+    return [false, ...result];
   }
 
   return [false, ...result];

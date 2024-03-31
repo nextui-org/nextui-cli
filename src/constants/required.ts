@@ -11,6 +11,7 @@ export const DOCS_INSTALLED = 'https://nextui.org/docs/guide/installation#global
 export const DOCS_TAILWINDCSS_SETUP =
   'https://nextui.org/docs/guide/installation#tailwind-css-setup';
 export const DOCS_APP_SETUP = 'https://nextui.org/docs/guide/installation#provider-setup';
+export const DOCS_PNPM_SETUP = 'https://nextui.org/docs/guide/installation#setup-pnpm-optional';
 
 // Record the required content of tailwind.config.js
 export const tailwindRequired = {
@@ -37,4 +38,8 @@ export const individualTailwindRequired = {
 
 export const appRequired = {
   import: 'NextUIProvider'
+} as const;
+
+export const pnpmRequired = {
+  content: 'public-hoist-pattern[]=*@nextui-org/*'
 } as const;

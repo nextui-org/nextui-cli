@@ -41,3 +41,9 @@ export const findFiles = (glob: string, options?: Options) => {
 
   return file;
 };
+
+export function transformOption(options: boolean | 'false') {
+  if (options === 'false') return false;
+
+  return !!options;
+}

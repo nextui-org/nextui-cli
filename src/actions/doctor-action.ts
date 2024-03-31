@@ -10,7 +10,7 @@ import {
 import {detect} from '@helpers/detect';
 import {Logger, type PrefixLogType} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
-import {findFiles} from '@helpers/utils';
+import {findFiles, transformOption} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
 import {DOCS_PNPM_SETUP, DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
 
@@ -18,9 +18,9 @@ interface DoctorActionOptions {
   packagePath?: string;
   tailwindPath?: string;
   appPath?: string;
-  checkApp?: boolean;
-  checkTailwind?: boolean;
-  checkPnpm?: boolean;
+  checkApp?: boolean | 'false';
+  checkTailwind?: boolean | 'false';
+  checkPnpm?: boolean | 'false';
 }
 
 export interface ProblemRecord {
@@ -32,12 +32,15 @@ export interface ProblemRecord {
 export async function doctorAction(options: DoctorActionOptions) {
   const {
     appPath = findFiles('**/app.tsx')[0],
-    checkApp: enableCheckApp = true,
-    checkPnpm: enableCheckPnpm = true,
-    checkTailwind: enableCheckTailwind = true,
+    checkApp: _enableCheckApp = true,
+    checkPnpm: _enableCheckPnpm = true,
+    checkTailwind: _enableCheckTailwind = true,
     packagePath = resolver('package.json'),
     tailwindPath = findFiles('**/tailwind.config.js')
   } = options;
+  const enableCheckApp = transformOption(_enableCheckApp);
+  const enableCheckPnpm = transformOption(_enableCheckPnpm);
+  const enableCheckTailwind = transformOption(_enableCheckTailwind);
   const tailwindPaths = [tailwindPath].flat();
 
   const {allDependenciesKeys, currentComponents, isAllComponents} =

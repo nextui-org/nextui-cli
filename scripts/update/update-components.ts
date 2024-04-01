@@ -38,7 +38,7 @@ async function updateComponents() {
   }
 
   if (isNeedUpdate) {
-    Logger.info('Updating components...');
+    Logger.info('Updating components...\n');
 
     writeFileSync(
       resolver('package.json'),
@@ -54,6 +54,7 @@ async function updateComponents() {
     Logger.newLine();
     Logger.info('Installing latest NextUI version...');
     execSync('pnpm install', {stdio: 'inherit'});
+    Logger.log(chalk.greenBright('✅ @nextui-org/react updated'));
   }
 
   let components;

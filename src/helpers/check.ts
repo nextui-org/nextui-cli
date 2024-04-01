@@ -6,8 +6,8 @@ import {readFileSync} from 'fs';
 
 import {resolver} from 'src/constants/path';
 import {
-  DOCS_APP_SETUP,
   DOCS_INSTALLED,
+  DOCS_TAILWINDCSS_SETUP,
   FRAMER_MOTION,
   NEXT_UI,
   SYSTEM_UI,
@@ -56,7 +56,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
           Logger.info(`- ${dependency}`);
         });
         Logger.newLine();
-        Logger.info(`Please check the detail in the NextUI document: ${DOCS_INSTALLED}`);
+        Logger.info(`See more info here: ${DOCS_INSTALLED}`);
       }
     };
   } else if (type === 'incorrectTailwind') {
@@ -68,10 +68,10 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
         Logger.newLine();
         Logger.info('The missing part is:');
         errorInfo.forEach((info) => {
-          Logger.info(`- need added ${info}`);
+          Logger.info(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.error(`Please check the detail in the NextUI document: ${DOCS_APP_SETUP}`);
+        Logger.error(`See more info here: ${DOCS_TAILWINDCSS_SETUP}-1`);
       }
     };
   } else {
@@ -83,10 +83,10 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
         Logger.newLine();
         Logger.info('The missing part is:');
         errorInfo.forEach((info) => {
-          Logger.info(`- need added ${info}`);
+          Logger.info(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.error(`Please check the detail in the NextUI document: ${DOCS_INSTALLED}`);
+        Logger.error(`See more info here: ${DOCS_INSTALLED}`);
       }
     };
   }

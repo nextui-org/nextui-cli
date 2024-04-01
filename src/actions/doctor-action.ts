@@ -50,9 +50,9 @@ export async function doctorAction(options: DoctorActionOptions) {
   if (!currentComponents.length && !isAllComponents) {
     Logger.prefix(
       'error',
-      `❌Sorry there are no ${chalk.underline(
+      `❌ There are no ${chalk.underline(
         'NextUI components'
-      )} in your project\nPlace check the NextUI document: https://nextui.org/docs/guide/installation#global-installation`
+      )} in your project\nCheck the NextUI installation docs: https://nextui.org/docs/guide/installation#global-installation`
     );
 
     return;
@@ -83,7 +83,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       name: 'missingTailwind',
       outputFn: () => {
         Logger.error('you have not created the tailwind.config.js');
-        Logger.error(`Please check the detail in the NextUI document: ${DOCS_TAILWINDCSS_SETUP}`);
+        Logger.error(`See more info here: ${DOCS_TAILWINDCSS_SETUP}`);
       }
     });
   }
@@ -182,10 +182,10 @@ export async function doctorAction(options: DoctorActionOptions) {
             Logger.newLine();
             Logger.info('The missing part is:');
             errorInfo.forEach((info) => {
-              Logger.info(`- need added ${info}`);
+              Logger.info(`- need to add ${info}`);
             });
             Logger.newLine();
-            Logger.error(`Please check the detail in the NextUI document: ${DOCS_PNPM_SETUP}`);
+            Logger.error(`See more info here: ${DOCS_PNPM_SETUP}`);
           }
         });
       }
@@ -194,7 +194,7 @@ export async function doctorAction(options: DoctorActionOptions) {
 
   /** ======================== Return when there is no problem ======================== */
   if (!problemRecord.length) {
-    Logger.success('🌟Congratulation no problem found in your project');
+    Logger.success('✅ No problems found in your project');
 
     return;
   }

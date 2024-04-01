@@ -44,11 +44,14 @@
     "link:cli": "pnpm link --global",
     "link:remove": "pnpm uninstall --global nextui-cli",
     "build": "tsup",
+    "update:components": "tsx scripts/update/update-components.ts",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . -max-warnings=0 --fix",
     "check:prettier": "prettier --check .",
     "check:types": "tsc --noEmit",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postbuild": "pnpm run update:components",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "async-retry": "1.3.3",
@@ -62,6 +65,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.7.1",
     "@commitlint/config-conventional": "17.7.0",
+    "@nextui-org/react": "0.0.0-dev-v2-20240331183656",
     "@types/gradient-string": "1.1.3",
     "@types/node": "20.11.30",
     "@types/prompts": "2.4.9",

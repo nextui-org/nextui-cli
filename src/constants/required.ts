@@ -13,7 +13,7 @@ export const DOCS_TAILWINDCSS_SETUP =
 export const DOCS_APP_SETUP = 'https://nextui.org/docs/guide/installation#provider-setup';
 export const DOCS_PNPM_SETUP = 'https://nextui.org/docs/guide/installation#setup-pnpm-optional';
 
-// Record the required content of tailwind.config.js
+// Record the required content of tailwind.config file
 export const tailwindRequired = {
   content: '@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   darkMode: 'darkMode: "class"',

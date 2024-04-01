@@ -28,11 +28,14 @@ export type CombineType = 'missingDependencies' | 'incorrectTailwind' | 'incorre
 type DefaultCombineOptions = {
   errorInfo: string[];
   missingDependencies: string[];
+  tailwindName: string;
 };
 
 type CombineOptions<T extends CombineType> = T extends 'missingDependencies'
   ? RequiredKey<Partial<DefaultCombineOptions>, 'missingDependencies'>
-  : T extends 'incorrectTailwind' | 'incorrectApp'
+  : T extends 'incorrectTailwind'
+  ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo' | 'tailwindName'>
+  : T extends 'incorrectApp'
   ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo'>
   : DefaultCombineOptions;
 
@@ -42,7 +45,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
   type: T,
   options: CombineOptions<T>
 ): ProblemRecord {
-  const {errorInfo, missingDependencies} = options as DefaultCombineOptions;
+  const {errorInfo, missingDependencies, tailwindName} = options as DefaultCombineOptions;
 
   if (type === 'missingDependencies') {
     return {
@@ -64,7 +67,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'incorrectTailwind',
       outputFn: () => {
-        Logger.error('Your tailwind.config.js is incorrect');
+        Logger.error(`Your ${tailwindName} is incorrect`);
         Logger.newLine();
         Logger.info('The missing part is:');
         errorInfo.forEach((info) => {
@@ -135,7 +138,7 @@ export function checkRequiredContentInstalled(
 }
 
 /**
- * Check if the tailwind.config.js is correct
+ * Check if the tailwind.config file is correct
  * @param type
  * @param tailwindPath
  * @param currentComponents

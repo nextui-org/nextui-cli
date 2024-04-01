@@ -1,3 +1,5 @@
+import {basename} from 'path';
+
 import chalk from 'chalk';
 
 import {
@@ -36,7 +38,7 @@ export async function doctorAction(options: DoctorActionOptions) {
     checkPnpm: _enableCheckPnpm = true,
     checkTailwind: _enableCheckTailwind = true,
     packagePath = resolver('package.json'),
-    tailwindPath = findFiles('**/tailwind.config.js')
+    tailwindPath = findFiles('**/tailwind.config.(j|t)s')
   } = options;
   const enableCheckApp = transformOption(_enableCheckApp);
   const enableCheckPnpm = transformOption(_enableCheckPnpm);
@@ -67,7 +69,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'warn',
       name: 'redundantDependencies',
       outputFn: () => {
-        Logger.warn('you have installed redundant dependencies, please remove them');
+        Logger.warn('You have installed redundant dependencies, please remove them');
         Logger.newLine();
         Logger.info('The redundant dependencies are:');
         currentComponents.forEach((component) => {
@@ -76,13 +78,13 @@ export async function doctorAction(options: DoctorActionOptions) {
       }
     });
   }
-  // If there is no tailwind.config.js
+  // If there is no tailwind.config file
   if (enableCheckTailwind && !tailwindPaths.length) {
     problemRecord.push({
       level: 'error',
       name: 'missingTailwind',
       outputFn: () => {
-        Logger.error('you have not created the tailwind.config.js');
+        Logger.error('You have not created the tailwind.config.(j|t)s');
         Logger.error(`See more info here: ${DOCS_TAILWINDCSS_SETUP}`);
       }
     });
@@ -111,13 +113,15 @@ export async function doctorAction(options: DoctorActionOptions) {
       problemRecord.push(combineProblemRecord('missingDependencies', {missingDependencies}));
     }
 
-    // Check whether tailwind.config.js is correct
+    // Check whether tailwind.config file is correct
     if (enableCheckTailwind) {
       for (const tailwindPath of tailwindPaths) {
         const [isCorrectTailwind, ...errorInfo] = checkTailwind('all', tailwindPath);
 
         if (!isCorrectTailwind) {
-          problemRecord.push(combineProblemRecord('incorrectTailwind', {errorInfo}));
+          const tailwindName = basename(tailwindPath);
+
+          problemRecord.push(combineProblemRecord('incorrectTailwind', {errorInfo, tailwindName}));
         }
       }
     }
@@ -141,7 +145,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       problemRecord.push(combineProblemRecord('missingDependencies', {missingDependencies}));
     }
 
-    // Check whether tailwind.config.js is correct
+    // Check whether tailwind.config file is correct
     if (enableCheckTailwind) {
       for (const tailwindPath of tailwindPaths) {
         const [isCorrectTailwind, ...errorInfo] = checkTailwind(
@@ -151,7 +155,9 @@ export async function doctorAction(options: DoctorActionOptions) {
         );
 
         if (!isCorrectTailwind) {
-          problemRecord.push(combineProblemRecord('incorrectTailwind', {errorInfo}));
+          const tailwindName = basename(tailwindPath);
+
+          problemRecord.push(combineProblemRecord('incorrectTailwind', {errorInfo, tailwindName}));
         }
       }
     }

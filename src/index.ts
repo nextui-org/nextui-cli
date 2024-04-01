@@ -49,10 +49,10 @@ nextui
   .command('doctor')
   .description('Check whether exist problem in user project')
   .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config.js file')
+  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
   .option('-app --appPath [string]', 'The path to the App.tsx file')
   .option('-ca --checkApp [boolean]', 'Open check App', true)
-  .option('-ct --checkTailwind [boolean]', 'Open check tailwind.config.js', true)
+  .option('-ct --checkTailwind [boolean]', 'Open check tailwind.config file', true)
   .option('-cp --checkPnpm [boolean]', 'Open check Pnpm', true)
   .action(doctorAction);
 

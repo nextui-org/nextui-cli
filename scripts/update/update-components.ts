@@ -38,8 +38,8 @@ async function updateComponents() {
   }
 
   if (isNeedUpdate) {
+    // Update package.json
     Logger.info('Updating components...\n');
-
     writeFileSync(
       resolver('package.json'),
       JSON.stringify(
@@ -49,9 +49,10 @@ async function updateComponents() {
       ),
       'utf-8'
     );
-
     Logger.log(chalk.greenBright('Package.json updated'));
     Logger.newLine();
+
+    // Install latest NextUI version
     Logger.info('Installing latest NextUI version...');
     execSync('pnpm install', {stdio: 'inherit'});
     Logger.log(chalk.greenBright('@nextui-org/react updated'));
@@ -65,6 +66,7 @@ async function updateComponents() {
     throw new Error(`Error importing components.json: ${error}`);
   }
 
+  // Update components.json
   writeFileSync(TARGET_COMPONENTS_PATH, components, 'utf-8');
 
   Logger.log(chalk.greenBright('✅ Components updated'));

@@ -208,7 +208,7 @@ export async function doctorAction(options: DoctorActionOptions) {
   /** ======================== Output the problem record ======================== */
   Logger.prefix(
     'error',
-    `❌Sorry there are ${chalk.underline(problemRecord.length)} problem${
+    `❌ There are ${chalk.underline(problemRecord.length)} problem${
       problemRecord.length === 1 ? '' : 's'
     } in your project`
   );

@@ -50,11 +50,11 @@ async function updateComponents() {
       'utf-8'
     );
 
-    Logger.log(chalk.greenBright('✅ Package.json updated'));
+    Logger.log(chalk.greenBright('Package.json updated'));
     Logger.newLine();
     Logger.info('Installing latest NextUI version...');
     execSync('pnpm install', {stdio: 'inherit'});
-    Logger.log(chalk.greenBright('✅ @nextui-org/react updated'));
+    Logger.log(chalk.greenBright('@nextui-org/react updated'));
   }
 
   let components;

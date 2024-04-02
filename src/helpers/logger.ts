@@ -11,7 +11,10 @@ export const gradientString = _gradientString;
 
 const logPrefix = gradientString(...defaultColors)('NextUI CLI:');
 
-type PrefixLogType = Extract<keyof typeof Logger, 'error' | 'gradient' | 'info' | 'log' | 'warn'>;
+export type PrefixLogType = Extract<
+  keyof typeof Logger,
+  'error' | 'gradient' | 'info' | 'log' | 'warn' | 'success'
+>;
 export class Logger {
   constructor() {}
 
@@ -21,6 +24,10 @@ export class Logger {
 
   static info(...args: Parameters<typeof console.info>) {
     console.info(...args.map((item) => chalk.blue(item)));
+  }
+
+  static success(...args: Parameters<typeof console.info>) {
+    console.info(...args.map((item) => chalk.green(item)));
   }
 
   static warn(...args: Parameters<typeof console.warn>) {

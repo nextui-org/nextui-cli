@@ -1,6 +1,7 @@
 import {readFileSync} from 'fs';
 
 import {type NextUIComponents, nextUIComponents} from 'src/constants/component';
+import {NEXT_UI} from 'src/constants/required';
 
 import {Logger} from './logger';
 
@@ -20,11 +21,11 @@ export async function getPackageInfo(packagePath: string) {
   const devDependencies = pkg.devDependencies || {};
   const dependencies = pkg.dependencies || {};
   const allDependencies = {...devDependencies, ...dependencies};
-  const dependenciesKeys = new Set(Object.keys(allDependencies));
+  const allDependenciesKeys = new Set(Object.keys(allDependencies));
 
   const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(
     (component) => {
-      if (dependenciesKeys.has(component.package)) {
+      if (allDependenciesKeys.has(component.package)) {
         const currentVersion = allDependencies[component.package];
 
         component.version = `${currentVersion} new: ${component.version}`;
@@ -35,13 +36,15 @@ export async function getPackageInfo(packagePath: string) {
       return false;
     }
   ) as NextUIComponents;
+  const isAllComponents = allDependenciesKeys.has(NEXT_UI);
 
   return {
     allDependencies,
+    allDependenciesKeys,
     currentComponents,
     dependencies,
-    dependenciesKeys,
     devDependencies,
+    isAllComponents,
     package: pkg
   };
 }

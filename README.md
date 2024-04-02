@@ -38,7 +38,9 @@
 
 - [ ] Add `nextui doctor` command
 
-  > Check whether the required dependence has been installed.
+  > Check whether installed redundant dependencies.
+
+  > Check whether the required dependency has been installed.
 
   > Check tailwind config、provide has been added.
 

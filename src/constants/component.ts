@@ -1,7 +1,6 @@
-import _nextUIComponents from './components.json';
+import {getComponents} from 'src/scripts/helpers';
 
-// Don't change manually, use update:components script to update
-export const nextUIComponents = _nextUIComponents;
+export const nextUIComponents = (await getComponents()).components;
 
 export const orderNextUIComponentKeys = ['package', 'version', 'status', 'docs'] as const;
 

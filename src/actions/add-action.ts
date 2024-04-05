@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import type {SAFE_ANY} from '@helpers/type';
 
 import {writeFileSync} from 'fs';
@@ -95,7 +96,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   // Check whether have added the NextUI components
-  const {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
+  var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
 
   const currentComponentsKeys = currentComponents.map((c) => c.name);
   const filterCurrentComponents = components.filter((c) => currentComponentsKeys.includes(c));
@@ -155,6 +156,9 @@ export async function addAction(components: string[], options: AddActionOptions)
 
     await exec(`${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`);
   }
+
+  // After install the required dependencies, get the latest package information
+  var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
 
   /** ======================== Step 2 Tailwind CSS Setup ======================== */
   const type: SAFE_ANY = all ? 'all' : 'partial';

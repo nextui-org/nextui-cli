@@ -40,7 +40,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
 
-  if (!components && !all) {
+  if (!components.length && !all) {
     components = await getAutocompleteMultiselect(
       'Select the NextUI components to add',
       nextUIComponents.map((component) => {

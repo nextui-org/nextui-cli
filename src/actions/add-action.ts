@@ -19,7 +19,7 @@ import {
   nextUIComponentsMap
 } from 'src/constants/component';
 import {resolver} from 'src/constants/path';
-import {individualTailwindRequired} from 'src/constants/required';
+import {NEXT_UI, individualTailwindRequired} from 'src/constants/required';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
 
@@ -52,44 +52,46 @@ export async function addAction(components: string[], options: AddActionOptions)
       })
     );
   } else if (all) {
-    components = nextUIComponentsKeys;
+    components = [NEXT_UI];
   }
 
   /** ======================== Add judge whether illegal component exist ======================== */
-  const illegalList: [string, null | string][] = [];
+  if (!all) {
+    const illegalList: [string, null | string][] = [];
 
-  for (const component of components) {
-    if (!nextUIComponentsKeysSet.has(component)) {
-      const matchComponent = findMostMatchText(nextUIComponentsKeys, component);
+    for (const component of components) {
+      if (!nextUIComponentsKeysSet.has(component)) {
+        const matchComponent = findMostMatchText(nextUIComponentsKeys, component);
 
-      illegalList.push([component, matchComponent]);
+        illegalList.push([component, matchComponent]);
+      }
     }
-  }
 
-  if (illegalList.length) {
-    const [illegalComponents, matchComponents] = illegalList.reduce(
-      (acc, [illegalComponent, matchComponent]) => {
-        return [
-          acc[0] + chalk.underline(illegalComponent) + ', ',
-          acc[1] + (matchComponent ? chalk.underline(matchComponent) + ', ' : '')
-        ];
-      },
-      ['', '']
-    );
+    if (illegalList.length) {
+      const [illegalComponents, matchComponents] = illegalList.reduce(
+        (acc, [illegalComponent, matchComponent]) => {
+          return [
+            acc[0] + chalk.underline(illegalComponent) + ', ',
+            acc[1] + (matchComponent ? chalk.underline(matchComponent) + ', ' : '')
+          ];
+        },
+        ['', '']
+      );
 
-    Logger.prefix(
-      'error',
-      `Illegal NextUI components: ${illegalComponents.replace(/, $/, '')}${
-        matchComponents
-          ? `\n${''.padEnd(12)}It may be a typo, did you mean ${matchComponents.replace(
-              /, $/,
-              ''
-            )}?`
-          : ''
-      }`
-    );
+      Logger.prefix(
+        'error',
+        `Illegal NextUI components: ${illegalComponents.replace(/, $/, '')}${
+          matchComponents
+            ? `\n${''.padEnd(12)}It may be a typo, did you mean ${matchComponents.replace(
+                /, $/,
+                ''
+              )}?`
+            : ''
+        }`
+      );
 
-    return;
+      return;
+    }
   }
 
   // Check whether have added the NextUI components
@@ -120,6 +122,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   const currentPkgManager = await detect();
+  const runCmd = currentPkgManager === 'npm' ? 'install' : 'add';
 
   /** ======================== Step 1 Add dependencies required ======================== */
   if (all) {
@@ -132,7 +135,7 @@ export async function addAction(components: string[], options: AddActionOptions)
           .join(', ')}`
       );
 
-      await exec(`${currentPkgManager} add ${[...missingDependencies].join(' ')}`);
+      await exec(`${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`);
     }
   } else {
     const [, ..._missingDependencies] = checkRequiredContentInstalled(
@@ -150,11 +153,7 @@ export async function addAction(components: string[], options: AddActionOptions)
         .join(', ')}`
     );
 
-    await exec(
-      `${currentPkgManager} ${currentPkgManager === 'npm' ? 'install' : 'add'} ${[
-        ...missingDependencies
-      ].join(' ')}`
-    );
+    await exec(`${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`);
   }
 
   /** ======================== Step 2 Tailwind CSS Setup ======================== */

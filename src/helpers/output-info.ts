@@ -3,6 +3,7 @@ import type {CommandName} from './type';
 import chalk from 'chalk';
 
 import {
+  type NextUIComponent,
   type NextUIComponents,
   colorNextUIComponentKeys,
   orderNextUIComponentKeys
@@ -42,12 +43,13 @@ export function outputComponents(
     return;
   }
 
-  const componentKeyLengthMap: Record<keyof NextUIComponents[0], number> = {
+  const componentKeyLengthMap: Record<keyof NextUIComponent, number> = {
     description: 0,
     docs: 0,
     name: 0,
     package: 0,
     status: 0,
+    style: 0,
     version: 0
   };
 

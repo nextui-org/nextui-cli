@@ -33,7 +33,7 @@ export interface ProblemRecord {
 
 export async function doctorAction(options: DoctorActionOptions) {
   const {
-    appPath = findFiles('**/App.tsx')[0],
+    appPath = findFiles('**/App.(j|t)sx')[0],
     checkApp: _enableCheckApp = true,
     checkPnpm: _enableCheckPnpm = true,
     checkTailwind: _enableCheckTailwind = true,
@@ -45,8 +45,7 @@ export async function doctorAction(options: DoctorActionOptions) {
   const enableCheckTailwind = transformOption(_enableCheckTailwind);
   const tailwindPaths = [tailwindPath].flat();
 
-  const {allDependenciesKeys, currentComponents, isAllComponents} =
-    await getPackageInfo(packagePath);
+  const {allDependenciesKeys, currentComponents, isAllComponents} = getPackageInfo(packagePath);
 
   /** ======================== Output when there is no components installed ======================== */
   if (!currentComponents.length && !isAllComponents) {
@@ -95,7 +94,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingApp',
       outputFn: () => {
-        Logger.error('Cannot find the App.tsx file');
+        Logger.error('Cannot find the App.(j|t)sx file');
         Logger.error("You should specify appPath through 'doctor --appPath=yourAppPath'");
       }
     });
@@ -147,11 +146,14 @@ export async function doctorAction(options: DoctorActionOptions) {
 
     // Check whether tailwind.config file is correct
     if (enableCheckTailwind) {
+      const isPnpm = (await detect()) === 'pnpm';
+
       for (const tailwindPath of tailwindPaths) {
         const [isCorrectTailwind, ...errorInfo] = checkTailwind(
           'partial',
           tailwindPath,
-          currentComponents
+          currentComponents,
+          isPnpm
         );
 
         if (!isCorrectTailwind) {
@@ -177,7 +179,9 @@ export async function doctorAction(options: DoctorActionOptions) {
     const currentPkgManager = await detect();
 
     if (currentPkgManager === 'pnpm') {
-      const [isCorrect, ...errorInfo] = checkPnpm();
+      const npmrcPath = resolver('.npmrc');
+
+      const [isCorrect, ...errorInfo] = checkPnpm(npmrcPath);
 
       if (!isCorrect) {
         problemRecord.push({

@@ -13,6 +13,7 @@ export type Components = {
   docs: string;
   description: string;
   status: string;
+  style: string;
 }[];
 
 export type ComponentsJson = {
@@ -29,7 +30,7 @@ export async function updateComponents() {
   }
   // const latestVersion = await getLatestVersion('@nextui-org/react');
   // TODO:(winches) Remove this after the NextUI first release
-  const latestVersion = '0.0.0-dev-v2-20240331183656';
+  const latestVersion = '0.0.0-dev-v2-20240402181757';
 
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
@@ -73,14 +74,14 @@ const getUnpkgUrl = (version: string) =>
 
 export async function autoUpdateComponents() {
   // TODO:(winches) Remove this after the NextUI first release
-  const url = getUnpkgUrl('0.0.0-dev-v2-20240331183656');
+  const url = getUnpkgUrl('0.0.0-dev-v2-20240402181757');
 
   const components = await downloadFile(url);
 
   const componentsJson = {
     components,
     // TODO:(winches) Remove this after the NextUI first release
-    version: '0.0.0-dev-v2-20240331183656'
+    version: '0.0.0-dev-v2-20240402181757'
   };
 
   writeFileSync(COMPONENTS_PATH, JSON.stringify(componentsJson, null, 2), 'utf-8');

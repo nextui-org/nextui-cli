@@ -1,4 +1,4 @@
-import type {PascalCase} from './type';
+import type {PascalCase, SAFE_ANY} from './type';
 
 import fg, {type Options} from 'fast-glob';
 
@@ -46,4 +46,8 @@ export function transformOption(options: boolean | 'false') {
   if (options === 'false') return false;
 
   return !!options;
+}
+
+export function omit(obj: Record<string, SAFE_ANY>, keys: string[]) {
+  return Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key)));
 }

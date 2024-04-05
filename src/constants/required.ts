@@ -1,4 +1,11 @@
-import type {NextUIComponents} from './component';
+import {existsSync} from 'fs';
+
+import fg from 'fast-glob';
+
+import {getPackageInfo} from '@helpers/package';
+
+import {type NextUIComponent, type NextUIComponents} from './component';
+import {resolver} from './path';
 
 export const FRAMER_MOTION = 'framer-motion';
 export const TAILWINDCSS = 'tailwindcss';
@@ -21,13 +28,27 @@ export const tailwindRequired = {
 } as const;
 
 export const individualTailwindRequired = {
-  content: (currentComponents: NextUIComponents) => {
-    if (currentComponents.length === 1) {
-      return `@nextui-org/theme/dist/components/${currentComponents[0]!.name}.js`;
+  content: (currentComponents: NextUIComponents, isPnpm: boolean) => {
+    currentComponents.forEach((component) => {
+      const walkDeps = walkDepComponents(component, isPnpm) as NextUIComponents;
+
+      currentComponents.push(...walkDeps);
+    });
+
+    const outputComponents = [
+      ...new Set(
+        currentComponents.map((component) => {
+          return component.style || component.name;
+        })
+      )
+    ];
+
+    if (outputComponents.length === 1) {
+      return `@nextui-org/theme/dist/components/${currentComponents[0]}.js`;
     }
-    const requiredContent = currentComponents
+    const requiredContent = outputComponents
       .reduce((acc, component) => {
-        return (acc += `${component.name}|`);
+        return (acc += `${component}|`);
       }, '')
       .replace(/\|$/, '');
 
@@ -43,3 +64,37 @@ export const appRequired = {
 export const pnpmRequired = {
   content: 'public-hoist-pattern[]=*@nextui-org/*'
 } as const;
+
+export function walkDepComponents(nextUIComponent: NextUIComponent, isPnpm: boolean) {
+  const component = nextUIComponent.name;
+  let componentPath = resolver(`node_modules/@nextui-org/${component}`);
+  const components = [nextUIComponent];
+
+  if (!existsSync(componentPath) && isPnpm) {
+    const pnpmDir = resolver('node_modules/.pnpm');
+
+    const file = fg.sync(`**/@nextui-org/${component}`, {
+      absolute: true,
+      cwd: pnpmDir,
+      onlyDirectories: true
+    })[0];
+
+    if (file) {
+      componentPath = file;
+    } else {
+      return components;
+    }
+  }
+
+  const {currentComponents} = getPackageInfo(`${componentPath}/package.json`);
+
+  if (currentComponents.length) {
+    for (const component of currentComponents) {
+      const result = walkDepComponents(component, isPnpm);
+
+      components.push(...result);
+    }
+  }
+
+  return components;
+}

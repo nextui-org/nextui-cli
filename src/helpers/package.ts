@@ -9,7 +9,7 @@ import {Logger} from './logger';
  * Get the package information
  * @param packagePath string
  */
-export async function getPackageInfo(packagePath: string) {
+export function getPackageInfo(packagePath: string) {
   let pkg;
 
   try {

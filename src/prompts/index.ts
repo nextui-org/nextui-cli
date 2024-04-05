@@ -23,6 +23,22 @@ export async function getInput(message: string, choices?: prompts.Choice[]) {
   return result.value;
 }
 
+export async function getAutocompleteMultiselect(message: string, choices?: prompts.Choice[]) {
+  const result = await prompts(
+    {
+      hint: '- Space to select. Return to submit',
+      message,
+      min: 1,
+      name: 'value',
+      type: 'autocompleteMultiselect',
+      ...(choices ? {choices} : {})
+    },
+    defaultPromptOptions
+  );
+
+  return result.value;
+}
+
 export async function getSelect(message: string, choices: prompts.Choice[]) {
   const result = await prompts(
     {

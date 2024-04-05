@@ -18,7 +18,7 @@ export async function listAction(options: ListActionOptions) {
   try {
     /** ======================== Get the installed components ======================== */
     if (current) {
-      const {currentComponents} = await getPackageInfo(packagePath);
+      const {currentComponents} = getPackageInfo(packagePath);
 
       components = currentComponents;
     }

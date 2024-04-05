@@ -43,3 +43,31 @@ export function getMatchArray(key: string, target: string) {
 
   return [];
 }
+
+/**
+ * Replace the array content of the key in the target string.
+ * @example replaceMatchArray('key', 'key: [a, b, c]', ['d', 'e', 'f']) => 'key: [d, e, f]'
+ * @param key
+ * @param target
+ * @param value
+ */
+export function replaceMatchArray(key: string, target: string, value: string[]) {
+  const mixinReg = new RegExp(`\\s*${key}:\\s\\[([\\w\\W]*?)\\]\\s*`);
+  const replaceValue = value.map((v) => JSON.stringify(v)).join(', ');
+
+  if (mixinReg.test(target)) {
+    return target.replace(mixinReg, `\n  ${key}: [${replaceValue}]`);
+  }
+
+  // If the key does not exist, add the key and value to the end of the target
+  const targetArray = target.split('\n');
+  const contentIndex = targetArray.findIndex((item) => item.includes('content:'));
+  const moduleIndex = targetArray.findIndex((item) => item.includes('module.exports ='));
+  const insertIndex = contentIndex !== -1 ? contentIndex : moduleIndex !== -1 ? moduleIndex : 0;
+
+  key === 'content'
+    ? targetArray.splice(insertIndex + 1, 0, `  ${key}: [${replaceValue}],`)
+    : targetArray.splice(insertIndex + 1, 0, `  ${key}: [${value}],`);
+
+  return targetArray.join('\n');
+}

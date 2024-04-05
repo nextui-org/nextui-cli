@@ -4,7 +4,6 @@ import type {NextUIComponents} from 'src/constants/component';
 
 import {readFileSync} from 'fs';
 
-import {resolver} from 'src/constants/path';
 import {
   DOCS_INSTALLED,
   DOCS_TAILWINDCSS_SETUP,
@@ -147,17 +146,20 @@ export function checkRequiredContentInstalled(
 export function checkTailwind(
   type: 'all',
   tailwindPath: string,
-  currentComponents?: NextUIComponents
+  currentComponents?: NextUIComponents,
+  isPnpm?: boolean
 ): CheckResult;
 export function checkTailwind(
   type: 'partial',
   tailwindPath: string,
-  currentComponents: NextUIComponents
+  currentComponents: NextUIComponents,
+  isPnpm: boolean
 ): CheckResult;
 export function checkTailwind(
   type: CheckType,
   tailwindPath: string,
-  currentComponents?: NextUIComponents
+  currentComponents?: NextUIComponents,
+  isPnpm?: boolean
 ): CheckResult {
   const result = [] as unknown as CheckResult;
 
@@ -168,7 +170,7 @@ export function checkTailwind(
 
   if (type === 'all') {
     // Check if the required content is added Detail: https://nextui.org/docs/guide/installation#global-installation
-    const isDarkModeCorrect = new RegExp(tailwindRequired.darkMode).test(tailwindContent);
+    const isDarkModeCorrect = tailwindContent.match(/darkMode: ["']\w/);
     const isContentCorrect = contentMatch.some((content) =>
       content.includes(tailwindRequired.content)
     );
@@ -183,8 +185,8 @@ export function checkTailwind(
     !isContentCorrect && result.push(tailwindRequired.content);
     !isPluginsCorrect && result.push(tailwindRequired.plugins);
   } else if (type === 'partial') {
-    const individualContent = individualTailwindRequired.content(currentComponents!);
-    const isContentCorrect = contentMatch.some((content) => individualContent.includes(content));
+    const individualContent = individualTailwindRequired.content(currentComponents!, isPnpm!);
+    const isContentCorrect = contentMatch.some((content) => content.includes(individualContent));
     const isPluginsCorrect = pluginsMatch.some((plugins) =>
       plugins.includes(tailwindRequired.plugins)
     );
@@ -218,9 +220,8 @@ export function checkApp(type: CheckType, appPath: string): CheckResult {
   return [false, ...result];
 }
 
-export function checkPnpm(): CheckResult {
+export function checkPnpm(npmrcPath: string): CheckResult {
   const result = [] as unknown as CheckResult;
-  const npmrcPath = resolver('.npmrc');
 
   let content: string;
 

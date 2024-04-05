@@ -11,6 +11,7 @@ import {doctorAction} from './actions/doctor-action';
 import {envAction} from './actions/env-action';
 import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
+import {upgradeAction} from './actions/upgrade-action';
 
 const nextui = new Command();
 
@@ -47,6 +48,13 @@ nextui
     false
   )
   .action(addAction);
+
+nextui
+  .command('upgrade')
+  .description('Upgrade the NextUI CLI to the latest version')
+  .argument('[components...]', 'The name of the NextUI components to upgrade')
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .action(upgradeAction);
 
 nextui
   .command('list')

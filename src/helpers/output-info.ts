@@ -154,3 +154,34 @@ export function outputInfo() {
   Logger.log(chalk.greenBright('    Node:'), process.version);
   Logger.newLine();
 }
+
+export function getOutputVersion(currentVersion: string, latestVersion: string) {
+  if (isMajorUpdate(currentVersion, latestVersion)) {
+    return chalk.redBright(latestVersion);
+  } else if (isMinorUpdate(currentVersion, latestVersion)) {
+    return chalk.yellowBright(latestVersion);
+  } else {
+    return chalk.greenBright(latestVersion);
+  }
+}
+
+function isMajorUpdate(currentVersion: string, latestVersion: string) {
+  const currentVersionArr = currentVersion.split('.');
+  const latestVersionArr = latestVersion.split('.');
+
+  return currentVersionArr[0] !== latestVersionArr[0];
+}
+
+function isMinorUpdate(currentVersion: string, latestVersion: string) {
+  const currentVersionArr = currentVersion.split('.');
+  const latestVersionArr = latestVersion.split('.');
+
+  return currentVersionArr[1] !== latestVersionArr[1];
+}
+
+export function isPatchUpdate(currentVersion: string, latestVersion: string) {
+  const currentVersionArr = currentVersion.split('.');
+  const latestVersionArr = latestVersion.split('.');
+
+  return currentVersionArr[2] !== latestVersionArr[2];
+}

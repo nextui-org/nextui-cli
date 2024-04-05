@@ -8,8 +8,9 @@ import {Logger} from './logger';
 /**
  * Get the package information
  * @param packagePath string
+ * @param transformVersion boolean
  */
-export function getPackageInfo(packagePath: string) {
+export function getPackageInfo(packagePath: string, transformVersion = true) {
   let pkg;
 
   try {
@@ -28,7 +29,9 @@ export function getPackageInfo(packagePath: string) {
       if (allDependenciesKeys.has(component.package)) {
         const currentVersion = allDependencies[component.package];
 
-        component.version = `${currentVersion} new: ${component.version}`;
+        component.version = transformVersion
+          ? `${currentVersion} new: ${component.version}`
+          : currentVersion;
 
         return true;
       }

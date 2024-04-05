@@ -1,7 +1,7 @@
 /* eslint-disable no-var */
 import type {SAFE_ANY} from '@helpers/type';
 
-import {writeFileSync} from 'fs';
+import {existsSync, writeFileSync} from 'fs';
 
 import chalk from 'chalk';
 
@@ -198,7 +198,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (currentPkgManager === 'pnpm') {
     const npmrcPath = resolver('.npmrc');
 
-    if (!npmrcPath) {
+    if (!existsSync(npmrcPath)) {
       writeFileSync(resolver('.npmrc'), pnpmRequired.content, 'utf-8');
     } else {
       const [isCorrectPnpm] = checkPnpm(npmrcPath);

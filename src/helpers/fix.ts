@@ -103,7 +103,7 @@ function transformErrorInfo(errorInfo: string): [keyof typeof tailwindRequired, 
 export function fixPnpm(npmrcPath: string, write = true, runInstall = true) {
   let content = readFileSync(npmrcPath, 'utf-8');
 
-  content = `${pnpmRequired.content}\n${npmrcPath}`;
+  content = `${pnpmRequired.content}\n${content}`;
 
   write && writeFileSync(npmrcPath, content, 'utf-8');
   Logger.newLine();

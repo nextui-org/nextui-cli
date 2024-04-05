@@ -19,7 +19,7 @@ import {
   nextUIComponentsMap
 } from 'src/constants/component';
 import {resolver} from 'src/constants/path';
-import {NEXT_UI, individualTailwindRequired} from 'src/constants/required';
+import {NEXT_UI, individualTailwindRequired, pnpmRequired} from 'src/constants/required';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
 
@@ -194,10 +194,14 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (currentPkgManager === 'pnpm') {
     const npmrcPath = resolver('.npmrc');
 
-    const [isCorrectPnpm] = checkPnpm(npmrcPath);
+    if (!npmrcPath) {
+      writeFileSync(resolver('.npmrc'), pnpmRequired.content, 'utf-8');
+    } else {
+      const [isCorrectPnpm] = checkPnpm(npmrcPath);
 
-    if (!isCorrectPnpm) {
-      fixPnpm(npmrcPath);
+      if (!isCorrectPnpm) {
+        fixPnpm(npmrcPath);
+      }
     }
   }
 

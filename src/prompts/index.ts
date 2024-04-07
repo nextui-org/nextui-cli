@@ -6,6 +6,7 @@ import {Logger} from '@helpers/logger';
 const defaultPromptOptions: prompts.Options = {
   onCancel: () => {
     Logger.log(`${chalk.red('✖')} Operation cancelled`);
+    process.exit(0);
   }
 };
 

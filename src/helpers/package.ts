@@ -27,11 +27,14 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
   const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(
     (component) => {
       if (allDependenciesKeys.has(component.package)) {
-        const currentVersion = allDependencies[component.package];
+        const versionModeRegex = /([\^~])/;
+        const currentVersion = allDependencies[component.package].replace(versionModeRegex, '');
+        const versionMode = allDependencies[component.package].match(versionModeRegex)?.[1] || '';
 
         component.version = transformVersion
           ? `${currentVersion} new: ${component.version}`
           : currentVersion;
+        component.versionMode = versionMode;
 
         return true;
       }

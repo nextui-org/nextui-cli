@@ -9,7 +9,7 @@ import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {upgrade} from '@helpers/upgrade';
 import {getColorVersion} from '@helpers/utils';
-import {type NextUIComponent, nextUIComponentsMap} from 'src/constants/component';
+import {type NextUIComponents, nextUIComponentsMap} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {NEXT_UI} from 'src/constants/required';
 import {getAutocompleteMultiselect, getSelect} from 'src/prompts';
@@ -30,7 +30,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   const isNextUIAll = !!allDependencies[NEXT_UI];
 
   const transformComponents: Required<
-    AppendKeyValue<NextUIComponent, 'latestVersion', string> & {isLatest: boolean}
+    AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
   >[] = [];
 
   for (const component of currentComponents) {
@@ -111,7 +111,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     await exec(
       `${packageManager} ${packageManager === 'npm' ? 'install' : 'add'} ${result.reduce(
         (acc, component) => {
-          return `${acc} ${component.package}@${component.latestVersion}`;
+          return `${acc} ${component.package}@${component.versionMode}${component.latestVersion}`;
         },
         ''
       )}`

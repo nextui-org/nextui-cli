@@ -13,6 +13,7 @@ interface UpgradeOption {
   version: string;
   latestVersion: string;
   isLatest: boolean;
+  versionMode?: string;
 }
 
 const DEFAULT_SPACE = ''.padEnd(7);
@@ -40,7 +41,7 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[]) {
     if (upgradeOption.isLatest) {
       output.push(
         `  ${chalk.white(
-          `${`${upgradeOption.package}@${upgradeOption.latestVersion}`.padEnd(
+          `${`${upgradeOption.package}@${upgradeOption.versionMode}${upgradeOption.latestVersion}`.padEnd(
             optionMaxLenMap.package + DEFAULT_SPACE.length + DEFAULT_SPACE.length
           )}`
         )}${chalk.greenBright('latest').padStart(optionMaxLenMap.version)}${DEFAULT_SPACE}`
@@ -51,9 +52,9 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[]) {
       `  ${chalk.white(
         `${upgradeOption.package.padEnd(
           optionMaxLenMap.package + DEFAULT_SPACE.length
-        )}${DEFAULT_SPACE}${upgradeOption.version.padStart(optionMaxLenMap.version)}  ->  ${
-          upgradeOption.latestVersion
-        }`
+        )}${DEFAULT_SPACE}${upgradeOption.versionMode}${upgradeOption.version.padStart(
+          optionMaxLenMap.version
+        )}  ->  ${upgradeOption.versionMode}${upgradeOption.latestVersion}`
       )}${DEFAULT_SPACE}`
     );
   }

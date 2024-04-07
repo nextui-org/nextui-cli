@@ -1,9 +1,15 @@
 import type {RequiredKey, SAFE_ANY} from './type';
 import type {ProblemRecord} from 'src/actions/doctor-action';
-import type {NextUIComponents} from 'src/constants/component';
 
 import {readFileSync} from 'fs';
 
+import chalk from 'chalk';
+
+import {
+  type NextUIComponents,
+  nextUIComponentsKeys,
+  nextUIComponentsKeysSet
+} from 'src/constants/component';
 import {
   DOCS_INSTALLED,
   DOCS_TAILWINDCSS_SETUP,
@@ -20,6 +26,7 @@ import {
 
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
+import {findMostMatchText} from './math-diff';
 
 export type CheckType = 'all' | 'partial';
 export type CombineType = 'missingDependencies' | 'incorrectTailwind' | 'incorrectApp';
@@ -243,4 +250,45 @@ export function checkPnpm(npmrcPath: string): CheckResult {
   }
 
   return [false, ...result];
+}
+
+export function checkIllegalComponents(components: string[], loggerError = true) {
+  const illegalList: [string, null | string][] = [];
+
+  for (const component of components) {
+    if (!nextUIComponentsKeysSet.has(component)) {
+      const matchComponent = findMostMatchText(nextUIComponentsKeys, component);
+
+      illegalList.push([component, matchComponent]);
+    }
+  }
+
+  if (illegalList.length) {
+    const [illegalComponents, matchComponents] = illegalList.reduce(
+      (acc, [illegalComponent, matchComponent]) => {
+        return [
+          acc[0] + chalk.underline(illegalComponent) + ', ',
+          acc[1] + (matchComponent ? chalk.underline(matchComponent) + ', ' : '')
+        ];
+      },
+      ['', '']
+    );
+
+    loggerError &&
+      Logger.prefix(
+        'error',
+        `Illegal NextUI components: ${illegalComponents.replace(/, $/, '')}${
+          matchComponents
+            ? `\n${''.padEnd(12)}It may be a typo, did you mean ${matchComponents.replace(
+                /, $/,
+                ''
+              )}?`
+            : ''
+        }`
+      );
+
+    return false;
+  }
+
+  return true;
 }

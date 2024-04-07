@@ -12,6 +12,9 @@ import {
 import {Logger} from './logger';
 import {PasCalCase} from './utils';
 
+// eslint-disable-next-line no-control-regex
+const colorMatchRegex = /(\u001b\[\d+m)/g;
+
 const rounded = {
   bl: '╰',
   br: '╯',
@@ -155,33 +158,40 @@ export function outputInfo() {
   Logger.newLine();
 }
 
-export function getOutputVersion(currentVersion: string, latestVersion: string) {
-  if (isMajorUpdate(currentVersion, latestVersion)) {
-    return chalk.redBright(latestVersion);
-  } else if (isMinorUpdate(currentVersion, latestVersion)) {
-    return chalk.yellowBright(latestVersion);
-  } else {
-    return chalk.greenBright(latestVersion);
-  }
-}
+/**
+ * Output a box with the content
+ * @param content
+ * @param center
+ * @param log
+ */
+export function outputBox(content: string, center = false, log = true) {
+  const contentArr = content.split('\n');
+  const transformArr = contentArr.map((c) => c.replace(colorMatchRegex, ''));
 
-function isMajorUpdate(currentVersion: string, latestVersion: string) {
-  const currentVersionArr = currentVersion.split('.');
-  const latestVersionArr = latestVersion.split('.');
+  const maxLength = transformArr.reduce((acc, cur) => (cur.length > acc ? cur.length : acc), 0);
 
-  return currentVersionArr[0] !== latestVersionArr[0];
-}
+  const boxHeader = rounded.tl + rounded.h.padEnd(maxLength, rounded.h) + rounded.tr;
+  const boxFooter = rounded.bl + rounded.h.padEnd(maxLength, rounded.h) + rounded.br;
 
-function isMinorUpdate(currentVersion: string, latestVersion: string) {
-  const currentVersionArr = currentVersion.split('.');
-  const latestVersionArr = latestVersion.split('.');
+  let boxContent = contentArr.reduce((acc, cur) => {
+    const transformCur = cur.replace(colorMatchRegex, '');
+    const space = maxLength - transformCur.length;
+    const spaceFir = Math.floor(space / 2);
+    const spaceSec = Math.ceil(space / 2);
+    const pad = ' '.repeat(space);
+    const padFir = spaceFir > 0 ? ' '.repeat(spaceFir) : '';
+    const padSec = spaceSec > 0 ? ' '.repeat(spaceSec) : '';
 
-  return currentVersionArr[1] !== latestVersionArr[1];
-}
+    center
+      ? acc.push(`${rounded.v}${space ? `${padFir}${cur}${padSec}` : cur}${rounded.v}`)
+      : acc.push(`${rounded.v}${space > 0 ? `${cur}${pad}` : cur}${rounded.v}`);
 
-export function isPatchUpdate(currentVersion: string, latestVersion: string) {
-  const currentVersionArr = currentVersion.split('.');
-  const latestVersionArr = latestVersion.split('.');
+    return acc;
+  }, [] as string[]);
 
-  return currentVersionArr[2] !== latestVersionArr[2];
+  boxContent = [boxHeader, ...boxContent, boxFooter];
+
+  log && Logger.log(boxContent.join('\n'));
+
+  return boxContent.join('\n');
 }

@@ -54,6 +54,7 @@ nextui
   .description('Upgrade the NextUI CLI to the latest version')
   .argument('[components...]', 'The name of the NextUI components to upgrade')
   .option('-p --packagePath [string]', 'The path to the package.json file')
+  .option('-a --all [boolean]', 'Upgrade all the NextUI components', false)
   .action(upgradeAction);
 
 nextui

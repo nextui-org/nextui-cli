@@ -5,20 +5,20 @@ import {existsSync, writeFileSync} from 'fs';
 
 import chalk from 'chalk';
 
-import {checkApp, checkPnpm, checkRequiredContentInstalled, checkTailwind} from '@helpers/check';
+import {
+  checkApp,
+  checkIllegalComponents,
+  checkPnpm,
+  checkRequiredContentInstalled,
+  checkTailwind
+} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
 import {fixPnpm, fixProvider, fixTailwind} from '@helpers/fix';
 import {Logger} from '@helpers/logger';
-import {findMostMatchText} from '@helpers/math-diff';
 import {getPackageInfo} from '@helpers/package';
 import {findFiles} from '@helpers/utils';
-import {
-  nextUIComponents,
-  nextUIComponentsKeys,
-  nextUIComponentsKeysSet,
-  nextUIComponentsMap
-} from 'src/constants/component';
+import {nextUIComponents, nextUIComponentsMap} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {NEXT_UI, individualTailwindRequired, pnpmRequired} from 'src/constants/required';
 import {tailwindTemplate} from 'src/constants/templates';
@@ -57,42 +57,8 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   /** ======================== Add judge whether illegal component exist ======================== */
-  if (!all) {
-    const illegalList: [string, null | string][] = [];
-
-    for (const component of components) {
-      if (!nextUIComponentsKeysSet.has(component)) {
-        const matchComponent = findMostMatchText(nextUIComponentsKeys, component);
-
-        illegalList.push([component, matchComponent]);
-      }
-    }
-
-    if (illegalList.length) {
-      const [illegalComponents, matchComponents] = illegalList.reduce(
-        (acc, [illegalComponent, matchComponent]) => {
-          return [
-            acc[0] + chalk.underline(illegalComponent) + ', ',
-            acc[1] + (matchComponent ? chalk.underline(matchComponent) + ', ' : '')
-          ];
-        },
-        ['', '']
-      );
-
-      Logger.prefix(
-        'error',
-        `Illegal NextUI components: ${illegalComponents.replace(/, $/, '')}${
-          matchComponents
-            ? `\n${''.padEnd(12)}It may be a typo, did you mean ${matchComponents.replace(
-                /, $/,
-                ''
-              )}?`
-            : ''
-        }`
-      );
-
-      return;
-    }
+  if (!all && !checkIllegalComponents(components)) {
+    return;
   }
 
   // Check whether have added the NextUI components

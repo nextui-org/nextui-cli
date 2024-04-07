@@ -4,6 +4,7 @@ import {type NextUIComponents, nextUIComponents} from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
 
 import {Logger} from './logger';
+import {getVersionAndMode} from './utils';
 
 /**
  * Get the package information
@@ -27,9 +28,7 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
   const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(
     (component) => {
       if (allDependenciesKeys.has(component.package)) {
-        const versionModeRegex = /([\^~])/;
-        const currentVersion = allDependencies[component.package].replace(versionModeRegex, '');
-        const versionMode = allDependencies[component.package].match(versionModeRegex)?.[1] || '';
+        const {currentVersion, versionMode} = getVersionAndMode(allDependencies, component.package);
 
         component.version = transformVersion
           ? `${currentVersion} new: ${component.version}`

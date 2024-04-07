@@ -6,14 +6,14 @@ import {NEXT_UI} from 'src/constants/required';
 import {getLatestVersion} from 'src/scripts/helpers';
 
 import {outputBox} from './output-info';
-import {getColorVersion} from './utils';
+import {getColorVersion, getVersionAndMode} from './utils';
 
 interface UpgradeOption {
   package: string;
   version: string;
   latestVersion: string;
   isLatest: boolean;
-  versionMode?: string;
+  versionMode: string;
 }
 
 const DEFAULT_SPACE = ''.padEnd(7);
@@ -41,9 +41,9 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[]) {
     if (upgradeOption.isLatest) {
       output.push(
         `  ${chalk.white(
-          `${`${upgradeOption.package}@${upgradeOption.versionMode}${upgradeOption.latestVersion}`.padEnd(
-            optionMaxLenMap.package + DEFAULT_SPACE.length + DEFAULT_SPACE.length
-          )}`
+          `${`${upgradeOption.package}@${upgradeOption.versionMode || ''}${
+            upgradeOption.latestVersion
+          }`.padEnd(optionMaxLenMap.package + DEFAULT_SPACE.length + DEFAULT_SPACE.length)}`
         )}${chalk.greenBright('latest').padStart(optionMaxLenMap.version)}${DEFAULT_SPACE}`
       );
       continue;
@@ -52,9 +52,9 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[]) {
       `  ${chalk.white(
         `${upgradeOption.package.padEnd(
           optionMaxLenMap.package + DEFAULT_SPACE.length
-        )}${DEFAULT_SPACE}${upgradeOption.versionMode}${upgradeOption.version.padStart(
+        )}${DEFAULT_SPACE}${upgradeOption.versionMode || ''}${upgradeOption.version.padStart(
           optionMaxLenMap.version
-        )}  ->  ${upgradeOption.versionMode}${upgradeOption.latestVersion}`
+        )}  ->  ${upgradeOption.versionMode || ''}${upgradeOption.latestVersion}`
       )}${DEFAULT_SPACE}`
     );
   }
@@ -81,7 +81,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
 
   if (isNextUIAll) {
     const latestVersion = await getLatestVersion(NEXT_UI);
-    const currentVersion = allDependencies[NEXT_UI];
+    const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
     const colorVersion = getColorVersion(currentVersion, latestVersion);
     const isLatest = latestVersion === currentVersion;
     const outputInfo = getUpgradeVersion([
@@ -89,7 +89,8 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
         isLatest,
         latestVersion: colorVersion,
         package: NEXT_UI,
-        version: currentVersion
+        version: currentVersion,
+        versionMode
       }
     ]);
 
@@ -100,7 +101,8 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
         isLatest,
         latestVersion,
         package: NEXT_UI,
-        version: currentVersion
+        version: currentVersion,
+        versionMode
       });
     }
   } else {

@@ -45,6 +45,8 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   if (isNextUIAll) {
     components = [NEXT_UI];
+  } else if (all) {
+    components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
     if (!transformComponents.length) {
       Logger.prefix('error', 'No NextUI components found in package.json');
@@ -71,8 +73,6 @@ export async function upgradeAction(components: string[], options: UpgradeAction
         };
       })
     );
-  } else if (all) {
-    components = currentComponents.map((component) => component.package);
   } else {
     // Check if the components are valid
     if (!checkIllegalComponents(components)) {
@@ -97,24 +97,29 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     upgradeOptionList
   });
 
-  const isExec = await getSelect('Upgrade the version?', [
-    {
-      title: 'Yes',
-      value: true
-    },
-    {title: 'No', value: false}
-  ]);
+  if (result.length) {
+    const isExec = await getSelect('Upgrade the version?', [
+      {
+        title: 'Yes',
+        value: true
+      },
+      {title: 'No', value: false}
+    ]);
 
-  if (isExec) {
-    const packageManager = await detect();
+    if (isExec) {
+      const packageManager = await detect();
 
-    await exec(
-      `${packageManager} ${packageManager === 'npm' ? 'install' : 'add'} ${result.reduce(
-        (acc, component) => {
-          return `${acc} ${component.package}@${component.versionMode}${component.latestVersion}`;
-        },
-        ''
-      )}`
-    );
+      await exec(
+        `${packageManager} ${packageManager === 'npm' ? 'install' : 'add'} ${result.reduce(
+          (acc, component) => {
+            return `${acc} ${component.package}@${component.versionMode}${component.latestVersion}`;
+          },
+          ''
+        )}`
+      );
+    }
   }
+
+  Logger.newLine();
+  Logger.success('✅ All components are already up to date');
 }

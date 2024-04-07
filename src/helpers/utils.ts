@@ -117,3 +117,14 @@ export function isPatchUpdate(currentVersion: string, latestVersion: string) {
 
   return '';
 }
+
+export function getVersionAndMode(allDependencies: Record<string, SAFE_ANY>, packageName: string) {
+  const versionModeRegex = /([\^~])/;
+  const currentVersion = allDependencies[packageName].replace(versionModeRegex, '');
+  const versionMode = allDependencies[packageName].match(versionModeRegex)?.[1] || '';
+
+  return {
+    currentVersion,
+    versionMode
+  };
+}

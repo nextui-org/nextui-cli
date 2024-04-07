@@ -6,7 +6,8 @@ export const orderNextUIComponentKeys = ['package', 'version', 'status', 'docs']
 
 export const colorNextUIComponentKeys = ['package', 'version', 'status'];
 
-export type NextUIComponentStatus = 'stable' | 'updated' | 'newPost';
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type NextUIComponentStatus = 'stable' | 'updated' | 'new' | (string & {});
 
 type NextUIComponent = (typeof nextUIComponents)[0];
 

@@ -11,6 +11,7 @@ import {doctorAction} from './actions/doctor-action';
 import {envAction} from './actions/env-action';
 import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
+import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
 
 const nextui = new Command();
@@ -56,6 +57,14 @@ nextui
   .option('-p --packagePath [string]', 'The path to the package.json file')
   .option('-a --all [boolean]', 'Upgrade all the NextUI components', false)
   .action(upgradeAction);
+
+nextui
+  .command('remove')
+  .description('Remove NextUI components from your project')
+  .argument('[components...]', 'The name of the NextUI components to remove')
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .option('-a --all [boolean]', 'Remove all the NextUI components', false)
+  .action(removeAction);
 
 nextui
   .command('list')

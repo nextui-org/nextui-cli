@@ -86,7 +86,7 @@
     "lint-staged": "14.0.1",
     "tsup": "7.2.0",
     "tsx": "4.7.1",
-    "typescript": "5.2.2"
+    "typescript": "5.4.4"
   },
   "engines": {
     "pnpm": ">=8.x",

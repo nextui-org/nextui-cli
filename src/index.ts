@@ -36,7 +36,7 @@ nextui
   .command('list')
   .description('List all the components status, description, version, etc')
   .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-c --current', 'List the current installed components')
+  .option('-r --remote', 'List all the remote NextUI components')
   .action(listAction);
 
 nextui

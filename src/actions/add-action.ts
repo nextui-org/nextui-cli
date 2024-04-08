@@ -52,11 +52,6 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   // Check whether the user has installed the All NextUI components
   if (allDependenciesKeys.has(NEXT_UI)) {
-    Logger.prefix(
-      'error',
-      `❌ You have installed all the NextUI components (@nextui-org/react)\nYou can use 'nextui list' to view the current installed components`
-    );
-
     // Check whether have added redundant dependencies
     if (currentComponents.length) {
       Logger.newLine();
@@ -66,8 +61,6 @@ export async function addAction(components: string[], options: AddActionOptions)
         Logger.info(`- ${component.package}`);
       });
     }
-
-    return;
   }
 
   if (!components.length && !all) {

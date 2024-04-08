@@ -60,6 +60,11 @@ export function fixTailwind(type: CheckType, options: FixTailwind) {
     const [errorType, info] = transformErrorInfo(errorInfo);
 
     if (errorType === 'content') {
+      // Check if all the required content is added then skip
+      const allPublic = contentMatch.includes(tailwindRequired.content);
+
+      if (allPublic) continue;
+
       contentMatch = contentMatch.filter((content) => !content.includes('@nextui-org/theme/dist/'));
       contentMatch.push(info);
       tailwindContent = replaceMatchArray(
@@ -70,6 +75,10 @@ export function fixTailwind(type: CheckType, options: FixTailwind) {
           .map((v, index, arr) => {
             // Add 4 spaces before the content
             if (index === 0) {
+              if (arr.length === 1) {
+                return `\n    ${JSON.stringify(v)}\n`;
+              }
+
               return `\n    ${JSON.stringify(v)}`;
             }
             if (arr.length - 1 === index) {

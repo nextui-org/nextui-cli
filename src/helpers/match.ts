@@ -37,7 +37,7 @@ export function getMatchArray(key: string, target: string) {
       target
         .match(mixinReg)?.[1]
         ?.split(/,\n/)
-        .map((i) => i.trim())
+        .map((i) => i.trim().replace(/[`'"]/g, ''))
         .filter(Boolean) ?? []
     );
 
@@ -51,9 +51,14 @@ export function getMatchArray(key: string, target: string) {
  * @param target
  * @param value
  */
-export function replaceMatchArray(key: string, target: string, value: string[]) {
+export function replaceMatchArray(
+  key: string,
+  target: string,
+  value: string[],
+  _replaceValue?: string
+) {
   const mixinReg = new RegExp(`\\s*${key}:\\s\\[([\\w\\W]*?)\\]\\s*`);
-  const replaceValue = value.map((v) => JSON.stringify(v)).join(', ');
+  const replaceValue = _replaceValue ?? value.map((v) => JSON.stringify(v)).join(', ');
 
   if (mixinReg.test(target)) {
     return target.replace(mixinReg, `\n  ${key}: [${replaceValue}]`);

@@ -46,6 +46,7 @@ nextui
     'Add prettier format in the add content which required installed prettier',
     false
   )
+  .option('--addApp [boolean]', 'Add App.tsx file content which required provider', false)
   .action(addAction);
 
 nextui

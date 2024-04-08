@@ -53,15 +53,33 @@ export function fixTailwind(type: CheckType, options: FixTailwind) {
   }
 
   let tailwindContent = readFileSync(tailwindPath, 'utf-8');
-  const contentMatch = getMatchArray('content', tailwindContent);
+  let contentMatch = getMatchArray('content', tailwindContent);
   const pluginsMatch = getMatchArray('plugins', tailwindContent);
 
   for (const errorInfo of errorInfoList) {
     const [errorType, info] = transformErrorInfo(errorInfo);
 
     if (errorType === 'content') {
+      contentMatch = contentMatch.filter((content) => !content.includes('@nextui-org/theme/dist/'));
       contentMatch.push(info);
-      tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
+      tailwindContent = replaceMatchArray(
+        'content',
+        tailwindContent,
+        contentMatch,
+        contentMatch
+          .map((v, index, arr) => {
+            // Add 4 spaces before the content
+            if (index === 0) {
+              return `\n    ${JSON.stringify(v)}`;
+            }
+            if (arr.length - 1 === index) {
+              return `    ${JSON.stringify(v)}\n`;
+            }
+
+            return `    ${JSON.stringify(v)}`;
+          })
+          .join(',\n')
+      );
     } else if (errorType === 'plugins') {
       pluginsMatch.push(info);
       tailwindContent = replaceMatchArray('plugins', tailwindContent, pluginsMatch);

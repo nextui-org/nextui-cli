@@ -20,7 +20,12 @@ import {
   nextUIComponentsMap
 } from 'src/constants/component';
 import {resolver} from 'src/constants/path';
-import {NEXT_UI, individualTailwindRequired, pnpmRequired} from 'src/constants/required';
+import {
+  DOCS_PROVIDER_SETUP,
+  NEXT_UI,
+  individualTailwindRequired,
+  pnpmRequired
+} from 'src/constants/required';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
 
@@ -30,10 +35,12 @@ interface AddActionOptions {
   packagePath?: string;
   tailwindPath?: string;
   appPath?: string;
+  addApp?: boolean;
 }
 
 export async function addAction(components: string[], options: AddActionOptions) {
   const {
+    addApp = false,
     all = false,
     appPath = findFiles('**/App.(j|t)sx')[0],
     packagePath = resolver('package.json'),
@@ -41,16 +48,43 @@ export async function addAction(components: string[], options: AddActionOptions)
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
 
+  var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
+
+  // Check whether the user has installed the All NextUI components
+  if (allDependenciesKeys.has(NEXT_UI)) {
+    Logger.prefix(
+      'error',
+      `❌ You have installed all the NextUI components (@nextui-org/react)\nYou can use 'nextui list' to view the current installed components`
+    );
+
+    // Check whether have added redundant dependencies
+    if (currentComponents.length) {
+      Logger.newLine();
+      Logger.warn('You have installed redundant dependencies, please remove them');
+      Logger.warn('The redundant dependencies are:');
+      currentComponents.forEach((component) => {
+        Logger.info(`- ${component.package}`);
+      });
+    }
+
+    return;
+  }
+
   if (!components.length && !all) {
     components = await getAutocompleteMultiselect(
       'Select the NextUI components to add',
-      nextUIComponents.map((component) => {
-        return {
-          description: component.description,
-          title: component.name,
-          value: component.name
-        };
-      })
+      nextUIComponents
+        .filter(
+          (component) =>
+            !currentComponents.some((currentComponent) => currentComponent.name === component.name)
+        )
+        .map((component) => {
+          return {
+            description: component.description,
+            title: component.name,
+            value: component.name
+          };
+        })
     );
   } else if (all) {
     components = [NEXT_UI];
@@ -96,8 +130,6 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   // Check whether have added the NextUI components
-  var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
-
   const currentComponentsKeys = currentComponents.map((c) => c.name);
   const filterCurrentComponents = components.filter((c) => currentComponentsKeys.includes(c));
 
@@ -113,7 +145,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   // Check whether the App.tsx file exists
-  if (!appPath) {
+  if (addApp && !appPath) {
     Logger.prefix(
       'error',
       "❌ Cannot find the App.(j|t)sx file\nYou should specify appPath through 'add --appPath=yourAppPath'"
@@ -183,15 +215,17 @@ export async function addAction(components: string[], options: AddActionOptions)
     Logger.info(`Added the required tailwind content in file: ${tailwindPath}`);
   }
 
-  /** ======================== Step 3 Provider ======================== */
-  const [isCorrectProvider] = checkApp(type, appPath);
+  /** ======================== Step 3 Provider Need Manually Open ======================== */
+  if (addApp && appPath && existsSync(appPath)) {
+    const [isCorrectProvider] = checkApp(type, appPath);
 
-  if (!isCorrectProvider) {
-    fixProvider(appPath, {format: prettier});
+    if (!isCorrectProvider) {
+      fixProvider(appPath, {format: prettier});
 
-    Logger.newLine();
-    Logger.info(`Added the NextUIProvider in file: ${appPath}`);
-    Logger.warn('You need to check the NextUIProvider whether in the correct place');
+      Logger.newLine();
+      Logger.info(`Added the NextUIProvider in file: ${appPath}`);
+      Logger.warn('You need to check the NextUIProvider whether in the correct place');
+    }
   }
 
   /** ======================== Step 4 Setup Pnpm ======================== */
@@ -211,7 +245,24 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   // Finish adding the NextUI components
   Logger.newLine();
-  Logger.success(
-    '✅ All the NextUI components have been added\nNow you can use the component you installed in your application'
+  Logger.success('✅ All the NextUI components have been added\n');
+
+  // Warn the user to check the NextUIProvider whether in the correct place
+  Logger.warn(
+    `Please check the ${chalk.bold(
+      'NextUIProvider'
+    )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
   );
+
+  // Add warn check when installed all the NextUI components
+  if (all && currentComponents.length) {
+    Logger.newLine();
+    Logger.warn('You have installed redundant dependencies, please remove them');
+    Logger.warn('The redundant dependencies are:');
+    currentComponents.forEach((component) => {
+      Logger.info(`- ${component.package}`);
+    });
+  }
+
+  return;
 }

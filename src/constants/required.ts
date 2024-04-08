@@ -19,10 +19,11 @@ export const DOCS_TAILWINDCSS_SETUP =
   'https://nextui.org/docs/guide/installation#tailwind-css-setup';
 export const DOCS_APP_SETUP = 'https://nextui.org/docs/guide/installation#provider-setup';
 export const DOCS_PNPM_SETUP = 'https://nextui.org/docs/guide/installation#setup-pnpm-optional';
+export const DOCS_PROVIDER_SETUP = 'https://nextui.org/docs/guide/installation#provider-setup';
 
 // Record the required content of tailwind.config file
 export const tailwindRequired = {
-  content: '@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
+  content: './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   darkMode: 'darkMode: "class"',
   plugins: 'nextui()'
 } as const;
@@ -44,7 +45,7 @@ export const individualTailwindRequired = {
     ];
 
     if (outputComponents.length === 1) {
-      return `@nextui-org/theme/dist/components/${currentComponents[0]}.js`;
+      return `./node_modules/@nextui-org/theme/dist/components/${currentComponents[0]}.js`;
     }
     const requiredContent = outputComponents
       .reduce((acc, component) => {
@@ -52,7 +53,7 @@ export const individualTailwindRequired = {
       }, '')
       .replace(/\|$/, '');
 
-    return `@nextui-org/theme/dist/components/(${requiredContent}).js`;
+    return `./node_modules/@nextui-org/theme/dist/components/(${requiredContent}).js`;
   },
   plugins: 'nextui()'
 } as const;

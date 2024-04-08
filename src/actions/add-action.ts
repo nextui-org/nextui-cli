@@ -111,7 +111,9 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   // Check whether have added the NextUI components
   const currentComponentsKeys = currentComponents.map((c) => c.name);
-  const filterCurrentComponents = components.filter((c) => currentComponentsKeys.includes(c));
+  const filterCurrentComponents = components.filter(
+    (c) => currentComponentsKeys.includes(c) || allDependenciesKeys[c]
+  );
 
   if (filterCurrentComponents.length) {
     Logger.prefix(
@@ -246,4 +248,6 @@ export async function addAction(components: string[], options: AddActionOptions)
       Logger.info(`- ${component.package}`);
     });
   }
+
+  process.exit(0);
 }

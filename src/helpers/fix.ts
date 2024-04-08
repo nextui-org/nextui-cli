@@ -82,7 +82,7 @@ export function fixTailwind(type: CheckType, options: FixTailwind) {
               return `\n    ${JSON.stringify(v)}`;
             }
             if (arr.length - 1 === index) {
-              return `    ${JSON.stringify(v)}\n`;
+              return `    ${JSON.stringify(v)}\n  `;
             }
 
             return `    ${JSON.stringify(v)}`;

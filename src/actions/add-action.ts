@@ -50,21 +50,6 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
 
-  // Check whether the user has installed the All NextUI components
-  if (allDependenciesKeys.has(NEXT_UI)) {
-    // Check whether have added redundant dependencies
-    if (currentComponents.length) {
-      Logger.newLine();
-      Logger.warn(
-        'You do not need the `@nextui-org/react` package when using individual components\nWe suggest to use individual components for smaller bundle sizes'
-      );
-      Logger.warn('The redundant dependencies are:');
-      currentComponents.forEach((component) => {
-        Logger.info(`- ${component.package}`);
-      });
-    }
-  }
-
   if (!components.length && !all) {
     components = await getAutocompleteMultiselect(
       'Select the NextUI components to add',
@@ -249,10 +234,13 @@ export async function addAction(components: string[], options: AddActionOptions)
     )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
   );
 
-  // Add warn check when installed all the NextUI components
-  if (all && currentComponents.length) {
+  // Check whether the user has installed the All NextUI components
+  if ((allDependenciesKeys.has(NEXT_UI) || all) && currentComponents.length) {
+    // Check whether have added redundant dependencies
     Logger.newLine();
-    Logger.warn('You have installed redundant dependencies, please remove them');
+    Logger.warn(
+      'You do not need the `@nextui-org/react` package when using individual components\nWe suggest to use individual components for smaller bundle sizes'
+    );
     Logger.warn('The redundant dependencies are:');
     currentComponents.forEach((component) => {
       Logger.info(`- ${component.package}`);

@@ -258,6 +258,4 @@ export async function addAction(components: string[], options: AddActionOptions)
       Logger.info(`- ${component.package}`);
     });
   }
-
-  return;
 }

@@ -55,7 +55,9 @@ export async function addAction(components: string[], options: AddActionOptions)
     // Check whether have added redundant dependencies
     if (currentComponents.length) {
       Logger.newLine();
-      Logger.warn('You have installed redundant dependencies, please remove them');
+      Logger.warn(
+        'You do not need the `@nextui-org/react` package when using individual components\nWe suggest to use individual components for smaller bundle sizes'
+      );
       Logger.warn('The redundant dependencies are:');
       currentComponents.forEach((component) => {
         Logger.info(`- ${component.package}`);

@@ -85,14 +85,22 @@ export function outputComponents(
           value = `${value} 🚀latest`.padEnd(componentKeyLengthMap[key]);
           value = value.replace('latest', chalk.magentaBright.underline('latest'));
         } else if (newVersion) {
-          value = value.replace(newVersion, chalk.magentaBright.underline(newVersion));
+          value = `${chalk.white(`${currentVersion} ->`)} ${chalk.yellowBright(
+            `${newVersion} (new)`
+          )}`;
+
+          componentKeyLengthMap[key] = Math.max(
+            // eslint-disable-next-line no-control-regex
+            value.replace(/(\u001b\[\d+m)/g, '').length,
+            componentKeyLengthMap[key]
+          );
         }
       }
 
       /** ======================== Change the color according to different status ======================== */
       if (component.status === 'stable' && colorNextUIComponentKeys.includes(key)) {
         value = chalk.greenBright(value);
-      } else if (component.status === 'newPost') {
+      } else if (component.status === 'new') {
         value = chalk.magentaBright(value);
       } else if (component.status === 'updated') {
         value = chalk.blueBright(value);

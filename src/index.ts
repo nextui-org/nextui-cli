@@ -61,7 +61,7 @@ nextui
   .command('list')
   .description('List all the components status, description, version, etc')
   .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-c --current', 'List the current installed components')
+  .option('-r --remote', 'List all the remote NextUI components')
   .action(listAction);
 
 nextui
@@ -76,7 +76,7 @@ nextui
   .option('-p --packagePath [string]', 'The path to the package.json file')
   .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
   .option('-app --appPath [string]', 'The path to the App.tsx file')
-  .option('-ca --checkApp [boolean]', 'Open check App', true)
+  .option('-ca --checkApp [boolean]', 'Open check App', false)
   .option('-ct --checkTailwind [boolean]', 'Open check tailwind.config file', true)
   .option('-cp --checkPnpm [boolean]', 'Open check Pnpm', true)
   .action(doctorAction);

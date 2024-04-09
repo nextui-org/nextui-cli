@@ -19,6 +19,7 @@ export const DOCS_TAILWINDCSS_SETUP =
   'https://nextui.org/docs/guide/installation#tailwind-css-setup';
 export const DOCS_APP_SETUP = 'https://nextui.org/docs/guide/installation#provider-setup';
 export const DOCS_PNPM_SETUP = 'https://nextui.org/docs/guide/installation#setup-pnpm-optional';
+export const DOCS_PROVIDER_SETUP = 'https://nextui.org/docs/guide/installation#provider-setup';
 
 // Record the required content of tailwind.config file
 export const tailwindRequired = {

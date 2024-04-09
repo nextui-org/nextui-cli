@@ -12,7 +12,7 @@ export async function envAction(options: EnvActionOptions) {
   const {currentComponents} = getPackageInfo(packagePath);
 
   /** ======================== Output the current components ======================== */
-  outputComponents(currentComponents);
+  outputComponents({components: currentComponents});
 
   /** ======================== Output the system environment info ======================== */
   outputInfo();

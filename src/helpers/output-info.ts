@@ -33,11 +33,17 @@ const padEnd = `${space}${rounded.v}${space}`;
  * @param commandName
  * @param warnError
  */
-export function outputComponents(
-  components: NextUIComponents,
-  commandName?: CommandName,
+export function outputComponents({
+  commandName,
+  components,
+  message = 'Current Installed NextUI Components:\n',
   warnError = true
-) {
+}: {
+  components: NextUIComponents;
+  commandName?: CommandName;
+  warnError?: boolean;
+  message?: string;
+}) {
   if (!components.length) {
     if (warnError) {
       Logger.prefix('warn', 'No installed NextUI components found');
@@ -139,7 +145,7 @@ export function outputComponents(
     boxFooter
   ];
 
-  Logger.info('Current Installed NextUI Components:\n');
+  Logger.info(message);
 
   Logger.log(transformComponentsOutput.join('\n'));
 }

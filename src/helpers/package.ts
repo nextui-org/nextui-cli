@@ -1,6 +1,10 @@
 import {readFileSync} from 'fs';
 
-import {type NextUIComponents, nextUIComponents} from 'src/constants/component';
+import {
+  type NextUIComponents,
+  nextUIComponents,
+  nextUIComponentsMap
+} from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
 
 import {Logger} from './logger';
@@ -52,4 +56,13 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
     isAllComponents,
     package: pkg
   };
+}
+
+export function transformComponentsToPackage(components: string[]) {
+  return components.map((component) => {
+    const nextuiComponent = nextUIComponentsMap[component];
+    const packageName = nextuiComponent?.package;
+
+    return packageName ? packageName : component;
+  });
 }

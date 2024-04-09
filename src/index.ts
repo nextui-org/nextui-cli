@@ -64,6 +64,12 @@ nextui
   .argument('[components...]', 'The name of the NextUI components to remove')
   .option('-p --packagePath [string]', 'The path to the package.json file')
   .option('-a --all [boolean]', 'Remove all the NextUI components', false)
+  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
+  .option(
+    '--prettier [boolean]',
+    'Add prettier format in the add content which required installed prettier',
+    false
+  )
   .action(removeAction);
 
 nextui

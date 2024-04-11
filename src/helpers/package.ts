@@ -6,6 +6,7 @@ import {
   nextUIComponentsMap
 } from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
+import {getLatestVersion} from 'src/scripts/helpers';
 
 import {exec} from './exec';
 import {Logger} from './logger';
@@ -76,12 +77,14 @@ export function transformComponentsToPackage(components: string[]) {
  */
 export async function transformPackageDetail(
   components: string[],
-  allDependencies: Record<string, string>
+  allDependencies: Record<string, string>,
+  transformVersion = true
 ): Promise<NextUIComponents> {
   const result: NextUIComponents = [];
 
   for (const component of components) {
-    const {currentVersion, versionMode} = getVersionAndMode(allDependencies, component);
+    let {currentVersion} = getVersionAndMode(allDependencies, component);
+    const {versionMode} = getVersionAndMode(allDependencies, component);
     const docs = (
       ((await exec(`npm show ${component} homepage`, {
         logCmd: false,
@@ -94,6 +97,9 @@ export async function transformPackageDetail(
         stdio: 'pipe'
       })) || '') as string
     ).replace(/\n/, '');
+    const latestVersion = await getLatestVersion(component);
+
+    currentVersion = transformVersion ? `${currentVersion} new: ${latestVersion}` : currentVersion;
 
     const detailPackageInfo: NextUIComponents[0] = {
       description: description || '',

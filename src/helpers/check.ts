@@ -154,23 +154,30 @@ export function checkTailwind(
   type: 'all',
   tailwindPath: string,
   currentComponents?: NextUIComponents,
-  isPnpm?: boolean
+  isPnpm?: boolean,
+  content?: string
 ): CheckResult;
 export function checkTailwind(
   type: 'partial',
   tailwindPath: string,
   currentComponents: NextUIComponents,
-  isPnpm: boolean
+  isPnpm: boolean,
+  content?: string
 ): CheckResult;
 export function checkTailwind(
   type: CheckType,
   tailwindPath: string,
   currentComponents?: NextUIComponents,
-  isPnpm?: boolean
+  isPnpm?: boolean,
+  content?: string
 ): CheckResult {
+  if (!currentComponents!.length) {
+    return [true];
+  }
+
   const result = [] as unknown as CheckResult;
 
-  const tailwindContent = readFileSync(tailwindPath, 'utf-8');
+  const tailwindContent = content ?? readFileSync(tailwindPath, 'utf-8');
 
   const contentMatch = getMatchArray('content', tailwindContent);
   const pluginsMatch = getMatchArray('plugins', tailwindContent);

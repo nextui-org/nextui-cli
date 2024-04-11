@@ -2,8 +2,6 @@ import type {NextUIComponents} from 'src/constants/component';
 
 import {existsSync, readFileSync, writeFileSync} from 'fs';
 
-import {tailwindRequired} from 'src/constants/required';
-
 import {type CheckType, checkTailwind} from './check';
 import {exec} from './exec';
 import {fixTailwind} from './fix';
@@ -48,41 +46,50 @@ export async function removeTailwind(
 
   // Not installed NextUI components then remove the tailwind content about nextui
   if (!currentComponents.length && !isNextUIAll) {
-    pluginsMatch.splice(pluginsMatch.indexOf('nextui'), 1);
+    const index = pluginsMatch.findIndex((c) => c.includes('nextui'));
+
+    index !== -1 && pluginsMatch.splice(index, 1);
     tailwindContent = replaceMatchArray('plugins', tailwindContent, pluginsMatch);
 
     // Remove the import nextui content
     tailwindContent = tailwindContent.replace(/(const|var|let|import)[\w\W]+?nextui.*?;\n/, '');
-
-    // Remove the nextui content
-    while (contentMatch.some((c) => c.includes('nextui'))) {
-      contentMatch.splice(contentMatch.indexOf('nextui'), 1);
-    }
-    tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
-  } else if (!currentComponents.length) {
-    // Remove the nextui content
+  }
+  // Remove the nextui content
+  while (contentMatch.some((c) => c.includes('nextui'))) {
     contentMatch.splice(
-      contentMatch.indexOf('./node_modules/@nextui-org/theme/dist/components'),
+      contentMatch.findIndex((c) => c.includes('nextui')),
       1
     );
-    tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
-  } else if (!isNextUIAll) {
-    // Remove the nextui content
-    contentMatch.splice(contentMatch.indexOf(tailwindRequired.content), 1);
-    tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
-  } else {
-    const [, ...errorInfoList] = checkTailwind(
-      type as 'partial',
-      tailwindPath!,
-      currentComponents,
-      isPnpm
-    );
-
-    fixTailwind(type, {errorInfoList, format: prettier, tailwindPath: tailwindPath!});
   }
+  tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
+  //  if (!currentComponents.length && isNextUIAll) {
+  //   const index = contentMatch.findIndex(c => c.includes('nextui'));
 
+  //   // Remove the nextui content
+  //   index !== -1 &&
+  //     contentMatch.splice(
+  //       contentMatch.indexOf('./node_modules/@nextui-org/theme/dist/components'),
+  //       1
+  //     );
+  //   tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
+  // } else if (!isNextUIAll && currentComponents.length) {
+  //   const index = contentMatch.indexOf(tailwindRequired.content);
+
+  //   // Remove the nextui content
+  //   index !== -1 && contentMatch.splice(index, 1);
+  //   tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
+  // }
   // Write the tailwind content
   writeFileSync(tailwindPath!, tailwindContent, 'utf-8');
+
+  const [, ...errorInfoList] = checkTailwind(
+    type as 'partial',
+    tailwindPath!,
+    currentComponents,
+    isPnpm
+  );
+
+  fixTailwind(type, {errorInfoList, format: prettier, tailwindPath: tailwindPath!});
 
   Logger.newLine();
   Logger.info(`Remove the removed components tailwind content in file: ${tailwindPath}`);

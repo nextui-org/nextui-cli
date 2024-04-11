@@ -67,7 +67,11 @@ export function replaceMatchArray(key: string, target: string, value: string[]) 
 
   key === 'content'
     ? targetArray.splice(insertIndex + 1, 0, `  ${key}: [${replaceValue}],`)
-    : targetArray.splice(insertIndex + 1, 0, `  ${key}: [${value}],`);
+    : targetArray.splice(
+        insertIndex + 1,
+        0,
+        `  ${key}: [${value.map((v) => v.replace(/['"`]/g, ''))}],`
+      );
 
   return targetArray.join('\n');
 }

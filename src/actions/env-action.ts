@@ -16,4 +16,6 @@ export async function envAction(options: EnvActionOptions) {
 
   /** ======================== Output the system environment info ======================== */
   outputInfo();
+
+  process.exit(0);
 }

@@ -61,6 +61,8 @@ export async function initAction(projectName: string, options: InitActionOptions
     await generateTemplate(PAGES_REPO);
     projectName && renameTemplate(PAGES_DIR, projectName);
   }
+
+  process.exit(0);
 }
 
 async function generateTemplate(url: string) {

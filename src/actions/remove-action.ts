@@ -83,7 +83,6 @@ export async function removeAction(components: string[], options: RemoveOptionsA
       );
 
   outputComponents({
-    commandName: 'list',
     components: filteredComponents,
     message: chalk.yellowBright('❗️ Current remove components:')
   });
@@ -157,4 +156,6 @@ export async function removeAction(components: string[], options: RemoveOptionsA
       .map((c) => chalk.underline(c))
       .join(', ')} successfully`
   );
+
+  process.exit(0);
 }

@@ -226,4 +226,6 @@ export async function doctorAction(options: DoctorActionOptions) {
     problem.outputFn();
     Logger.newLine();
   }
+
+  process.exit(0);
 }

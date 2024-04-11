@@ -121,4 +121,6 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   Logger.newLine();
   Logger.success('✅ All components are already up to date');
+
+  process.exit(0);
 }

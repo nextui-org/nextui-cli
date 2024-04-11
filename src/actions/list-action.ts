@@ -36,4 +36,6 @@ export async function listAction(options: ListActionOptions) {
   } catch (error) {
     Logger.prefix('error', `Error occurred while listing the components: ${error}`);
   }
+
+  process.exit(0);
 }

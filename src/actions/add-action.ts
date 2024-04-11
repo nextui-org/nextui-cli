@@ -180,4 +180,6 @@ export async function addAction(components: string[], options: AddActionOptions)
   Logger.success(
     '✅ All the NextUI components have been added\nNow you can use the component you installed in your application'
   );
+
+  process.exit(0);
 }

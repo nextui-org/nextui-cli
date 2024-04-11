@@ -7,6 +7,7 @@ import {
 } from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
 
+import {exec} from './exec';
 import {Logger} from './logger';
 import {getVersionAndMode} from './utils';
 
@@ -65,4 +66,48 @@ export function transformComponentsToPackage(components: string[]) {
 
     return packageName ? packageName : component;
   });
+}
+
+/**
+ * Get the package detail information
+ * @param components need package name
+ * @param allDependencies
+ * @returns
+ */
+export async function transformPackageDetail(
+  components: string[],
+  allDependencies: Record<string, string>
+): Promise<NextUIComponents> {
+  const result: NextUIComponents = [];
+
+  for (const component of components) {
+    const {currentVersion, versionMode} = getVersionAndMode(allDependencies, component);
+    const docs = (
+      ((await exec(`npm show ${component} homepage`, {
+        logCmd: false,
+        stdio: 'pipe'
+      })) || '') as string
+    ).replace(/\n/, '');
+    const description = (
+      ((await exec(`npm show ${component} description`, {
+        logCmd: false,
+        stdio: 'pipe'
+      })) || '') as string
+    ).replace(/\n/, '');
+
+    const detailPackageInfo: NextUIComponents[0] = {
+      description: description || '',
+      docs: docs || '',
+      name: component,
+      package: component,
+      status: 'stable',
+      style: '',
+      version: currentVersion,
+      versionMode: versionMode
+    };
+
+    result.push(detailPackageInfo);
+  }
+
+  return result;
 }

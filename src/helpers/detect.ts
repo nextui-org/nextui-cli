@@ -28,7 +28,7 @@ export async function detect(cwd = ROOT) {
   const lockPath = await findUp(Object.keys(LOCKS), {cwd});
 
   // detect based on lock
-  if (!agent && lockPath) {
+  if (lockPath) {
     agent = LOCKS[path.basename(lockPath)]!;
   }
 

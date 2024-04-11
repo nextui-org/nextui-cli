@@ -1,6 +1,8 @@
 import type {NextUIComponents} from 'src/constants/component';
 
-import {existsSync, readFileSync} from 'fs';
+import {existsSync, readFileSync, writeFileSync} from 'fs';
+
+import {tailwindRequired} from 'src/constants/required';
 
 import {type CheckType, checkTailwind} from './check';
 import {exec} from './exec';
@@ -50,10 +52,23 @@ export async function removeTailwind(
     tailwindContent = replaceMatchArray('plugins', tailwindContent, pluginsMatch);
 
     // Remove the import nextui content
-    tailwindContent = tailwindContent.replace(/(const|var|let|import)[\w\W]+?nextui.*?;/, '');
+    tailwindContent = tailwindContent.replace(/(const|var|let|import)[\w\W]+?nextui.*?;\n/, '');
 
     // Remove the nextui content
-    contentMatch.splice(contentMatch.indexOf('nextui'), 1);
+    while (contentMatch.some((c) => c.includes('nextui'))) {
+      contentMatch.splice(contentMatch.indexOf('nextui'), 1);
+    }
+    tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
+  } else if (!currentComponents.length) {
+    // Remove the nextui content
+    contentMatch.splice(
+      contentMatch.indexOf('./node_modules/@nextui-org/theme/dist/components'),
+      1
+    );
+    tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
+  } else if (!isNextUIAll) {
+    // Remove the nextui content
+    contentMatch.splice(contentMatch.indexOf(tailwindRequired.content), 1);
     tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
   } else {
     const [, ...errorInfoList] = checkTailwind(
@@ -65,6 +80,9 @@ export async function removeTailwind(
 
     fixTailwind(type, {errorInfoList, format: prettier, tailwindPath: tailwindPath!});
   }
+
+  // Write the tailwind content
+  writeFileSync(tailwindPath!, tailwindContent, 'utf-8');
 
   Logger.newLine();
   Logger.info(`Remove the removed components tailwind content in file: ${tailwindPath}`);

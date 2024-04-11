@@ -37,7 +37,7 @@ export function getMatchArray(key: string, target: string) {
       target
         .match(mixinReg)?.[1]
         ?.split(/,\n/)
-        .map((i) => i.trim())
+        .map((i) => i.trim().replace(/[`'"]/g, ''))
         .filter(Boolean) ?? []
     );
 

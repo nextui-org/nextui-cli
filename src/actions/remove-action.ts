@@ -9,11 +9,21 @@ import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {Logger} from '@helpers/logger';
 import {outputComponents} from '@helpers/output-info';
-import {getPackageInfo, transformComponentsToPackage} from '@helpers/package';
+import {
+  getPackageInfo,
+  transformComponentsToPackage,
+  transformPackageDetail
+} from '@helpers/package';
 import {removeDependencies, removeTailwind} from '@helpers/remove';
 import {findFiles} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
-import {DOCS_PROVIDER_SETUP, NEXT_UI, pnpmRequired} from 'src/constants/required';
+import {
+  DOCS_PROVIDER_SETUP,
+  NEXT_UI,
+  SYSTEM_UI,
+  THEME_UI,
+  pnpmRequired
+} from 'src/constants/required';
 import {getAutocompleteMultiselect, getSelect} from 'src/prompts';
 
 interface RemoveOptionsAction {
@@ -34,7 +44,7 @@ export async function removeAction(components: string[], options: RemoveOptionsA
   var {allDependencies, currentComponents} = getPackageInfo(packagePath);
   const packageManager = await detect();
 
-  const isNextUIAll = !!allDependencies[NEXT_UI];
+  let isNextUIAll = !!allDependencies[NEXT_UI];
 
   // If no Installed NextUI components then exit
   if (!currentComponents.length && !isNextUIAll) {
@@ -66,11 +76,10 @@ export async function removeAction(components: string[], options: RemoveOptionsA
   }
 
   // Ask user whether need to remove these components
-  const filteredComponents = currentComponents.filter((component) =>
-    components.some((c) => c.includes(component.package) || c.includes(component.name))
-  );
+  const filteredComponents = await transformPackageDetail(components, allDependencies);
 
   outputComponents({
+    commandName: 'list',
     components: filteredComponents,
     message: chalk.yellowBright('❗️ Current remove components:')
   });
@@ -86,13 +95,24 @@ export async function removeAction(components: string[], options: RemoveOptionsA
   }
 
   /** ======================== Step 1 Remove dependencies ======================== */
-  await removeDependencies(components, packageManager);
+  const removeDepList: string[] = [...components];
+  const filterComponents = currentComponents.filter((c) => !components.includes(c.package));
+
+  if (!filterComponents.length) {
+    // Remove the selected components if not components leave then remove the theme-ui and system-ui
+    allDependencies[THEME_UI] && removeDepList.push(THEME_UI);
+    allDependencies[SYSTEM_UI] && removeDepList.push(SYSTEM_UI);
+  }
+
+  await removeDependencies(removeDepList, packageManager);
 
   /** ======================== Step 2 Remove the content ======================== */
   // Get the new package information
-  var {currentComponents} = getPackageInfo(packagePath, false);
+  var {allDependencies, currentComponents} = getPackageInfo(packagePath, false);
 
-  const type: SAFE_ANY = all ? 'all' : 'partial';
+  isNextUIAll = !!allDependencies[NEXT_UI];
+
+  const type: SAFE_ANY = isNextUIAll ? 'all' : 'partial';
 
   removeTailwind(type, {
     currentComponents,

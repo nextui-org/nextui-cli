@@ -76,7 +76,11 @@ export async function removeAction(components: string[], options: RemoveOptionsA
   }
 
   // Ask user whether need to remove these components
-  const filteredComponents = await transformPackageDetail(components, allDependencies);
+  const filteredComponents = components.includes(NEXT_UI)
+    ? await transformPackageDetail(components, allDependencies)
+    : currentComponents.filter((component) =>
+        components.some((c) => c.includes(component.package) || c.includes(component.name))
+      );
 
   outputComponents({
     commandName: 'list',

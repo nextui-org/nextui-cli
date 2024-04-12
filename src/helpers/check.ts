@@ -1,10 +1,15 @@
 import type {RequiredKey, SAFE_ANY} from './type';
 import type {ProblemRecord} from 'src/actions/doctor-action';
-import type {NextUIComponents} from 'src/constants/component';
 
 import {readFileSync} from 'fs';
 
-import {resolver} from 'src/constants/path';
+import chalk from 'chalk';
+
+import {
+  type NextUIComponents,
+  nextUIComponentsKeys,
+  nextUIComponentsKeysSet
+} from 'src/constants/component';
 import {
   DOCS_INSTALLED,
   DOCS_TAILWINDCSS_SETUP,
@@ -21,6 +26,7 @@ import {
 
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
+import {findMostMatchText} from './math-diff';
 
 export type CheckType = 'all' | 'partial';
 export type CombineType = 'missingDependencies' | 'incorrectTailwind' | 'incorrectApp';
@@ -147,17 +153,20 @@ export function checkRequiredContentInstalled(
 export function checkTailwind(
   type: 'all',
   tailwindPath: string,
-  currentComponents?: NextUIComponents
+  currentComponents?: NextUIComponents,
+  isPnpm?: boolean
 ): CheckResult;
 export function checkTailwind(
   type: 'partial',
   tailwindPath: string,
-  currentComponents: NextUIComponents
+  currentComponents: NextUIComponents,
+  isPnpm: boolean
 ): CheckResult;
 export function checkTailwind(
   type: CheckType,
   tailwindPath: string,
-  currentComponents?: NextUIComponents
+  currentComponents?: NextUIComponents,
+  isPnpm?: boolean
 ): CheckResult {
   const result = [] as unknown as CheckResult;
 
@@ -168,7 +177,7 @@ export function checkTailwind(
 
   if (type === 'all') {
     // Check if the required content is added Detail: https://nextui.org/docs/guide/installation#global-installation
-    const isDarkModeCorrect = new RegExp(tailwindRequired.darkMode).test(tailwindContent);
+    const isDarkModeCorrect = tailwindContent.match(/darkMode: ["']\w/);
     const isContentCorrect = contentMatch.some((content) =>
       content.includes(tailwindRequired.content)
     );
@@ -183,8 +192,8 @@ export function checkTailwind(
     !isContentCorrect && result.push(tailwindRequired.content);
     !isPluginsCorrect && result.push(tailwindRequired.plugins);
   } else if (type === 'partial') {
-    const individualContent = individualTailwindRequired.content(currentComponents!);
-    const isContentCorrect = contentMatch.some((content) => individualContent.includes(content));
+    const individualContent = individualTailwindRequired.content(currentComponents!, isPnpm!);
+    const isContentCorrect = contentMatch.some((content) => content.includes(individualContent));
     const isPluginsCorrect = pluginsMatch.some((plugins) =>
       plugins.includes(tailwindRequired.plugins)
     );
@@ -218,9 +227,8 @@ export function checkApp(type: CheckType, appPath: string): CheckResult {
   return [false, ...result];
 }
 
-export function checkPnpm(): CheckResult {
+export function checkPnpm(npmrcPath: string): CheckResult {
   const result = [] as unknown as CheckResult;
-  const npmrcPath = resolver('.npmrc');
 
   let content: string;
 
@@ -242,4 +250,45 @@ export function checkPnpm(): CheckResult {
   }
 
   return [false, ...result];
+}
+
+export function checkIllegalComponents(components: string[], loggerError = true) {
+  const illegalList: [string, null | string][] = [];
+
+  for (const component of components) {
+    if (!nextUIComponentsKeysSet.has(component)) {
+      const matchComponent = findMostMatchText(nextUIComponentsKeys, component);
+
+      illegalList.push([component, matchComponent]);
+    }
+  }
+
+  if (illegalList.length) {
+    const [illegalComponents, matchComponents] = illegalList.reduce(
+      (acc, [illegalComponent, matchComponent]) => {
+        return [
+          acc[0] + chalk.underline(illegalComponent) + ', ',
+          acc[1] + (matchComponent ? chalk.underline(matchComponent) + ', ' : '')
+        ];
+      },
+      ['', '']
+    );
+
+    loggerError &&
+      Logger.prefix(
+        'error',
+        `Illegal NextUI components: ${illegalComponents.replace(/, $/, '')}${
+          matchComponents
+            ? `\n${''.padEnd(12)}It may be a typo, did you mean ${matchComponents.replace(
+                /, $/,
+                ''
+              )}?`
+            : ''
+        }`
+      );
+
+    return false;
+  }
+
+  return true;
 }

@@ -6,10 +6,12 @@ import {getCommandDescAndLog} from '@helpers/utils';
 
 import pkg from '../package.json';
 
+import {addAction} from './actions/add-action';
 import {doctorAction} from './actions/doctor-action';
 import {envAction} from './actions/env-action';
 import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
+import {upgradeAction} from './actions/upgrade-action';
 
 const nextui = new Command();
 
@@ -31,6 +33,29 @@ nextui
   /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
   // .option('-p --package [string]', 'The package manager to use for the new project')
   .action(initAction);
+
+nextui
+  .command('add')
+  .description('Add NextUI components to your project')
+  .argument('[components...]', 'The name of the NextUI components to add')
+  .option('-a --all [boolean]', 'Add all the NextUI components', false)
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
+  .option('-app --appPath [string]', 'The path to the App.tsx file')
+  .option(
+    '--prettier [boolean]',
+    'Add prettier format in the add content which required installed prettier',
+    false
+  )
+  .action(addAction);
+
+nextui
+  .command('upgrade')
+  .description('Upgrade the NextUI CLI to the latest version')
+  .argument('[components...]', 'The name of the NextUI components to upgrade')
+  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .option('-a --all [boolean]', 'Upgrade all the NextUI components', false)
+  .action(upgradeAction);
 
 nextui
   .command('list')

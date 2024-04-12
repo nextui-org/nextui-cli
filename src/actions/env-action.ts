@@ -9,7 +9,7 @@ interface EnvActionOptions {
 export async function envAction(options: EnvActionOptions) {
   const {packagePath = resolver('package.json')} = options;
 
-  const {currentComponents} = await getPackageInfo(packagePath);
+  const {currentComponents} = getPackageInfo(packagePath);
 
   /** ======================== Output the current components ======================== */
   outputComponents(currentComponents);

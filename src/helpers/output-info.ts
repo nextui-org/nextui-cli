@@ -3,6 +3,7 @@ import type {CommandName} from './type';
 import chalk from 'chalk';
 
 import {
+  type NextUIComponent,
   type NextUIComponents,
   colorNextUIComponentKeys,
   orderNextUIComponentKeys
@@ -10,6 +11,9 @@ import {
 
 import {Logger} from './logger';
 import {PasCalCase} from './utils';
+
+// eslint-disable-next-line no-control-regex
+const colorMatchRegex = /(\u001b\[\d+m)/g;
 
 const rounded = {
   bl: '╰',
@@ -42,12 +46,13 @@ export function outputComponents(
     return;
   }
 
-  const componentKeyLengthMap: Record<keyof NextUIComponents[0], number> = {
+  const componentKeyLengthMap: Record<keyof NextUIComponent, number> = {
     description: 0,
     docs: 0,
     name: 0,
     package: 0,
     status: 0,
+    style: 0,
     version: 0
   };
 
@@ -159,4 +164,42 @@ export function outputInfo() {
   Logger.log(chalk.greenBright('  Binaries:'));
   Logger.log(chalk.greenBright('    Node:'), process.version);
   Logger.newLine();
+}
+
+/**
+ * Output a box with the content
+ * @param content
+ * @param center
+ * @param log
+ */
+export function outputBox(content: string, center = false, log = true) {
+  const contentArr = content.split('\n');
+  const transformArr = contentArr.map((c) => c.replace(colorMatchRegex, ''));
+
+  const maxLength = transformArr.reduce((acc, cur) => (cur.length > acc ? cur.length : acc), 0);
+
+  const boxHeader = rounded.tl + rounded.h.padEnd(maxLength, rounded.h) + rounded.tr;
+  const boxFooter = rounded.bl + rounded.h.padEnd(maxLength, rounded.h) + rounded.br;
+
+  let boxContent = contentArr.reduce((acc, cur) => {
+    const transformCur = cur.replace(colorMatchRegex, '');
+    const space = maxLength - transformCur.length;
+    const spaceFir = Math.floor(space / 2);
+    const spaceSec = Math.ceil(space / 2);
+    const pad = ' '.repeat(space);
+    const padFir = spaceFir > 0 ? ' '.repeat(spaceFir) : '';
+    const padSec = spaceSec > 0 ? ' '.repeat(spaceSec) : '';
+
+    center
+      ? acc.push(`${rounded.v}${space ? `${padFir}${cur}${padSec}` : cur}${rounded.v}`)
+      : acc.push(`${rounded.v}${space > 0 ? `${cur}${pad}` : cur}${rounded.v}`);
+
+    return acc;
+  }, [] as string[]);
+
+  boxContent = [boxHeader, ...boxContent, boxFooter];
+
+  log && Logger.log(boxContent.join('\n'));
+
+  return boxContent.join('\n');
 }

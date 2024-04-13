@@ -27,4 +27,5 @@ export type NextUIComponent = (typeof nextUIComponents)[0];
 
 export type NextUIComponents = (Omit<NextUIComponent, 'status'> & {
   status: NextUIComponentStatus;
+  versionMode: string;
 })[];

@@ -4,12 +4,14 @@ import {type NextUIComponents, nextUIComponents} from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
 
 import {Logger} from './logger';
+import {getVersionAndMode} from './utils';
 
 /**
  * Get the package information
  * @param packagePath string
+ * @param transformVersion boolean
  */
-export function getPackageInfo(packagePath: string) {
+export function getPackageInfo(packagePath: string, transformVersion = true) {
   let pkg;
 
   try {
@@ -26,9 +28,12 @@ export function getPackageInfo(packagePath: string) {
   const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(
     (component) => {
       if (allDependenciesKeys.has(component.package)) {
-        const currentVersion = allDependencies[component.package];
+        const {currentVersion, versionMode} = getVersionAndMode(allDependencies, component.package);
 
-        component.version = `${currentVersion} new: ${component.version}`;
+        component.version = transformVersion
+          ? `${currentVersion} new: ${component.version}`
+          : currentVersion;
+        component.versionMode = versionMode;
 
         return true;
       }

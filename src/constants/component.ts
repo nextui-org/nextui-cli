@@ -15,6 +15,7 @@ export const nextUIComponentsMap = nextUIComponents.reduce(
   },
   {} as Record<string, (typeof nextUIComponents)[number]>
 );
+export type NextUIComponentsMap = Record<string, (typeof nextUIComponents)[number]>;
 
 export const orderNextUIComponentKeys = ['package', 'version', 'status', 'docs'] as const;
 

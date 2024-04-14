@@ -128,3 +128,22 @@ export function getVersionAndMode(allDependencies: Record<string, SAFE_ANY>, pac
     versionMode
   };
 }
+
+export function getPackageManagerInfo(packageManager: string): {install: string; remove: string} {
+  const packageManagerInfo = {
+    npm: {
+      install: 'install',
+      remove: 'uninstall'
+    },
+    pnpm: {
+      install: 'add',
+      remove: 'remove'
+    },
+    yarn: {
+      install: 'add',
+      remove: 'remove'
+    }
+  };
+
+  return packageManagerInfo[packageManager];
+}

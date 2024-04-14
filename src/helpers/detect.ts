@@ -24,11 +24,11 @@ export const LOCKS: Record<string, Agent> = {
 };
 
 export async function detect(cwd = ROOT) {
-  let agent: Agent | null = null;
+  let agent: Agent | null = 'npm';
   const lockPath = await findUp(Object.keys(LOCKS), {cwd});
 
   // detect based on lock
-  if (!agent && lockPath) {
+  if (lockPath) {
     agent = LOCKS[path.basename(lockPath)]!;
   }
 

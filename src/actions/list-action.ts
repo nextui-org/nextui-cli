@@ -32,8 +32,10 @@ export async function listAction(options: ListActionOptions) {
     }
 
     /** ======================== Output the components ======================== */
-    remote ? outputComponents(components, 'list') : outputComponents(components);
+    remote ? outputComponents({commandName: 'list', components}) : outputComponents({components});
   } catch (error) {
     Logger.prefix('error', `Error occurred while listing the components: ${error}`);
   }
+
+  process.exit(0);
 }

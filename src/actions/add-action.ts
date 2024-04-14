@@ -202,6 +202,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
   );
 
+
   // Check whether the user has installed the All NextUI components
   if ((allDependenciesKeys.has(NEXT_UI) || all) && currentComponents.length) {
     // Check whether have added redundant dependencies

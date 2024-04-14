@@ -8,7 +8,7 @@ import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {upgrade} from '@helpers/upgrade';
-import {getColorVersion} from '@helpers/utils';
+import {getColorVersion, getPackageManagerInfo} from '@helpers/utils';
 import {type NextUIComponents, nextUIComponentsMap} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {NEXT_UI} from 'src/constants/required';
@@ -43,17 +43,18 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     });
   }
 
+  // If no Installed NextUI components then exit
+  if (!transformComponents.length && !isNextUIAll) {
+    Logger.prefix('error', `No NextUI components found in package.json: ${packagePath}`);
+
+    return;
+  }
+
   if (isNextUIAll) {
     components = [NEXT_UI];
   } else if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
-    if (!transformComponents.length) {
-      Logger.prefix('error', 'No NextUI components found in package.json');
-
-      return;
-    }
-
     components = await getAutocompleteMultiselect(
       'Select the NextUI components to upgrade',
       transformComponents.map((component) => {
@@ -108,18 +109,18 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
     if (isExec) {
       const packageManager = await detect();
+      const {install} = getPackageManagerInfo(packageManager);
 
       await exec(
-        `${packageManager} ${packageManager === 'npm' ? 'install' : 'add'} ${result.reduce(
-          (acc, component) => {
-            return `${acc} ${component.package}@${component.versionMode}${component.latestVersion}`;
-          },
-          ''
-        )}`
+        `${packageManager} ${install} ${result.reduce((acc, component) => {
+          return `${acc} ${component.package}@${component.versionMode}${component.latestVersion}`;
+        }, '')}`
       );
     }
   }
 
   Logger.newLine();
   Logger.success('✅ All components are already up to date');
+
+  process.exit(0);
 }

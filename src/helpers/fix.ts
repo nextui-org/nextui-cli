@@ -111,7 +111,7 @@ export function fixPnpm(npmrcPath: string, write = true, runInstall = true) {
 
   if (runInstall) {
     Logger.newLine();
-    Logger.info('Pnpm install will be run now');
+    Logger.info('Pnpm restructure will be run now');
     runInstall && execSync('pnpm install', {stdio: 'inherit'});
   }
 }

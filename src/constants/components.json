@@ -15,7 +15,7 @@
       "version": "2.0.10",
       "docs": "https://nextui.org/docs/components/autocomplete",
       "description": "An autocomplete combines a text input with a listbox, allowing users to filter a list of options to items matching a query.",
-      "status": "newPost",
+      "status": "new",
       "style": ""
     },
     {
@@ -42,7 +42,7 @@
       "version": "2.0.4",
       "docs": "https://nextui.org/docs/components/breadcrumbs",
       "description": "Breadcrumbs display a hierarchy of links to the current page or resource in an application.",
-      "status": "newPost",
+      "status": "new",
       "style": ""
     },
     {
@@ -258,7 +258,7 @@
       "version": "2.2.6",
       "docs": "https://nextui.org/docs/components/slider",
       "description": "A slider allows a user to select one or more values within a range.",
-      "status": "newPost",
+      "status": "new",
       "style": ""
     },
     {

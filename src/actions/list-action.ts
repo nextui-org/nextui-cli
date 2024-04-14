@@ -6,19 +6,19 @@ import {type NextUIComponents, nextUIComponents} from '../../src/constants/compo
 import {resolver} from '../../src/constants/path';
 
 interface ListActionOptions {
-  current?: boolean;
+  remote?: boolean;
   packagePath?: string;
 }
 
 export async function listAction(options: ListActionOptions) {
-  const {current, packagePath = resolver('package.json')} = options;
+  const {packagePath = resolver('package.json'), remote = false} = options;
 
   let components = nextUIComponents as NextUIComponents;
 
   try {
     /** ======================== Get the installed components ======================== */
-    if (current) {
-      const {currentComponents} = getPackageInfo(packagePath);
+    if (!remote) {
+      const {currentComponents} = await getPackageInfo(packagePath);
 
       components = currentComponents;
     }
@@ -32,7 +32,7 @@ export async function listAction(options: ListActionOptions) {
     }
 
     /** ======================== Output the components ======================== */
-    current ? outputComponents({components}) : outputComponents({commandName: 'list', components});
+    remote ? outputComponents(components, 'list') : outputComponents(components);
   } catch (error) {
     Logger.prefix('error', `Error occurred while listing the components: ${error}`);
   }

@@ -1,8 +1,6 @@
 # NextUI CLI
 
-A CLI tool that unlocks seamless NextUI integration.
-
-It provides a set of commands to help you easily manage your NextUI project.
+The CLI offers a comprehensive suite of commands to initialize, manage, and improve your NextUI projects. It enables you to `add`, `remove`, or `upgrade` individual components, assess the health of your project, and more.
 
 ## Quick Start
 

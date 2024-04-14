@@ -178,6 +178,13 @@ Check whether exist problem in your project by using the `doctor` command.
 nextui doctor [options]
 ```
 
+### Features
+
+> 1. Check whether have `redundant dependencies` in the project
+> 2. Check whether the NextUI components `required dependencies are installed` in the project
+> 3. Check the required `tailwind.config.js` file and the content is correct
+> 4. Check `.npmrc` is correct when using `pnpm`
+
 #### Doctor Options
 
 - `-p` `--packagePath` [string] The path to the package.json file

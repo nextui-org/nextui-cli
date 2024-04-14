@@ -1,51 +1,218 @@
 # NextUI CLI
 
-## 🏗️ Under Construction
+A CLI tool that unlocks seamless NextUI integration
 
-- [x] Add `nextui` command
+It provides a set of commands to help you easily manage your NextUI project.
 
-  > Manage the NextUI CLI.
+## 🚀 Quick Start
 
-- [x] Add `nextui init` command
+> **Note**: The NextUI CLI requires [Node.js](https://nodejs.org/en) _18.17.x+_ or later
 
-  > Initialize a NextUI project.
+You can choose the following ways to start the NextUI CLI.
 
-  > Provided with a `-t, --template` flag to initialize a project with a template.
+### Npx
 
-- [ ] Add `nextui add` command
+```bash
+npx nextui-cli@latest
+```
 
-  > Add component(s) to a NextUI project by selecting from a list of components.
+### Global Installation
 
-- [ ] Add `nextui remove` command
+```bash
+npm install -g @nextui/cli
+```
 
-  > Remove component(s) from a NextUI project by selecting from a list of components.
+## 📖 Usage
 
-- [ ] Add `nextui upgrade` command
+```bash
+nextui [command]
 
-  > Upgrade NextUI Components by selecting from a list of components.
+Options:
+  -v, --version                      Output the current version
+  -h, --help                         Display help for command
 
-- [x] Add `nextui list` command
+Commands:
+  init [options] [projectName]       Initialize a new NextUI project
+  add [options] [components...]      Add NextUI components to your project
+  upgrade [options] [components...]  Upgrade the NextUI components to the latest version
+  remove [options] [components...]   Remove NextUI components from your project
+  list [options]                     List all the components status, description, version, etc
+  env [options]                      Display debug information about the local environment
+  doctor [options]                   Check whether exist problem in user project
+  help [command]                     display help for command
+```
 
-  > List all the NextUI components.
+## 📦 Commands
 
-  > Display the components version, docs link and the component's status.
+### Init
 
-- [ ] Add `nextui env` command
+Initialize a new NextUI project with official templates.
 
-  > Display the local environment information, such as os, system, node, components versions, etc.
+```bash
+nextui init [projectName] [options]
+```
 
-  > Integrate doctor check whether exist problem.
+#### Init Options
 
-- [ ] Add `nextui doctor` command
+- `-t --template [string]` The template to use for the new project e.g. app, pages
 
-  > Check whether installed redundant dependencies.
+##### Example
 
-  > Check whether the required dependency has been installed.
+```bash
+# Initialize a new NextUI project with the app template, named my-nextui-app
+nextui init my-nextui-app -t app
+```
 
-  > Check tailwind config、provide has been added.
+### Add
 
-  > Check .npmrc correct when use pnpm.
+Add NextUI components to your project.
 
-  > Warn when tailwindcss intelliSense plugin uninstalled in Vscode.
+#### Features
 
-  > …other check.
+> 1. Auto add the missing required `dependencies` to your project
+> 2. Auto add the required `tailwindcss.config.js` configuration to your project
+> 3. Detect whether using pnpm, if so, add the required configuration to your `.npmrc` file
+
+```bash
+nextui add [components...] [options]
+```
+
+#### Add Options
+
+- `-a --all` [boolean] Add all the NextUI components (default: `false`)
+- `-p --packagePath` [string] The path to the package.json file
+- `-tw --tailwindPath` [string] The path to the tailwind.config file file
+- `-app --appPath` [string] The path to the App.tsx file
+- `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: false)
+- `--addApp` [boolean] Add App.tsx file content which required provider (default: `false`)
+
+##### Example
+
+Add the **Button** component to your project.
+
+<pre align="center">nextui add <b>Button</b></pre>
+
+<p align="center">
+<img src='./screenshots/add-command.png' />
+</p>
+
+### Upgrade
+
+Upgrade the NextUI components to the latest version.
+
+```bash
+nextui upgrade [components...] [options]
+```
+
+#### Upgrade Options
+
+- `-p --packagePath` [string] The path to the package.json file
+- `-a --all` [boolean] Upgrade all the NextUI components (default: `false`)
+- `-h, --help` Display help for command
+
+##### Example
+
+Upgrade the **Button** component to the latest version.
+
+<pre align="center">nextui upgrade <b>Button</b></pre>
+
+<p align="center">
+<img src='./screenshots/upgrade-command.png' />
+</p>
+
+### Remove
+
+Remove NextUI components from your project.
+
+> **Note**: If there are no NextUI components after removing, the required content will also be removed
+
+```bash
+nextui remove [components...] [options]
+```
+
+#### Remove Options
+
+- `-p --packagePath` [string] The path to the package.json file
+- `-a --all` [boolean] Remove all the NextUI components (default: `false`)
+- `-tw --tailwindPath` [string] The path to the tailwind.config file file
+- `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: false)
+
+##### Example
+
+Remove the **Button** component from your project.
+
+<pre align="center">nextui remove <b>Button</b></pre>
+
+<p align="center">
+<img src='./screenshots/remove-command.png' />
+</p>
+
+### List
+
+List all the NextUI components.
+
+```bash
+nextui list [options]
+```
+
+#### List Options
+
+- `-p --packagePath` [string] The path to the package.json file
+- `-c --current` List the current installed components
+
+##### Example
+
+Show `all NextUI components` of the current project.
+
+<pre align="center">nextui list</pre>
+
+<p align="center">
+<img src='./screenshots/list-command.png' />
+</p>
+
+### Doctor
+
+Check whether exist problem in your project by using the `doctor` command.
+
+```bash
+nextui doctor [options]
+```
+
+#### Doctor Options
+
+- `-p` `--packagePath` [string] The path to the package.json file
+- `-tw` `--tailwindPath` [string] The path to the tailwind.config file file
+- `-app` `--appPath` [string] The path to the App.tsx file
+- `-ca` `--checkApp` [boolean] Open check App (default: `true`)
+- `-ct` `--checkTailwind` [boolean] Open check tailwind.config file (default: `true`)
+- `-cp` `--checkPnpm` [boolean] Open check Pnpm (default: `true`)
+
+#### Example
+
+<pre align="center">nextui doctor</pre>
+
+<p align="center">
+<img src='./screenshots/doctor-command.png' />
+</p>
+
+### Env
+
+Display debug information about the local environment.
+
+```bash
+nextui env [options]
+```
+
+#### Env Options
+
+- `-p --packagePath` [string] The path to the package.json file
+
+#### Example
+
+Display the local environment Information by using the `env` command.
+
+<pre align="center">nextui doctor</pre>
+
+<p align="center">
+<img src='./screenshots/env-command.png' />
+</p>

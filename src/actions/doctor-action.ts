@@ -51,9 +51,9 @@ export async function doctorAction(options: DoctorActionOptions) {
   if (!currentComponents.length && !isAllComponents) {
     Logger.prefix(
       'error',
-      `❌ There are no ${chalk.underline(
+      `❌ No ${chalk.underline(
         'NextUI components'
-      )} in your project\nCheck the NextUI installation docs: https://nextui.org/docs/guide/installation#global-installation`
+      )} found in your project. Please consult the installation guide at: https://nextui.org/docs/guide/installation#global-installation`
     );
 
     return;
@@ -68,9 +68,11 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'warn',
       name: 'redundantDependencies',
       outputFn: () => {
-        Logger.warn('You have installed redundant dependencies, please remove them');
+        Logger.warn(
+          'You have installed some unnecessary dependencies. Consider removing them for optimal performance.'
+        );
         Logger.newLine();
-        Logger.info('The redundant dependencies are:');
+        Logger.info('The following dependencies are redundant:');
         currentComponents.forEach((component) => {
           Logger.info(`- ${component.package}`);
         });
@@ -83,8 +85,9 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingTailwind',
       outputFn: () => {
-        Logger.error('You have not created the tailwind.config.(j|t)s');
-        Logger.error(`See more info here: ${DOCS_TAILWINDCSS_SETUP}`);
+        Logger.error(
+          'Missing tailwind.config.(j|t)s file. To set up, visit: ' + DOCS_TAILWINDCSS_SETUP
+        );
       }
     });
   }
@@ -94,8 +97,9 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingApp',
       outputFn: () => {
-        Logger.error('Cannot find the App.(j|t)sx file');
-        Logger.error("You should specify appPath through 'doctor --appPath=yourAppPath'");
+        Logger.error(
+          'App.(j|t)sx file not found. Please specify the path using: doctor --appPath=[yourAppPath]'
+        );
       }
     });
   }
@@ -188,14 +192,15 @@ export async function doctorAction(options: DoctorActionOptions) {
           level: 'error',
           name: 'incorrectPnpm',
           outputFn: () => {
-            Logger.error('Your pnpm setup is incorrect');
+            Logger.error(
+              'The pnpm setup is incorrect. Please update your configuration according to the guidelines provided at: ' +
+                DOCS_PNPM_SETUP
+            );
             Logger.newLine();
-            Logger.info('The missing part is:');
+            Logger.info('Required changes:');
             errorInfo.forEach((info) => {
-              Logger.info(`- need to add ${info}`);
+              Logger.info(`- Add ${info}`);
             });
-            Logger.newLine();
-            Logger.error(`See more info here: ${DOCS_PNPM_SETUP}`);
           }
         });
       }
@@ -204,7 +209,7 @@ export async function doctorAction(options: DoctorActionOptions) {
 
   /** ======================== Return when there is no problem ======================== */
   if (!problemRecord.length) {
-    Logger.success('✅ No problems found in your project');
+    Logger.success('✅ Your project has no detected issues.');
 
     return;
   }
@@ -212,16 +217,16 @@ export async function doctorAction(options: DoctorActionOptions) {
   /** ======================== Output the problem record ======================== */
   Logger.prefix(
     'error',
-    `❌ There ${problemRecord.length === 1 ? 'is' : 'are'} ${chalk.underline(
-      problemRecord.length
-    )} problem${problemRecord.length === 1 ? '' : 's'} in your project`
+    `❌ Your project has ${chalk.underline(problemRecord.length)} issue${
+      problemRecord.length === 1 ? '' : 's'
+    } that require attention`
   );
   Logger.newLine();
 
   for (let index = 0; index < problemRecord.length; index++) {
     const problem = problemRecord[index] as ProblemRecord;
 
-    Logger[problem.level](`❗️Problem ${index + 1}: ${chalk.bold(problem.name)}`);
+    Logger[problem.level](`❗️Issue ${index + 1}: ${chalk.bold(problem.name)}`);
     Logger.newLine();
     problem.outputFn();
     Logger.newLine();

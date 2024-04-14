@@ -284,7 +284,7 @@ export function checkIllegalComponents(components: string[], loggerError = true)
     loggerError &&
       Logger.prefix(
         'error',
-        `Illegal NextUI components: ${illegalComponents.replace(/, $/, '')}${
+        `Illegal components: ${illegalComponents.replace(/, $/, '')}${
           matchComponents
             ? `\n${''.padEnd(12)}It may be a typo, did you mean ${matchComponents.replace(
                 /, $/,

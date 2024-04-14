@@ -1,8 +1,6 @@
-import chalk from 'chalk';
 import {Command} from 'commander';
 
 import {Logger} from '@helpers/logger';
-import {getCommandDescAndLog} from '@helpers/utils';
 
 import pkg from '../package.json';
 
@@ -19,82 +17,69 @@ const nextui = new Command();
 nextui
   .name('nextui')
   .usage('[command]')
-  .description(
-    `${chalk.blue(getCommandDescAndLog(`\nNextUI CLI ${pkg.version}\n\n${pkg.description}\n`, ''))}`
-  )
   .version(pkg.version, '-v, --version', 'Output the current version')
-  .helpOption('-h, --help', 'Display help for command')
+  .helpOption('-h, --help', 'Display help information for commands')
   .allowUnknownOption();
 
 nextui
   .command('init')
-  .description('Initialize a new NextUI project')
-  .argument('[projectName]', 'The name of the new project')
-  .option('-t --template [string]', 'The template to use for the new project e.g. app, pages')
+  .description('Initializes a new project')
+  .argument('[projectName]', 'Name of the project to initialize')
+  .option('-t --template [string]', 'Specify a template for the new project, e.g., app, pages')
   /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
   // .option('-p --package [string]', 'The package manager to use for the new project')
   .action(initAction);
 
 nextui
   .command('add')
-  .description('Add NextUI components to your project')
-  .argument('[components...]', 'The name of the NextUI components to add')
-  .option('-a --all [boolean]', 'Add all the NextUI components', false)
-  .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
-  .option('-app --appPath [string]', 'The path to the App.tsx file')
-  .option(
-    '--prettier [boolean]',
-    'Add prettier format in the add content which required installed prettier',
-    false
-  )
-  .option('--addApp [boolean]', 'Add App.tsx file content which required provider', false)
+  .description('Adds components to your project')
+  .argument('[components...]', 'Names of components to add')
+  .option('-a --all [boolean]', 'Add all components', false)
+  .option('-p --packagePath [string]', 'Specify the path to the package.json file')
+  .option('-tw --tailwindPath [string]', 'Specify the path to the tailwind.config.js file')
+  .option('-app --appPath [string]', 'Specify the path to the App.tsx file')
+  .option('--prettier [boolean]', 'Apply Prettier formatting to the added content', false)
+  .option('--addApp [boolean]', 'Include App.tsx file content that requires a provider', false)
   .action(addAction);
 
 nextui
   .command('upgrade')
-  .description('Upgrade the NextUI components to the latest version')
-  .argument('[components...]', 'The name of the NextUI components to upgrade')
-  .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-a --all [boolean]', 'Upgrade all the NextUI components', false)
+  .description('Upgrades project components to the latest versions')
+  .argument('[components...]', 'Names of components to upgrade')
+  .option('-p --packagePath [string]', 'Specify the path to the package.json file')
+  .option('-a --all [boolean]', 'Upgrade all components', false)
   .action(upgradeAction);
 
 nextui
   .command('remove')
-  .description('Remove NextUI components from your project')
-  .argument('[components...]', 'The name of the NextUI components to remove')
-  .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-a --all [boolean]', 'Remove all the NextUI components', false)
-  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
-  .option(
-    '--prettier [boolean]',
-    'Add prettier format in the add content which required installed prettier',
-    false
-  )
+  .description('Removes components from the project')
+  .argument('[components...]', 'Names of components to remove')
+  .option('-p --packagePath [string]', 'Specify the path to the package.json file')
+  .option('-a --all [boolean]', 'Remove all components', false)
+  .option('-tw --tailwindPath [string]', 'Specify the path to the tailwind.config.js file')
   .action(removeAction);
 
 nextui
   .command('list')
-  .description('List all the components status, description, version, etc')
-  .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-r --remote', 'List all the remote NextUI components')
+  .description('Lists all components, showing status, descriptions, and versions')
+  .option('-p --packagePath [string]', 'Specify the path to the package.json file')
+  .option('-r --remote', 'List all components available remotely')
   .action(listAction);
-
 nextui
   .command('env')
-  .description('Display debug information about the local environment')
-  .option('-p --packagePath [string]', 'The path to the package.json file')
+  .description('Displays debugging information for the local environment')
+  .option('-p --packagePath [string]', 'Specify the path to the package.json file')
   .action(envAction);
 
 nextui
   .command('doctor')
-  .description('Check whether exist problem in user project')
-  .option('-p --packagePath [string]', 'The path to the package.json file')
-  .option('-tw --tailwindPath [string]', 'The path to the tailwind.config file file')
-  .option('-app --appPath [string]', 'The path to the App.tsx file')
-  .option('-ca --checkApp [boolean]', 'Open check App', false)
-  .option('-ct --checkTailwind [boolean]', 'Open check tailwind.config file', true)
-  .option('-cp --checkPnpm [boolean]', 'Open check Pnpm', true)
+  .description('Checks for issues in the project')
+  .option('-p --packagePath [string]', 'Specify the path to the package.json file')
+  .option('-tw --tailwindPath [string]', 'Specify the path to the tailwind.config.js file')
+  .option('-app --appPath [string]', 'Specify the path to the App.tsx file')
+  .option('-ca --checkApp [boolean]', 'Check the App.tsx file', false)
+  .option('-ct --checkTailwind [boolean]', 'Check the tailwind.config.js file', true)
+  .option('-cp --checkPnpm [boolean]', 'Check for Pnpm', true)
   .action(doctorAction);
 
 nextui.parseAsync(process.argv).catch(async (reason) => {

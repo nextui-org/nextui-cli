@@ -36,7 +36,7 @@ const padEnd = `${space}${rounded.v}${space}`;
 export function outputComponents({
   commandName,
   components,
-  message = 'Current Installed NextUI Components:\n',
+  message = 'Current unstalled components:\n',
   warnError = true
 }: {
   components: NextUIComponents;
@@ -46,7 +46,7 @@ export function outputComponents({
 }) {
   if (!components.length) {
     if (warnError) {
-      Logger.prefix('warn', 'No installed NextUI components found');
+      Logger.prefix('warn', 'No components found');
     }
 
     return;

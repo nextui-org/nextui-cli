@@ -24,9 +24,7 @@ export async function listAction(options: ListActionOptions) {
     }
 
     if (!components.length) {
-      Logger.warn(
-        `No installed NextUI components found, reference package.json path: ${packagePath}`
-      );
+      Logger.warn(`No NextUI components detected in the specified package.json at: ${packagePath}`);
 
       return;
     }
@@ -34,7 +32,7 @@ export async function listAction(options: ListActionOptions) {
     /** ======================== Output the components ======================== */
     remote ? outputComponents({commandName: 'list', components}) : outputComponents({components});
   } catch (error) {
-    Logger.prefix('error', `Error occurred while listing the components: ${error}`);
+    Logger.prefix('error', `An error occurred while attempting to list the components: ${error}`);
   }
 
   process.exit(0);

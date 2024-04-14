@@ -48,7 +48,7 @@ export async function removeAction(components: string[], options: RemoveOptionsA
 
   // If no Installed NextUI components then exit
   if (!currentComponents.length && !isNextUIAll) {
-    Logger.prefix('error', `No NextUI components found in package.json: ${packagePath}`);
+    Logger.prefix('error', `No NextUI components detected in your package.json at: ${packagePath}`);
 
     return;
   }
@@ -57,7 +57,7 @@ export async function removeAction(components: string[], options: RemoveOptionsA
     components = isNextUIAll ? [NEXT_UI] : currentComponents.map((component) => component.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(
-      'Select the NextUI components to upgrade',
+      'Select the components to remove',
       currentComponents.map((component) => {
         return {
           title: component.package,
@@ -84,10 +84,10 @@ export async function removeAction(components: string[], options: RemoveOptionsA
 
   outputComponents({
     components: filteredComponents,
-    message: chalk.yellowBright('❗️ Current remove components:')
+    message: chalk.yellowBright('❗️ Components slated for removal:')
   });
 
-  const isRemove = await getSelect('Do you want to remove these components?', [
+  const isRemove = await getSelect('Confirm removal of these components:', [
     {title: 'Yes', value: true},
     {title: 'No', value: false}
   ]);
@@ -136,7 +136,7 @@ export async function removeAction(components: string[], options: RemoveOptionsA
         content = content.replace(pnpmRequired.content, '');
 
         Logger.newLine();
-        Logger.info('Remove the .npmrc file content');
+        Logger.info('Removing specified .npmrc file content');
 
         writeFileSync(npmrcPath, content, 'utf-8');
       }
@@ -144,17 +144,16 @@ export async function removeAction(components: string[], options: RemoveOptionsA
 
     Logger.newLine();
     Logger.warn(
-      `There are no NextUI components installed, Please check the ${chalk.bold(
-        'NextUIProvider'
-      )} whether removed \nSee more info here: ${DOCS_PROVIDER_SETUP}`
+      `No NextUI components remain installed. Ensure the NextUIProvider is also removed if necessary.\nFor more information, visit: ${DOCS_PROVIDER_SETUP}`
     );
   }
 
   Logger.newLine();
+
   Logger.success(
-    `✅ Have removed the NextUI components ${components
+    `✅ Successfully removed the specified NextUI components: ${components
       .map((c) => chalk.underline(c))
-      .join(', ')} successfully`
+      .join(', ')}`
   );
 
   process.exit(0);

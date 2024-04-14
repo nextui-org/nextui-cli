@@ -45,7 +45,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   // If no Installed NextUI components then exit
   if (!transformComponents.length && !isNextUIAll) {
-    Logger.prefix('error', `No NextUI components found in package.json: ${packagePath}`);
+    Logger.prefix('error', `No NextUI components detected in your package.json at: ${packagePath}`);
 
     return;
   }
@@ -56,15 +56,15 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(
-      'Select the NextUI components to upgrade',
+      'Select the components to upgrade',
       transformComponents.map((component) => {
-        const disabled = component.version === component.latestVersion;
+        const isUpToDate = component.version === component.latestVersion;
 
         return {
-          disabled,
+          disabled: isUpToDate,
           title: `${component.package} ${
-            disabled
-              ? `${chalk.greenBright('Already latest')}`
+            isUpToDate
+              ? chalk.greenBright('Already up to date')
               : `${chalk.gray(`${component.version} ->`)} ${getColorVersion(
                   component.version,
                   component.latestVersion
@@ -99,7 +99,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   });
 
   if (result.length) {
-    const isExec = await getSelect('Upgrade the version?', [
+    const isExecute = await getSelect('Would you like to proceed with the upgrade?', [
       {
         title: 'Yes',
         value: true
@@ -107,20 +107,20 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       {title: 'No', value: false}
     ]);
 
-    if (isExec) {
+    if (isExecute) {
       const packageManager = await detect();
       const {install} = getPackageManagerInfo(packageManager);
 
       await exec(
         `${packageManager} ${install} ${result.reduce((acc, component) => {
-          return `${acc} ${component.package}@${component.versionMode}${component.latestVersion}`;
+          return `${acc} ${component.package}@${component.latestVersion}`;
         }, '')}`
       );
     }
   }
 
   Logger.newLine();
-  Logger.success('✅ All components are already up to date');
+  Logger.success('✅ Upgrade complete. All components are up to date.');
 
   process.exit(0);
 }

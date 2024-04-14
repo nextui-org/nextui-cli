@@ -52,7 +52,7 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   if (!components.length && !all) {
     components = await getAutocompleteMultiselect(
-      'Select the NextUI components to add',
+      'Which components would you like to add?',
       nextUIComponents
         .filter(
           (component) =>
@@ -84,7 +84,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (filterCurrentComponents.length) {
     Logger.prefix(
       'error',
-      `❌ You have added the NextUI components: ${filterCurrentComponents
+      `❌ You have added the following components: ${filterCurrentComponents
         .map((c) => chalk.underline(c))
         .join(', ')}`
     );
@@ -96,7 +96,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (addApp && !appPath) {
     Logger.prefix(
       'error',
-      "❌ Cannot find the App.(j|t)sx file\nYou should specify appPath through 'add --appPath=yourAppPath'"
+      "❌ App.(j|t)sx file not found. Please specify the appPath if the default search path does not locate your file.  'add --appPath=yourAppPath'"
     );
 
     return;
@@ -111,7 +111,7 @@ export async function addAction(components: string[], options: AddActionOptions)
 
     if (missingDependencies.length) {
       Logger.info(
-        `Adding the required dependencies: ${[...missingDependencies]
+        `Adding required dependencies: ${[...missingDependencies]
           .map((c) => chalk.underline(c))
           .join(', ')}`
       );
@@ -129,7 +129,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     ];
 
     Logger.info(
-      `Adding the required dependencies: ${[...missingDependencies]
+      `Adding required dependencies: ${[...missingDependencies]
         .map((c) => chalk.underline(c))
         .join(', ')}`
     );
@@ -153,14 +153,14 @@ export async function addAction(components: string[], options: AddActionOptions)
     writeFileSync(tailwindPath, template, 'utf-8');
 
     Logger.newLine();
-    Logger.info(`Added the tailwind.config.js file: ${tailwindPath}`);
+    Logger.info(`Tailwind CSS configuration file created at: ${tailwindPath}`);
   } else {
     const [, ...errorInfoList] = checkTailwind(type, tailwindPath, currentComponents, isPnpm);
 
     fixTailwind(type, {errorInfoList, format: prettier, tailwindPath});
 
     Logger.newLine();
-    Logger.info(`Added the required tailwind content in file: ${tailwindPath}`);
+    Logger.info(`Tailwind CSS settings have been updated in: ${tailwindPath}`);
   }
 
   /** ======================== Step 3 Provider Need Manually Open ======================== */
@@ -171,8 +171,10 @@ export async function addAction(components: string[], options: AddActionOptions)
       fixProvider(appPath, {format: prettier});
 
       Logger.newLine();
-      Logger.info(`Added the NextUIProvider in file: ${appPath}`);
-      Logger.warn('You need to check the NextUIProvider whether in the correct place');
+      Logger.info(`NextUIProvider successfully added to the App file at: ${appPath}`);
+      Logger.warn(
+        "Please check the placement of NextUIProvider in the App file to ensure it's correctly integrated.'"
+      );
     }
   }
 
@@ -193,7 +195,7 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   // Finish adding the NextUI components
   Logger.newLine();
-  Logger.success('✅ All the NextUI components have been added\n');
+  Logger.success('✅ Components added successfully');
 
   // Warn the user to check the NextUIProvider whether in the correct place
   Logger.warn(
@@ -202,13 +204,12 @@ export async function addAction(components: string[], options: AddActionOptions)
     )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
   );
 
-
   // Check whether the user has installed the All NextUI components
   if ((allDependenciesKeys.has(NEXT_UI) || all) && currentComponents.length) {
     // Check whether have added redundant dependencies
     Logger.newLine();
     Logger.warn(
-      'You do not need the `@nextui-org/react` package when using individual components\nWe suggest to use individual components for smaller bundle sizes'
+      'Attention: Individual components from NextUI do not require the `@nextui-org/react` package. For optimized bundle sizes, consider using individual components.'
     );
     Logger.warn('The redundant dependencies are:');
     currentComponents.forEach((component) => {

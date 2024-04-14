@@ -51,12 +51,19 @@ export function getMatchArray(key: string, target: string) {
  * @param target
  * @param value
  */
-export function replaceMatchArray(key: string, target: string, value: string[]) {
+export function replaceMatchArray(
+  key: string,
+  target: string,
+  value: string[],
+  _replaceValue?: string
+) {
   const mixinReg = new RegExp(`\\s*${key}:\\s\\[([\\w\\W]*?)\\]\\s*`);
-  const replaceValue = value.map((v) => JSON.stringify(v)).join(', ');
+  const replaceValue = _replaceValue ?? value.map((v) => JSON.stringify(v)).join(', ');
 
   if (mixinReg.test(target)) {
-    return target.replace(mixinReg, `\n  ${key}: [${replaceValue}]`);
+    const _value = key === 'content' ? `\n  ${key}: [${replaceValue}]` : `\n  ${key}: [${value}]`;
+
+    return target.replace(mixinReg, _value);
   }
 
   // If the key does not exist, add the key and value to the end of the target

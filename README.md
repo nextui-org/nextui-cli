@@ -1,10 +1,10 @@
 # NextUI CLI
 
-A CLI tool that unlocks seamless NextUI integration
+A CLI tool that unlocks seamless NextUI integration.
 
 It provides a set of commands to help you easily manage your NextUI project.
 
-## 🚀 Quick Start
+## Quick Start
 
 > **Note**: The NextUI CLI requires [Node.js](https://nodejs.org/en) _18.17.x+_ or later
 
@@ -22,7 +22,7 @@ npx nextui-cli@latest
 npm install -g @nextui/cli
 ```
 
-## 📖 Usage
+## Usage
 
 ```bash
 nextui [command]
@@ -42,7 +42,7 @@ Commands:
   help [command]                     display help for command
 ```
 
-## 📦 Commands
+## Commands
 
 ### Init
 
@@ -90,11 +90,29 @@ nextui add [components...] [options]
 
 Add the **Button** component to your project.
 
-<pre align="center">nextui add <b>Button</b></pre>
+```bash
+nextui add button
+```
 
-<p align="center">
-<img src='./screenshots/add-command.png' />
-</p>
+Output:
+
+```bash
+NextUI CLI 0.1.0
+
+Adding the required dependencies: @nextui-org/button
+
+pnpm add @nextui-org/badge
+Packages: +1
++
+Progress: resolved 470, reused 462, downloaded 0, added 0, done
+
+dependencies:
++ @nextui-org/badge 2.0.24
+
+Done in 3.4s
+
+Added the required tailwind content in file: /project-path/tailwind.config.js
+```
 
 ### Upgrade
 
@@ -114,11 +132,30 @@ nextui upgrade [components...] [options]
 
 Upgrade the **Button** component to the latest version.
 
-<pre align="center">nextui upgrade <b>Button</b></pre>
+```bash
+nextui upgrade button
+```
 
-<p align="center">
-<img src='./screenshots/upgrade-command.png' />
-</p>
+Output:
+
+```bash
+NextUI CLI 0.1.0
+
+Adding the required dependencies: @nextui-org/button
+
+╭──────────────────────────────────────────────────────────╮
+│  @nextui-org/button              2.0.23  ->  2.0.24       │
+╰──────────────────────────────────────────────────────────╯
+? Upgrade the version? › - Use arrow-keys. Return to submit.
+❯   Yes
+    No
+
+pnpm add  @nextui-org/button@2.0.24
+Already up to date
+Progress: resolved 470, reused 462, downloaded 0, added 0, done
+
+Done in 1.7s
+```
 
 ### Remove
 
@@ -141,11 +178,37 @@ nextui remove [components...] [options]
 
 Remove the **Button** component from your project.
 
-<pre align="center">nextui remove <b>Button</b></pre>
+```bash
+nextui remove button
+```
 
-<p align="center">
-<img src='./screenshots/remove-command.png' />
-</p>
+Output:
+
+```bash
+NextUI CLI 0.1.0
+
+❗️ Components to be removed:
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│   Package             │   Version              │   Status   │   Docs                                       │
+│────────────────────────────────────────────────────────────────────────────────────────────────────────────│
+│   @nextui-org/button   │   2.0.24 🚀latest      │   stable   │   https://nextui.org/docs/components/button   │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+? Do you want to remove these components? › - Use arrow-keys. Return to submit.
+❯   Yes
+    No
+
+pnpm remove  @nextui-org/badge
+Packages: -1
+-
+Progress: resolved 469, reused 460, downloaded 0, added 0, done
+
+dependencies:
+- @nextui-org/badge 2.0.24
+
+Done in 2.5s
+
+Remove the removed components tailwind content in file: /project-path/tailwind.config.js
+```
 
 ### List
 
@@ -162,13 +225,26 @@ nextui list [options]
 
 ##### Example
 
-Show `all NextUI components` of the current project.
+```bash
+nextui list
+```
 
-<pre align="center">nextui list</pre>
+Output:
 
-<p align="center">
-<img src='./screenshots/list-command.png' />
-</p>
+```bash
+NextUI CLI 0.1.0
+
+Current installed NextUI components:
+
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│   Package                    │   Version              │   Status    │   Docs                                              │
+│───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│
+│   @nextui-org/autocomplete   │   2.0.10 🚀latest      │   newPost   │   https://nextui.org/docs/components/autocomplete   │
+│   @nextui-org/badge          │   2.0.24 🚀latest      │   stable    │   https://nextui.org/docs/components/badge          │
+│   @nextui-org/button         │   2.0.27 🚀latest      │   stable    │   https://nextui.org/docs/components/button         │
+│   @nextui-org/chip           │   2.0.25 🚀latest      │   stable    │   https://nextui.org/docs/components/chip           │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
 
 ### Doctor
 
@@ -196,11 +272,32 @@ nextui doctor [options]
 
 #### Example
 
-<pre align="center">nextui doctor</pre>
+```bash
+nextui doctor
+```
 
-<p align="center">
-<img src='./screenshots/doctor-command.png' />
-</p>
+Output:
+
+If there is a problem in your project, the `doctor` command will display the problem information.
+
+```bash
+NextUI CLI 0.1.0
+
+NextUI CLI: ❌ There is 1 problem in your project
+
+❗️Problem 1: missingTailwind
+
+You have not created the tailwind.config.(j|t)s
+See more info here: https://nextui.org/docs/guide/installation#tailwind-css-setup
+```
+
+Otherwise, the `doctor` command will display the following message.
+
+```bash
+NextUI CLI 0.1.0
+
+✅ No problems found in your project
+```
 
 ### Env
 
@@ -218,8 +315,30 @@ nextui env [options]
 
 Display the local environment Information by using the `env` command.
 
-<pre align="center">nextui doctor</pre>
+```bash
+nextui env
+```
 
-<p align="center">
-<img src='./screenshots/env-command.png' />
-</p>
+Output:
+
+```bash
+NextUI CLI 0.1.0
+
+Current installed NextUI components:
+
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│   Package                    │   Version              │   Status    │   Docs                                              │
+│───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│
+│   @nextui-org/autocomplete   │   2.0.10 🚀latest      │   newPost   │   https://nextui.org/docs/components/autocomplete   │
+│   @nextui-org/badge          │   2.0.24 🚀latest      │   stable    │   https://nextui.org/docs/components/badge          │
+│   @nextui-org/button         │   2.0.27 🚀latest      │   stable    │   https://nextui.org/docs/components/button         │
+│   @nextui-org/chip           │   2.0.25 🚀latest      │   stable    │   https://nextui.org/docs/components/chip           │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Environment Info:
+  System:
+    OS: darwin
+    CPU: arm64
+  Binaries:
+    Node: v18.18.2
+```

@@ -17,26 +17,26 @@ npx nextui-cli@latest
 ### Global Installation
 
 ```bash
-npm install -g @nextui/cli
+npm install -g @nextui-cli
 ```
 
 ## Usage
 
 ```bash
-nextui [command]
+Usage: nextui [command]
 
 Options:
   -v, --version                      Output the current version
-  -h, --help                         Display help for command
+  -h, --help                         Display help information for commands
 
 Commands:
-  init [options] [projectName]       Initialize a new NextUI project
-  add [options] [components...]      Add NextUI components to your project
-  upgrade [options] [components...]  Upgrade the NextUI components to the latest version
-  remove [options] [components...]   Remove NextUI components from your project
-  list [options]                     List all the components status, description, version, etc
-  env [options]                      Display debug information about the local environment
-  doctor [options]                   Check whether exist problem in user project
+  init [options] [projectName]       Initializes a new project
+  add [options] [components...]      Adds components to your project
+  upgrade [options] [components...]  Upgrades project components to the latest versions
+  remove [options] [components...]   Removes components from the project
+  list [options]                     Lists all components, showing status, descriptions, and versions
+  env [options]                      Displays debugging information for the local environment
+  doctor [options]                   Checks for issues in the project
   help [command]                     display help for command
 ```
 
@@ -86,7 +86,39 @@ nextui add [components...] [options]
 
 ##### Example
 
-Add the **Button** component to your project.
+Without setting a specific component, the `add` command will show a list of available components.
+
+```bash
+nextui add
+```
+
+Output:
+
+```bash
+NextUI CLI v0.1.2
+
+? Which components would you like to add? › - Space to select. Return to submit
+Instructions:
+    ↑/↓: Highlight option
+    ←/→/[space]: Toggle selection
+    [a,b,c]/delete: Filter choices
+    enter/return: Complete answer
+
+Filtered results for: Enter something to filter
+
+◉  accordion
+◯  autocomplete
+◯  avatar
+◯  badge
+◯  breadcrumbs
+◯  button
+◯  card
+◯  checkbox
+◯  chip
+◯  code
+```
+
+If you want to add a specific component, you can specify the component name.
 
 ```bash
 nextui add button
@@ -95,21 +127,23 @@ nextui add button
 Output:
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
 Adding the required dependencies: @nextui-org/button
 
-pnpm add @nextui-org/badge
+pnpm add @nextui-org/button
 Packages: +1
 +
 Progress: resolved 470, reused 462, downloaded 0, added 0, done
 
 dependencies:
-+ @nextui-org/badge 2.0.24
++ @nextui-org/button 2.0.24
 
 Done in 3.4s
 
-Added the required tailwind content in file: /project-path/tailwind.config.js
+Tailwind CSS settings have been updated in: /project-path/tailwind.config.js
+
+✅ Components added successfully
 ```
 
 ### Upgrade
@@ -137,22 +171,21 @@ nextui upgrade button
 Output:
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
-Adding the required dependencies: @nextui-org/button
-
-╭──────────────────────────────────────────────────────────╮
-│  @nextui-org/button              2.0.23  ->  2.0.24       │
-╰──────────────────────────────────────────────────────────╯
-? Upgrade the version? › - Use arrow-keys. Return to submit.
+╭───────────────────────────────────────────────────────────╮
+│  @nextui-org/button              2.0.24  ->  2.0.27   │
+╰───────────────────────────────────────────────────────────╯
+? Would you like to proceed with the upgrade? › - Use arrow-keys. Return to submit.
 ❯   Yes
     No
 
-pnpm add  @nextui-org/button@2.0.24
+pnpm add  @nextui-org/button@2.0.27
 Already up to date
-Progress: resolved 470, reused 462, downloaded 0, added 0, done
+Progress: resolved 474, reused 465, downloaded 0, added 0, done
+Done in 2.9s
 
-Done in 1.7s
+✅ Upgrade complete. All components are up to date.
 ```
 
 ### Remove
@@ -183,29 +216,30 @@ nextui remove button
 Output:
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
-❗️ Components to be removed:
-╭────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│   Package             │   Version              │   Status   │   Docs                                       │
-│────────────────────────────────────────────────────────────────────────────────────────────────────────────│
-│   @nextui-org/button   │   2.0.24 🚀latest      │   stable   │   https://nextui.org/docs/components/button   │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-? Do you want to remove these components? › - Use arrow-keys. Return to submit.
+❗️ Components slated for removal:
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│   Package              │   Version              │   Status   │   Docs                                        │
+│──────────────────────────────────────────────────────────────────────────────────────────────────────────────│
+│   @nextui-org/button   │   2.0.27 🚀latest      │   stable   │   https://nextui.org/docs/components/button   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+? Confirm removal of these components: › - Use arrow-keys. Return to submit.
 ❯   Yes
     No
 
-pnpm remove  @nextui-org/badge
-Packages: -1
--
-Progress: resolved 469, reused 460, downloaded 0, added 0, done
+pnpm remove  @nextui-org/button
+Already up to date
+Progress: resolved 474, reused 465, downloaded 0, added 0, done
 
 dependencies:
-- @nextui-org/badge 2.0.24
+- @nextui-org/button 2.0.27
 
-Done in 2.5s
+Done in 2.1s
 
-Remove the removed components tailwind content in file: /project-path/tailwind.config.js
+Remove the removed components tailwind content in file:/project-path/tailwind.config.js
+
+✅ Successfully removed the specified NextUI components: @nextui-org/button
 ```
 
 ### List
@@ -230,9 +264,9 @@ nextui list
 Output:
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
-Current installed NextUI components:
+Current installed components:
 
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │   Package                    │   Version              │   Status    │   Docs                                              │
@@ -279,22 +313,21 @@ Output:
 If there is a problem in your project, the `doctor` command will display the problem information.
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
-NextUI CLI: ❌ There is 1 problem in your project
+NextUI CLI: ❌ Your project has 1 issue that require attention
 
-❗️Problem 1: missingTailwind
+❗️Issue 1: missingTailwind
 
-You have not created the tailwind.config.(j|t)s
-See more info here: https://nextui.org/docs/guide/installation#tailwind-css-setup
+Missing tailwind.config.(j|t)s file. To set up, visit: https://nextui.org/docs/guide/installation#tailwind-css-setup
 ```
 
 Otherwise, the `doctor` command will display the following message.
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
-✅ No problems found in your project
+✅ Your project has no detected issues.
 ```
 
 ### Env
@@ -322,7 +355,7 @@ Output:
 ```bash
 NextUI CLI 0.1.0
 
-Current installed NextUI components:
+Current installed components:
 
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │   Package                    │   Version              │   Status    │   Docs                                              │

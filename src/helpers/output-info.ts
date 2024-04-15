@@ -36,7 +36,7 @@ const padEnd = `${space}${rounded.v}${space}`;
 export function outputComponents({
   commandName,
   components,
-  message = 'Current unstalled components:\n',
+  message = 'Current installed components:\n',
   warnError = true
 }: {
   components: NextUIComponents;

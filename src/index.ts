@@ -1,6 +1,8 @@
+import chalk from 'chalk';
 import {Command} from 'commander';
 
 import {Logger} from '@helpers/logger';
+import {getCommandDescAndLog} from '@helpers/utils';
 
 import pkg from '../package.json';
 
@@ -17,6 +19,7 @@ const nextui = new Command();
 nextui
   .name('nextui')
   .usage('[command]')
+  .description(`${chalk.blue(getCommandDescAndLog(`\nNextUI CLI v${pkg.version}\n`, ''))}`)
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help information for commands')
   .allowUnknownOption();

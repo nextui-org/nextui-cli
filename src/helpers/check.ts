@@ -171,7 +171,7 @@ export function checkTailwind(
   isPnpm?: boolean,
   content?: string
 ): CheckResult {
-  if (!currentComponents!.length) {
+  if (type === 'partial' && !currentComponents!.length) {
     return [true];
   }
 

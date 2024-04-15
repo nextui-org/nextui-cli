@@ -25,6 +25,13 @@ export const DOCS_PROVIDER_SETUP = 'https://nextui.org/docs/guide/installation#p
 export const tailwindRequired = {
   content: './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   darkMode: 'darkMode: "class"',
+  importContent: (isTypescript = false) => {
+    if (isTypescript) {
+      return `import {nextui} from '@nextui-org/theme';`;
+    }
+
+    return `const {nextui} = require('@nextui-org/theme');`;
+  },
   plugins: 'nextui()'
 } as const;
 

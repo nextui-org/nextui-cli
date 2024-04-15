@@ -94,7 +94,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
       }
     ]);
 
-    outputBox(outputInfo);
+    outputBox({text: outputInfo});
 
     if (!isLatest) {
       result.push({
@@ -112,7 +112,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     }));
     const outputInfo = getUpgradeVersion(outputUpgradeOptionList);
 
-    outputBox(outputInfo);
+    outputBox({text: outputInfo});
 
     result = upgradeOptionList.filter((upgradeOption) => !upgradeOption.isLatest);
   }

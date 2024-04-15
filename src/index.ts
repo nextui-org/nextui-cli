@@ -1,7 +1,12 @@
+import type {CommandName} from '@helpers/type';
+
 import chalk from 'chalk';
 import {Command} from 'commander';
 
-import {Logger} from '@helpers/logger';
+import {exec} from '@helpers/exec';
+import {Logger, gradientString} from '@helpers/logger';
+import {findMostMatchText} from '@helpers/math-diff';
+import {outputBox} from '@helpers/output-info';
 import {getCommandDescAndLog} from '@helpers/utils';
 
 import pkg from '../package.json';
@@ -13,6 +18,9 @@ import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
 import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
+import {getLatestVersion} from './scripts/helpers';
+
+const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
 
 const nextui = new Command();
 
@@ -21,8 +29,50 @@ nextui
   .usage('[command]')
   .description(`${chalk.blue(getCommandDescAndLog(`\nNextUI CLI v${pkg.version}\n`, ''))}`)
   .version(pkg.version, '-v, --version', 'Output the current version')
-  .helpOption('-h, --help', 'Display help information for commands')
-  .allowUnknownOption();
+  .helpOption('-h, --help', 'Display help for command')
+  .allowUnknownOption()
+  .action(async (_, command) => {
+    let isArgs = false;
+
+    if (command) {
+      const args = command.args?.[0];
+
+      if (args) {
+        isArgs = true;
+
+        const matchCommand = findMostMatchText(commandList, args);
+
+        if (matchCommand) {
+          Logger.error(
+            `Unknown command '${args}', Did you mean '${chalk.underline(matchCommand)}'?`
+          );
+        } else {
+          Logger.error(`Unknown command '${args}'`);
+        }
+      }
+    }
+
+    if (!isArgs) {
+      const helpInfo = (await exec('nextui --help', {logCmd: false, stdio: 'pipe'})) as string;
+
+      let helpInfoArr = helpInfo.split('\n');
+
+      helpInfoArr = helpInfoArr.filter((info) => info && !info.includes('NextUI CLI v'));
+      // Add command name color
+      helpInfoArr = helpInfoArr.map((info) => {
+        const command = info.match(/(\w+)\s\[/)?.[1];
+
+        if (command) {
+          return info.replace(command, chalk.cyan(command));
+        }
+
+        return info;
+      });
+
+      Logger.log(helpInfoArr.join('\n'));
+    }
+    process.exit(0);
+  });
 
 nextui
   .command('init')
@@ -84,6 +134,30 @@ nextui
   .option('-ct --checkTailwind [boolean]', 'Check the tailwind.config.js file', true)
   .option('-cp --checkPnpm [boolean]', 'Check for Pnpm', true)
   .action(doctorAction);
+
+nextui.hook('preAction', async () => {
+  // Add NextUI CLI version check preAction
+  const currentVersion = pkg.version;
+  const latestVersion = await getLatestVersion(pkg.name);
+
+  if (currentVersion !== latestVersion) {
+    outputBox({
+      color: 'yellow',
+      padding: 1,
+      text: `${chalk.gray(
+        `Available upgrade: v${currentVersion} -> ${chalk.greenBright(
+          `v${latestVersion}`
+        )}\nRun \`${chalk.cyan(
+          'npm install nextui-cli@latest'
+        )}\` to upgrade\nChangelog: ${chalk.underline(
+          'https://github.com/nextui-org/nextui-cli/releases'
+        )}`
+      )}`,
+      title: gradientString('NextUI CLI')
+    });
+    Logger.newLine();
+  }
+});
 
 nextui.parseAsync(process.argv).catch(async (reason) => {
   Logger.newLine();

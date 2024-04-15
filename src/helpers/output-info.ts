@@ -1,7 +1,8 @@
-import type {CommandName} from './type';
+import type {ChalkColor, CommandName} from './type';
 
 import chalk from 'chalk';
 
+import {boxRound} from 'src/constants/box';
 import {
   type NextUIComponent,
   type NextUIComponents,
@@ -13,19 +14,12 @@ import {Logger} from './logger';
 import {PasCalCase} from './utils';
 
 // eslint-disable-next-line no-control-regex
-const colorMatchRegex = /(\u001b\[\d+m)/g;
+const colorMatchRegex = /\u001b\[[\d;]+m/g;
 
-const rounded = {
-  bl: '╰',
-  br: '╯',
-  h: '─',
-  tl: '╭',
-  tr: '╮',
-  v: '│'
-} as const;
+const rounded = boxRound.round;
 const space = '   ';
-const padStart = `${rounded.v}${space}`;
-const padEnd = `${space}${rounded.v}${space}`;
+const padStart = `${rounded.vertical}${space}`;
+const padEnd = `${space}${rounded.vertical}${space}`;
 
 /**
  * Output the components information e.g. status, description, version, etc.
@@ -123,27 +117,30 @@ export function outputComponents({
   }, [] as string[]);
 
   /** ======================== Generate box header ======================== */
-  let boxHeader = rounded.tl + padStart.replace(/.*/g, rounded.h).slice(1);
+  let boxHeader = rounded.topLeft + padStart.replace(/.*/g, rounded.horizontal).slice(1);
   let boxHeaderSec = padStart;
-  let boxHeaderTrd = rounded.v + padStart.replace(/.*/g, rounded.h).slice(1);
+  let boxHeaderTrd = rounded.vertical + padStart.replace(/.*/g, rounded.horizontal).slice(1);
 
   for (const key of orderNextUIComponentKeys) {
-    boxHeader += `${rounded.h.padEnd(componentKeyLengthMap[key] + 7, rounded.h)}`;
+    boxHeader += `${rounded.horizontal.padEnd(componentKeyLengthMap[key] + 7, rounded.horizontal)}`;
     boxHeaderSec += chalk.redBright(PasCalCase(key).padEnd(componentKeyLengthMap[key])) + padEnd;
-    boxHeaderTrd += `${rounded.h.padEnd(componentKeyLengthMap[key] + 7, rounded.h)}`;
+    boxHeaderTrd += `${rounded.horizontal.padEnd(
+      componentKeyLengthMap[key] + 7,
+      rounded.horizontal
+    )}`;
   }
 
-  boxHeader = boxHeader.slice(0, -2) + rounded.tr;
-  boxHeaderTrd = boxHeaderTrd.slice(0, -2) + rounded.v;
+  boxHeader = boxHeader.slice(0, -2) + rounded.topRight;
+  boxHeaderTrd = boxHeaderTrd.slice(0, -2) + rounded.vertical;
 
   /** ======================== Generate box footer ======================== */
-  let boxFooter = rounded.bl + padStart.replace(/.*/g, rounded.h).slice(1);
+  let boxFooter = rounded.bottomLeft + padStart.replace(/.*/g, rounded.horizontal).slice(1);
 
   for (const key of orderNextUIComponentKeys) {
-    boxFooter += `${rounded.h.padEnd(componentKeyLengthMap[key] + 7, rounded.h)}`;
+    boxFooter += `${rounded.horizontal.padEnd(componentKeyLengthMap[key] + 7, rounded.horizontal)}`;
   }
 
-  boxFooter = boxFooter.slice(0, -2) + rounded.br;
+  boxFooter = boxFooter.slice(0, -2) + rounded.bottomRight;
 
   transformComponentsOutput = [
     boxHeader,
@@ -174,34 +171,118 @@ export function outputInfo() {
 
 /**
  * Output a box with the content
- * @param content
+ * @param text
  * @param center
  * @param log
+ * @param color
+ * @param title
+ * @param borderStyle
+ * @param padding
  */
-export function outputBox(content: string, center = false, log = true) {
-  const contentArr = content.split('\n');
+export function outputBox({
+  borderStyle = 'round',
+  center = false,
+  color,
+  log = true,
+  padding = 0,
+  text,
+  title
+}: {
+  text: string;
+  center?: boolean;
+  log?: boolean;
+  color?: ChalkColor;
+  title?: string;
+  borderStyle?: keyof typeof boxRound;
+  padding?: number;
+}) {
+  const rounded = boxRound[borderStyle];
+  const mergedRounded = color
+    ? Object.fromEntries(Object.entries(rounded).map(([key, value]) => [key, chalk[color](value)]))
+    : rounded;
+  const contentArr = text.split('\n');
   const transformArr = contentArr.map((c) => c.replace(colorMatchRegex, ''));
 
-  const maxLength = transformArr.reduce((acc, cur) => (cur.length > acc ? cur.length : acc), 0);
+  const isPadding = padding > 0;
+  const paddingLength = padding;
 
-  const boxHeader = rounded.tl + rounded.h.padEnd(maxLength, rounded.h) + rounded.tr;
-  const boxFooter = rounded.bl + rounded.h.padEnd(maxLength, rounded.h) + rounded.br;
+  const mergedPadding = center || isPadding;
+
+  let maxLength = transformArr.reduce((acc, cur) => (cur.length > acc ? cur.length : acc), 0);
+
+  // Update the padding maxLength
+  // paddingLength * 2 because one vertical line == 4 spaces
+  maxLength = isPadding ? maxLength + paddingLength * 4 : maxLength;
+
+  const clearColorTitle = title ? title.replace(colorMatchRegex, '') : '';
+  const titleLength = title ? clearColorTitle.length : 0;
+  let titleHeaderLength = maxLength - titleLength;
+  const spaceLen = 2;
+
+  while (titleLength + spaceLen + paddingLength >= maxLength) {
+    // Need to adjust the maxLength
+    maxLength += Math.floor(titleLength / 2);
+  }
+  // Update the titleHeaderLength
+  titleHeaderLength = maxLength - titleLength;
+
+  const boxHeaderContent = title
+    ? `${rounded.horizontal
+        .padEnd(Math.floor(titleHeaderLength / 2) - 1, rounded.horizontal)
+        .replaceAll(rounded.horizontal, mergedRounded.horizontal)} ${title} ${rounded.horizontal
+        .padEnd(Math.ceil(titleHeaderLength / 2) - 1, rounded.horizontal)
+        .replaceAll(rounded.horizontal, mergedRounded.horizontal)}`
+    : rounded.horizontal
+        .padEnd(maxLength, rounded.horizontal)
+        .replaceAll(rounded.horizontal, mergedRounded.horizontal);
+
+  const boxHeader = mergedRounded.topLeft + boxHeaderContent + mergedRounded.topRight;
+  const boxFooter =
+    mergedRounded.bottomLeft +
+    rounded.horizontal
+      .padEnd(maxLength, rounded.horizontal)
+      .replaceAll(rounded.horizontal, mergedRounded.horizontal) +
+    mergedRounded.bottomRight;
 
   let boxContent = contentArr.reduce((acc, cur) => {
     const transformCur = cur.replace(colorMatchRegex, '');
-    const space = maxLength - transformCur.length;
-    const spaceFir = Math.floor(space / 2);
-    const spaceSec = Math.ceil(space / 2);
-    const pad = ' '.repeat(space);
+    const spaceLength = maxLength - transformCur.length;
+
+    const pad = ' '.repeat(spaceLength);
+
+    const spaceFir = Math.floor(spaceLength / 2);
+    const spaceSec = Math.ceil(spaceLength / 2);
+
     const padFir = spaceFir > 0 ? ' '.repeat(spaceFir) : '';
     const padSec = spaceSec > 0 ? ' '.repeat(spaceSec) : '';
 
-    center
-      ? acc.push(`${rounded.v}${space ? `${padFir}${cur}${padSec}` : cur}${rounded.v}`)
-      : acc.push(`${rounded.v}${space > 0 ? `${cur}${pad}` : cur}${rounded.v}`);
+    // Over 2 cause one vertical line == 2 spaces
+    // paddingLength = Math.floor(Math.max(paddingLength, spaceFir, spaceSec) / 2);
+
+    mergedPadding
+      ? acc.push(
+          `${mergedRounded.vertical}${spaceLength ? `${padFir}${cur}${padSec}` : cur}${
+            mergedRounded.vertical
+          }`
+        )
+      : acc.push(
+          `${mergedRounded.vertical}${spaceLength > 0 ? `${cur}${pad}` : cur}${
+            mergedRounded.vertical
+          }`
+        );
 
     return acc;
   }, [] as string[]);
+
+  // Generate the padding
+  if (mergedPadding) {
+    for (let i = 0; i < paddingLength; i++) {
+      boxContent.unshift(
+        `${mergedRounded.vertical}${' '.repeat(maxLength)}${mergedRounded.vertical}`
+      );
+      boxContent.push(`${mergedRounded.vertical}${' '.repeat(maxLength)}${mergedRounded.vertical}`);
+    }
+  }
 
   boxContent = [boxHeader, ...boxContent, boxFooter];
 

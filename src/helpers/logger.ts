@@ -7,9 +7,9 @@ import {default as _gradientString} from 'gradient-string';
 
 export const defaultColors = ['#F54180', '#338EF7'] as const;
 
-export const gradientString = _gradientString;
+export const gradientString = _gradientString(...defaultColors);
 
-const logPrefix = gradientString(...defaultColors)('NextUI CLI:');
+const logPrefix = gradientString('NextUI CLI:');
 
 export type PrefixLogType = Extract<
   keyof typeof Logger,
@@ -39,7 +39,7 @@ export class Logger {
   }
 
   static gradient(content: string | number | boolean, options?: {colors?: tinycolor.ColorInput[]}) {
-    this.log(gradientString(...(options?.colors ?? defaultColors))(String(content)));
+    this.log(_gradientString(...(options?.colors ?? defaultColors))(String(content)));
   }
 
   static prefix(type: PrefixLogType, ...args: SAFE_ANY) {

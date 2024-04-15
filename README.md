@@ -174,7 +174,7 @@ Output:
 NextUI CLI v0.1.2
 
 ╭───────────────────────────────────────────────────────────╮
-│  @nextui-org/button              2.0.24  ->  2.0.27   │
+│  @nextui-org/button              2.0.24  ->  2.0.27       │
 ╰───────────────────────────────────────────────────────────╯
 ? Would you like to proceed with the upgrade? › - Use arrow-keys. Return to submit.
 ❯   Yes

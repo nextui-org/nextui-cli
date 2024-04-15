@@ -92,6 +92,11 @@ export function fixTailwind(type: CheckType, options: FixTailwind) {
     } else if (errorType === 'plugins') {
       pluginsMatch.push(info);
       tailwindContent = replaceMatchArray('plugins', tailwindContent, pluginsMatch);
+
+      // Add import content
+      const importContent = tailwindRequired.importContent(tailwindPath.endsWith('.ts'));
+
+      tailwindContent = `${importContent}\n${tailwindContent}`;
     }
 
     if (type === 'all' && errorType === 'darkMode') {
@@ -102,7 +107,7 @@ export function fixTailwind(type: CheckType, options: FixTailwind) {
       tailwindContent = `${tailwindContent.slice(
         0,
         darkModeIndex
-      )}${darkModeContent},\n${tailwindContent.slice(darkModeIndex)}`;
+      )} ${darkModeContent},\n${tailwindContent.slice(darkModeIndex)}`;
     }
   }
 

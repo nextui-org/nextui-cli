@@ -48,7 +48,9 @@ export async function addAction(components: string[], options: AddActionOptions)
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
 
-  var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
+  var {allDependencies, allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
+
+  const isNextUIAll = !!allDependencies[NEXT_UI];
 
   if (!components.length && !all) {
     components = await getAutocompleteMultiselect(
@@ -79,7 +81,9 @@ export async function addAction(components: string[], options: AddActionOptions)
   var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
 
   const currentComponentsKeys = currentComponents.map((c) => c.name);
-  const filterCurrentComponents = components.filter((c) => currentComponentsKeys.includes(c));
+  const filterCurrentComponents = components.filter(
+    (c) => currentComponentsKeys.includes(c) || (isNextUIAll && c === NEXT_UI)
+  );
 
   if (filterCurrentComponents.length) {
     Logger.prefix(

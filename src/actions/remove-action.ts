@@ -53,7 +53,7 @@ export async function removeAction(components: string[], options: RemoveOptionsA
     return;
   }
 
-  if (all) {
+  if (all || isNextUIAll) {
     components = isNextUIAll ? [NEXT_UI] : currentComponents.map((component) => component.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(

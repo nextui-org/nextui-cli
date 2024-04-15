@@ -373,3 +373,7 @@ Environment Info:
   Binaries:
     Node: v18.18.2
 ```
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)

@@ -78,7 +78,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
   const {allDependencies, isNextUIAll} = options as Required<Upgrade>;
   const {upgradeOptionList} = options as Required<Upgrade>;
   let result: UpgradeOption[] = [];
-  const latestVersion = store.get('latestVersion');
+  const latestVersion = store.latestVersion;
 
   if (isNextUIAll) {
     const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);

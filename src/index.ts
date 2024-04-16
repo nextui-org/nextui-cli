@@ -18,8 +18,9 @@ import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
 import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
+import {initStoreComponentsData} from './constants/component';
 import {getStore, store} from './constants/store';
-import {compareVersions} from './scripts/helpers';
+import {compareVersions, getComponents} from './scripts/helpers';
 
 const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
 
@@ -136,11 +137,20 @@ nextui
   .option('-cp --checkPnpm [boolean]', 'Check for Pnpm', true)
   .action(doctorAction);
 
-nextui.hook('preAction', async () => {
+nextui.hook('preAction', async (command) => {
   const latestVersion = await getStore('latestVersion');
 
   // Init latest version
-  store.set('latestVersion', latestVersion);
+  store.latestVersion = latestVersion;
+
+  const args = command.args?.[0];
+
+  if (args && commandList.includes(args as CommandName)) {
+    // Before run the command init the components.json
+    const nextUIComponents = (await getComponents()).components;
+
+    initStoreComponentsData(nextUIComponents);
+  }
 
   // Add NextUI CLI version check preAction
   const currentVersion = pkg.version;

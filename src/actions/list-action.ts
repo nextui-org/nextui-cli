@@ -1,8 +1,9 @@
 import {Logger} from '@helpers/logger';
 import {outputComponents} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
+import {store} from 'src/constants/store';
 
-import {type NextUIComponents, nextUIComponents} from '../../src/constants/component';
+import {type NextUIComponents} from '../../src/constants/component';
 import {resolver} from '../../src/constants/path';
 
 interface ListActionOptions {
@@ -13,7 +14,7 @@ interface ListActionOptions {
 export async function listAction(options: ListActionOptions) {
   const {packagePath = resolver('package.json'), remote = false} = options;
 
-  let components = nextUIComponents as NextUIComponents;
+  let components = store.nextUIComponents as NextUIComponents;
 
   try {
     /** ======================== Get the installed components ======================== */

@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+import type {NextUIComponentsMap, StoreKeys} from 'src/constants/store';
+import type {Components} from 'src/scripts/helpers';
+
 /**
  * @example 'test-test' => 'TestTest'
  */
@@ -68,3 +72,19 @@ export type ChalkColor =
   | 'bgMagentaBright'
   | 'bgCyanBright'
   | 'bgWhiteBright';
+
+export type ExtractStoreData<T extends StoreKeys> = T extends 'latestVersion'
+  ? string
+  : T extends 'nextUIComponents'
+  ? Components
+  : T extends 'nextUIComponentsKeys'
+  ? string[]
+  : T extends 'nextUIcomponentsPackages'
+  ? string[]
+  : T extends 'nextUIComponentsKeysSet'
+  ? Set<string>
+  : T extends 'nextUIComponentsMap'
+  ? NextUIComponentsMap
+  : T extends 'nextUIComponentsPackageMap'
+  ? NextUIComponentsMap
+  : never;

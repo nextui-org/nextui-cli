@@ -1,23 +1,37 @@
-import type {SAFE_ANY} from '@helpers/type';
+import type {ExtractStoreData, SAFE_ANY} from '@helpers/type';
 
-import {getLatestVersion} from 'src/scripts/helpers';
+import {type Components, getLatestVersion} from 'src/scripts/helpers';
 
 import {NEXT_UI} from './required';
 
-export type StoreKeys = 'latestVersion';
+export type NextUIComponentsMap = Record<string, Components[0]>;
 
-export const store: Map<StoreKeys, SAFE_ANY> = new Map();
+export type Store = {
+  latestVersion: string;
+  nextUIComponents: Components;
+  nextUIComponentsKeys: string[];
+  nextUIcomponentsPackages: string[];
+  nextUIComponentsKeysSet: Set<string>;
+  nextUIComponentsMap: NextUIComponentsMap;
+  nextUIComponentsPackageMap: NextUIComponentsMap;
+};
 
-export async function getStore(key: StoreKeys) {
-  let data = store.get(key);
+export const store = {} as Store;
+
+export type StoreKeys = keyof Store;
+
+export async function getStore<T extends StoreKeys = StoreKeys>(
+  key: T
+): Promise<ExtractStoreData<T>> {
+  let data = store[key];
 
   if (!data) {
     if (key === 'latestVersion') {
-      data = await getLatestVersion(NEXT_UI);
+      data = (await getLatestVersion(NEXT_UI)) as SAFE_ANY;
 
-      store.set(key, data);
+      store[key] = data;
     }
   }
 
-  return data;
+  return data as unknown as Promise<ExtractStoreData<T>>;
 }

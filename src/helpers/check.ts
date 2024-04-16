@@ -5,11 +5,7 @@ import {readFileSync} from 'fs';
 
 import chalk from 'chalk';
 
-import {
-  type NextUIComponents,
-  nextUIComponentsKeys,
-  nextUIComponentsKeysSet
-} from 'src/constants/component';
+import {type NextUIComponents} from 'src/constants/component';
 import {
   DOCS_INSTALLED,
   DOCS_TAILWINDCSS_SETUP,
@@ -23,6 +19,7 @@ import {
   pnpmRequired,
   tailwindRequired
 } from 'src/constants/required';
+import {store} from 'src/constants/store';
 
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
@@ -263,8 +260,8 @@ export function checkIllegalComponents(components: string[], loggerError = true)
   const illegalList: [string, null | string][] = [];
 
   for (const component of components) {
-    if (!nextUIComponentsKeysSet.has(component)) {
-      const matchComponent = findMostMatchText(nextUIComponentsKeys, component);
+    if (!store.nextUIComponentsKeysSet.has(component)) {
+      const matchComponent = findMostMatchText(store.nextUIComponentsKeys, component);
 
       illegalList.push([component, matchComponent]);
     }

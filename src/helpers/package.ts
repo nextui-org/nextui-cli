@@ -1,12 +1,8 @@
 import {readFileSync} from 'fs';
 
-import {
-  type NextUIComponents,
-  nextUIComponents,
-  nextUIComponentsMap,
-  nextUIComponentsPackageMap
-} from 'src/constants/component';
+import {type NextUIComponents} from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
+import {store} from 'src/constants/store';
 import {getLatestVersion} from 'src/scripts/helpers';
 
 import {exec} from './exec';
@@ -32,7 +28,7 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
   const allDependencies = {...devDependencies, ...dependencies};
   const allDependenciesKeys = new Set(Object.keys(allDependencies));
 
-  const currentComponents = (nextUIComponents as unknown as NextUIComponents).filter(
+  const currentComponents = (store.nextUIComponents as unknown as NextUIComponents).filter(
     (component) => {
       if (allDependenciesKeys.has(component.package)) {
         const {currentVersion, versionMode} = getVersionAndMode(allDependencies, component.package);
@@ -63,7 +59,7 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
 
 export function transformComponentsToPackage(components: string[]) {
   return components.map((component) => {
-    const nextuiComponent = nextUIComponentsMap[component];
+    const nextuiComponent = store.nextUIComponentsMap[component];
     const packageName = nextuiComponent?.package;
 
     return packageName ? packageName : component;
@@ -99,7 +95,7 @@ export async function transformPackageDetail(
       })) || '') as string
     ).replace(/\n/, '');
     const latestVersion =
-      nextUIComponentsPackageMap[component]?.version || (await getLatestVersion(component));
+      store.nextUIComponentsPackageMap[component]?.version || (await getLatestVersion(component));
 
     currentVersion = transformVersion ? `${currentVersion} new: ${latestVersion}` : currentVersion;
 

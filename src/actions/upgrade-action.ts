@@ -34,7 +34,8 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   >[] = [];
 
   for (const component of currentComponents) {
-    const latestVersion = await getLatestVersion(component.package);
+    const latestVersion =
+      nextUIComponentsMap[component.name]?.version || (await getLatestVersion(component.package));
 
     transformComponents.push({
       ...component,

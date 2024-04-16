@@ -18,7 +18,8 @@ import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
 import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
-import {getLatestVersion} from './scripts/helpers';
+import {getStore, store} from './constants/store';
+import {compareVersions} from './scripts/helpers';
 
 const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
 
@@ -136,11 +137,15 @@ nextui
   .action(doctorAction);
 
 nextui.hook('preAction', async () => {
+  const latestVersion = await getStore('latestVersion');
+
+  // Init latest version
+  store.set('latestVersion', latestVersion);
+
   // Add NextUI CLI version check preAction
   const currentVersion = pkg.version;
-  const latestVersion = await getLatestVersion(pkg.name);
 
-  if (currentVersion !== latestVersion) {
+  if (compareVersions(currentVersion, latestVersion) === -1) {
     outputBox({
       color: 'yellow',
       padding: 1,

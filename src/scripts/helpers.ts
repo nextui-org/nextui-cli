@@ -5,6 +5,7 @@ import retry from 'async-retry';
 
 import {Logger} from '@helpers/logger';
 import {COMPONENTS_PATH} from 'src/constants/path';
+import {getStore} from 'src/constants/store';
 
 export type Components = {
   name: string;
@@ -21,6 +22,33 @@ export type ComponentsJson = {
   components: Components;
 };
 
+let isFirstUpdate = true;
+
+/**
+ * Compare two versions
+ * @example compareVersions('1.0.0', '1.0.1') // -1
+ * compareVersions('1.0.1', '1.0.0') // 1
+ * compareVersions('1.0.0', '1.0.0') // 0
+ * @param version1
+ * @param version2
+ */
+export function compareVersions(version1: string, version2: string) {
+  const parts1 = version1.split('.').map(Number);
+  const parts2 = version2.split('.').map(Number);
+
+  for (let i = 0; i < parts1.length; i++) {
+    if (parts1[i] !== undefined && parts2[i] !== undefined) {
+      if (parts1[i]! > parts2[i]!) {
+        return 1;
+      } else if (parts1[i]! < parts2[i]!) {
+        return -1;
+      }
+    }
+  }
+
+  return 0;
+}
+
 export async function updateComponents() {
   if (!existsSync(COMPONENTS_PATH)) {
     // First time download the latest date from net
@@ -28,14 +56,12 @@ export async function updateComponents() {
 
     return;
   }
-  // const latestVersion = await getLatestVersion('@nextui-org/react');
-  // TODO:(winches) Remove this after the NextUI first release
-  const latestVersion = '2.3.0';
 
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
+  const latestVersion = await getStore('latestVersion');
 
-  if (currentVersion !== latestVersion) {
+  if (compareVersions(currentVersion, latestVersion) === -1) {
     // After the first time, check the version and update
     await autoUpdateComponents();
 
@@ -46,7 +72,9 @@ export async function updateComponents() {
 export async function getComponents() {
   let components: ComponentsJson = {} as ComponentsJson;
 
-  await updateComponents();
+  if (isFirstUpdate) {
+    await updateComponents();
+  }
 
   try {
     components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
@@ -72,19 +100,19 @@ export async function getLatestVersion(packageName: string): Promise<string> {
 const getUnpkgUrl = (version: string) =>
   `https://unpkg.com/@nextui-org/react@${version}/dist/components.json`;
 
-export async function autoUpdateComponents() {
-  // TODO:(winches) Remove this after the NextUI first release
-  const url = getUnpkgUrl('2.3.0');
+export async function autoUpdateComponents(latestVersion?: string) {
+  latestVersion = latestVersion || ((await getStore('latestVersion')) as string);
+  const url = getUnpkgUrl(latestVersion);
 
   const components = await downloadFile(url);
 
   const componentsJson = {
     components,
-    // TODO:(winches) Remove this after the NextUI first release
-    version: '2.3.0'
+    version: latestVersion
   };
 
   writeFileSync(COMPONENTS_PATH, JSON.stringify(componentsJson, null, 2), 'utf-8');
+  isFirstUpdate = false;
 }
 
 export async function downloadFile(url: string): Promise<Components> {

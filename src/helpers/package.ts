@@ -3,7 +3,8 @@ import {readFileSync} from 'fs';
 import {
   type NextUIComponents,
   nextUIComponents,
-  nextUIComponentsMap
+  nextUIComponentsMap,
+  nextUIComponentsPackageMap
 } from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
 import {getLatestVersion} from 'src/scripts/helpers';
@@ -97,7 +98,8 @@ export async function transformPackageDetail(
         stdio: 'pipe'
       })) || '') as string
     ).replace(/\n/, '');
-    const latestVersion = await getLatestVersion(component);
+    const latestVersion =
+      nextUIComponentsPackageMap[component]?.version || (await getLatestVersion(component));
 
     currentVersion = transformVersion ? `${currentVersion} new: ${latestVersion}` : currentVersion;
 

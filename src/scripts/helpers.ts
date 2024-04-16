@@ -22,8 +22,6 @@ export type ComponentsJson = {
   components: Components;
 };
 
-let isFirstUpdate = true;
-
 /**
  * Compare two versions
  * @example compareVersions('1.0.0', '1.0.1') // -1
@@ -72,9 +70,7 @@ export async function updateComponents() {
 export async function getComponents() {
   let components: ComponentsJson = {} as ComponentsJson;
 
-  if (isFirstUpdate) {
-    await updateComponents();
-  }
+  await updateComponents();
 
   try {
     components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
@@ -112,7 +108,6 @@ export async function autoUpdateComponents(latestVersion?: string) {
   };
 
   writeFileSync(COMPONENTS_PATH, JSON.stringify(componentsJson, null, 2), 'utf-8');
-  isFirstUpdate = false;
 }
 
 export async function downloadFile(url: string): Promise<Components> {

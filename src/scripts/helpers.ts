@@ -61,7 +61,7 @@ export async function updateComponents() {
 
   if (compareVersions(currentVersion, latestVersion) === -1) {
     // After the first time, check the version and update
-    await autoUpdateComponents();
+    await autoUpdateComponents(latestVersion);
 
     return;
   }

@@ -39,7 +39,7 @@ nextui
     if (command) {
       const args = command.args?.[0];
 
-      if (args) {
+      if (args && !commandList.includes(args as CommandName)) {
         isArgs = true;
 
         const matchCommand = findMostMatchText(commandList, args);
@@ -138,11 +138,6 @@ nextui
   .action(doctorAction);
 
 nextui.hook('preAction', async (command) => {
-  const latestVersion = await getStore('latestVersion');
-
-  // Init latest version
-  store.latestVersion = latestVersion;
-
   const args = command.args?.[0];
 
   if (args && commandList.includes(args as CommandName)) {
@@ -152,16 +147,23 @@ nextui.hook('preAction', async (command) => {
     initStoreComponentsData(nextUIComponents);
   }
 
+  const cliLatestVersion = await getStore('cliLatestVersion');
+  const latestVersion = await getStore('latestVersion');
+
+  // Init latest version
+  store.latestVersion = latestVersion;
+  store.cliLatestVersion = cliLatestVersion;
+
   // Add NextUI CLI version check preAction
   const currentVersion = pkg.version;
 
-  if (compareVersions(currentVersion, latestVersion) === -1) {
+  if (compareVersions(currentVersion, cliLatestVersion) === -1) {
     outputBox({
       color: 'yellow',
       padding: 1,
       text: `${chalk.gray(
         `Available upgrade: v${currentVersion} -> ${chalk.greenBright(
-          `v${latestVersion}`
+          `v${cliLatestVersion}`
         )}\nRun \`${chalk.cyan(
           'npm install nextui-cli@latest'
         )}\` to upgrade\nChangelog: ${chalk.underline(

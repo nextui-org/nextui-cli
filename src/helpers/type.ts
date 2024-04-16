@@ -73,13 +73,11 @@ export type ChalkColor =
   | 'bgCyanBright'
   | 'bgWhiteBright';
 
-export type ExtractStoreData<T extends StoreKeys> = T extends 'latestVersion'
+export type ExtractStoreData<T extends StoreKeys> = T extends 'latestVersion' | 'cliLatestVersion'
   ? string
   : T extends 'nextUIComponents'
   ? Components
-  : T extends 'nextUIComponentsKeys'
-  ? string[]
-  : T extends 'nextUIcomponentsPackages'
+  : T extends 'nextUIComponentsKeys' | 'nextUIcomponentsPackages'
   ? string[]
   : T extends 'nextUIComponentsKeysSet'
   ? Set<string>

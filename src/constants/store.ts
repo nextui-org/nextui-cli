@@ -2,11 +2,12 @@ import type {ExtractStoreData, SAFE_ANY} from '@helpers/type';
 
 import {type Components, getLatestVersion} from 'src/scripts/helpers';
 
-import {NEXT_UI} from './required';
+import {NEXTUI_CLI, NEXT_UI} from './required';
 
 export type NextUIComponentsMap = Record<string, Components[0]>;
 
 export type Store = {
+  cliLatestVersion: string;
   latestVersion: string;
   nextUIComponents: Components;
   nextUIComponentsKeys: string[];
@@ -28,6 +29,10 @@ export async function getStore<T extends StoreKeys = StoreKeys>(
   if (!data) {
     if (key === 'latestVersion') {
       data = (await getLatestVersion(NEXT_UI)) as SAFE_ANY;
+
+      store[key] = data;
+    } else if (key === 'cliLatestVersion') {
+      data = (await getLatestVersion(NEXTUI_CLI)) as SAFE_ANY;
 
       store[key] = data;
     }

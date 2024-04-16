@@ -7,6 +7,8 @@ import {getPackageInfo} from '@helpers/package';
 import {type NextUIComponent, type NextUIComponents} from './component';
 import {resolver} from './path';
 
+export const NEXTUI_CLI = 'nextui-cli';
+
 export const FRAMER_MOTION = 'framer-motion';
 export const TAILWINDCSS = 'tailwindcss';
 export const NEXT_UI = '@nextui-org/react';

@@ -18,11 +18,18 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          check-latest: true
+          node-version-file: '.nvmrc'
 
       - run: npx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Publish to npm
         run: npm publish

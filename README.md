@@ -353,7 +353,7 @@ nextui env
 Output:
 
 ```bash
-NextUI CLI 0.1.0
+NextUI CLI v0.1.2
 
 Current installed components:
 

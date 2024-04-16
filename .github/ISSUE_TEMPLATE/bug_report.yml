@@ -26,7 +26,7 @@ body:
     attributes:
       label: NextUI CLI Version
       description: |
-        Please provide the version of NextUI you are using.
+        Please provide the version of NextUI CLI you are using.
         You can find the version number in the package.json file.
       placeholder: ex. 0.1.4
     validations:

@@ -9,9 +9,10 @@ import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {upgrade} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo} from '@helpers/utils';
-import {type NextUIComponents, nextUIComponentsMap} from 'src/constants/component';
+import {type NextUIComponents} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {NEXT_UI} from 'src/constants/required';
+import {store} from 'src/constants/store';
 import {getAutocompleteMultiselect, getSelect} from 'src/prompts';
 import {getLatestVersion} from 'src/scripts/helpers';
 
@@ -34,7 +35,9 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   >[] = [];
 
   for (const component of currentComponents) {
-    const latestVersion = await getLatestVersion(component.package);
+    const latestVersion =
+      store.nextUIComponentsMap[component.name]?.version ||
+      (await getLatestVersion(component.package));
 
     transformComponents.push({
       ...component,
@@ -82,8 +85,8 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   }
 
   components = components.map((c) => {
-    if (nextUIComponentsMap[c]?.package) {
-      return nextUIComponentsMap[c]!.package;
+    if (store.nextUIComponentsMap[c]?.package) {
+      return store.nextUIComponentsMap[c]!.package;
     }
 
     return c;

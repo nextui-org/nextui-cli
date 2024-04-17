@@ -18,7 +18,6 @@ import {fixPnpm, fixProvider, fixTailwind} from '@helpers/fix';
 import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {findFiles} from '@helpers/utils';
-import {nextUIComponents, nextUIComponentsMap} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {
   DOCS_PROVIDER_SETUP,
@@ -26,6 +25,7 @@ import {
   individualTailwindRequired,
   pnpmRequired
 } from 'src/constants/required';
+import {store} from 'src/constants/store';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
 
@@ -55,7 +55,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (!components.length && !all) {
     components = await getAutocompleteMultiselect(
       'Which components would you like to add?',
-      nextUIComponents
+      store.nextUIComponents
         .filter(
           (component) =>
             !currentComponents.some((currentComponent) => currentComponent.name === component.name)
@@ -129,7 +129,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     );
     const missingDependencies = [
       ..._missingDependencies,
-      ...components.map((c) => nextUIComponentsMap[c]!.package)
+      ...components.map((c) => store.nextUIComponentsMap[c]!.package)
     ];
 
     Logger.info(

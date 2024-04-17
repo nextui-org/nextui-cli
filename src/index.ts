@@ -18,7 +18,9 @@ import {initAction} from './actions/init-action';
 import {listAction} from './actions/list-action';
 import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
-import {getLatestVersion} from './scripts/helpers';
+import {initStoreComponentsData} from './constants/component';
+import {getStore, store} from './constants/store';
+import {compareVersions, getComponents} from './scripts/helpers';
 
 const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
 
@@ -37,7 +39,7 @@ nextui
     if (command) {
       const args = command.args?.[0];
 
-      if (args) {
+      if (args && !commandList.includes(args as CommandName)) {
         isArgs = true;
 
         const matchCommand = findMostMatchText(commandList, args);
@@ -135,18 +137,33 @@ nextui
   .option('-cp --checkPnpm [boolean]', 'Check for Pnpm', true)
   .action(doctorAction);
 
-nextui.hook('preAction', async () => {
+nextui.hook('preAction', async (command) => {
+  const args = command.args?.[0];
+
+  if (args && commandList.includes(args as CommandName)) {
+    // Before run the command init the components.json
+    const nextUIComponents = (await getComponents()).components;
+
+    initStoreComponentsData(nextUIComponents);
+  }
+
+  const cliLatestVersion = await getStore('cliLatestVersion');
+  const latestVersion = await getStore('latestVersion');
+
+  // Init latest version
+  store.latestVersion = latestVersion;
+  store.cliLatestVersion = cliLatestVersion;
+
   // Add NextUI CLI version check preAction
   const currentVersion = pkg.version;
-  const latestVersion = await getLatestVersion(pkg.name);
 
-  if (currentVersion !== latestVersion) {
+  if (compareVersions(currentVersion, cliLatestVersion) === -1) {
     outputBox({
       color: 'yellow',
       padding: 1,
       text: `${chalk.gray(
         `Available upgrade: v${currentVersion} -> ${chalk.greenBright(
-          `v${latestVersion}`
+          `v${cliLatestVersion}`
         )}\nRun \`${chalk.cyan(
           'npm install nextui-cli@latest'
         )}\` to upgrade\nChangelog: ${chalk.underline(

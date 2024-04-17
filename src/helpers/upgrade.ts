@@ -3,7 +3,7 @@ import type {RequiredKey, SAFE_ANY} from './type';
 import chalk from 'chalk';
 
 import {NEXT_UI} from 'src/constants/required';
-import {getLatestVersion} from 'src/scripts/helpers';
+import {store} from 'src/constants/store';
 
 import {outputBox} from './output-info';
 import {getColorVersion, getVersionAndMode} from './utils';
@@ -78,9 +78,9 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
   const {allDependencies, isNextUIAll} = options as Required<Upgrade>;
   const {upgradeOptionList} = options as Required<Upgrade>;
   let result: UpgradeOption[] = [];
+  const latestVersion = store.latestVersion;
 
   if (isNextUIAll) {
-    const latestVersion = await getLatestVersion(NEXT_UI);
     const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
     const colorVersion = getColorVersion(currentVersion, latestVersion);
     const isLatest = latestVersion === currentVersion;

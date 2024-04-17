@@ -53,3 +53,19 @@ export async function getSelect(message: string, choices: prompts.Choice[]) {
 
   return result.value;
 }
+
+export async function getMultiselect(message: string, choices?: prompts.Choice[]) {
+  const result = await prompts(
+    {
+      hint: '- Space to select. Return to submit',
+      message,
+      min: 1,
+      name: 'value',
+      type: 'multiselect',
+      ...(choices ? {choices} : {})
+    },
+    defaultPromptOptions
+  );
+
+  return result.value;
+}

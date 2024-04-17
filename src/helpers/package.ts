@@ -28,22 +28,25 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
   const allDependencies = {...devDependencies, ...dependencies};
   const allDependenciesKeys = new Set(Object.keys(allDependencies));
 
-  const currentComponents = (store.nextUIComponents as unknown as NextUIComponents).filter(
-    (component) => {
+  const currentComponents = (store.nextUIComponents as unknown as NextUIComponents)
+    .map((component) => {
+      let version = component.version;
+      let versionMode = component.versionMode;
+
       if (allDependenciesKeys.has(component.package)) {
-        const {currentVersion, versionMode} = getVersionAndMode(allDependencies, component.package);
+        const data = getVersionAndMode(allDependencies, component.package);
 
-        component.version = transformVersion
-          ? `${currentVersion} new: ${component.version}`
-          : currentVersion;
-        component.versionMode = versionMode;
-
-        return true;
+        version = transformVersion ? `${data.currentVersion} new: ${version}` : data.currentVersion;
+        versionMode = data.versionMode;
       }
 
-      return false;
-    }
-  ) as NextUIComponents;
+      return {
+        ...component,
+        version,
+        versionMode
+      };
+    })
+    .filter((component) => allDependenciesKeys.has(component.package)) as NextUIComponents;
   const isAllComponents = allDependenciesKeys.has(NEXT_UI);
 
   return {
@@ -104,6 +107,7 @@ export async function transformPackageDetail(
       docs: docs || '',
       name: component,
       package: component,
+      peerDependencies: {},
       status: 'stable',
       style: '',
       version: currentVersion,

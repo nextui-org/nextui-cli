@@ -4,8 +4,11 @@ import {existsSync, readFileSync, writeFileSync} from 'fs';
 import retry from 'async-retry';
 
 import {Logger} from '@helpers/logger';
+import {transformPeerVersion} from '@helpers/utils';
 import {COMPONENTS_PATH} from 'src/constants/path';
 import {getStore} from 'src/constants/store';
+
+export type Dependencies = Record<string, string>;
 
 export type Components = {
   name: string;
@@ -15,6 +18,7 @@ export type Components = {
   description: string;
   status: string;
   style: string;
+  peerDependencies: Dependencies;
 }[];
 
 export type ComponentsJson = {
@@ -31,6 +35,9 @@ export type ComponentsJson = {
  * @param version2
  */
 export function compareVersions(version1: string, version2: string) {
+  version1 = transformPeerVersion(version1);
+  version2 = transformPeerVersion(version2);
+
   const parts1 = version1.split('.').map(Number);
   const parts2 = version2.split('.').map(Number);
 

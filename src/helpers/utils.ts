@@ -70,6 +70,9 @@ export function getUpgradeType({
 }
 
 export function getColorVersion(currentVersion: string, latestVersion: string) {
+  currentVersion = transformPeerVersion(currentVersion);
+  latestVersion = transformPeerVersion(latestVersion);
+
   if (isMajorUpdate(currentVersion, latestVersion)) {
     return isMajorUpdate(currentVersion, latestVersion);
   } else if (isMinorUpdate(currentVersion, latestVersion)) {
@@ -146,4 +149,12 @@ export function getPackageManagerInfo(packageManager: string): {install: string;
   };
 
   return packageManagerInfo[packageManager];
+}
+
+/**
+ * @example transformPeerVersion('>=1.0.0') // '1.0.0'
+ * @param version
+ */
+export function transformPeerVersion(version: string) {
+  return version.replace(/\^|~|>=|<=|>|</g, '');
 }

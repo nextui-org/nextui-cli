@@ -14,7 +14,7 @@ import {Logger} from './logger';
 import {PasCalCase} from './utils';
 
 // eslint-disable-next-line no-control-regex
-const colorMatchRegex = /\u001b\[[\d;]+m/g;
+export const colorMatchRegex = /\u001b\[[\d;]+m/g;
 
 const rounded = boxRound.round;
 const space = '   ';
@@ -51,6 +51,7 @@ export function outputComponents({
     docs: 0,
     name: 0,
     package: 0,
+    peerDependencies: 0,
     status: 0,
     style: 0,
     version: 0

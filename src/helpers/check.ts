@@ -186,7 +186,7 @@ export function checkTailwind(
       content.includes(tailwindRequired.content)
     );
     const isPluginsCorrect = pluginsMatch.some((plugins) =>
-      plugins.includes(tailwindRequired.plugins)
+      tailwindRequired.checkPluginsRegex.test(plugins)
     );
 
     if (isDarkModeCorrect && isContentCorrect && isPluginsCorrect) {
@@ -202,7 +202,7 @@ export function checkTailwind(
       (content) => content.includes(individualContent) || content.includes(tailwindRequired.content)
     );
     const isPluginsCorrect = pluginsMatch.some((plugins) =>
-      plugins.includes(tailwindRequired.plugins)
+      tailwindRequired.checkPluginsRegex.test(plugins)
     );
 
     if (isContentCorrect && isPluginsCorrect) {

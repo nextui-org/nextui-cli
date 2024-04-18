@@ -22,60 +22,6 @@ interface UpgradeOption {
 
 const DEFAULT_SPACE = ''.padEnd(7);
 
-export function getUpgradeVersion(upgradeOptionList: UpgradeOption[]) {
-  if (!upgradeOptionList.length) {
-    return '';
-  }
-
-  const output: string[] = [];
-
-  const optionMaxLenMap = {
-    latestVersion: 0,
-    package: 0,
-    version: 0
-  };
-
-  for (const upgradeOption of upgradeOptionList) {
-    for (const key in upgradeOption) {
-      if (!Object.prototype.hasOwnProperty.call(upgradeOption, key)) {
-        continue;
-      }
-
-      optionMaxLenMap[key] = Math.max(optionMaxLenMap[key], upgradeOption[key].length);
-
-      if (key === 'version') {
-        // Remove the duplicate character '^'
-        upgradeOption[key] = upgradeOption[key].replace('^', '');
-      }
-    }
-  }
-
-  for (const upgradeOption of upgradeOptionList) {
-    if (upgradeOption.isLatest) {
-      output.push(
-        `  ${chalk.white(
-          `${`${upgradeOption.package}@${upgradeOption.versionMode || ''}${
-            upgradeOption.latestVersion
-          }`.padEnd(optionMaxLenMap.package + DEFAULT_SPACE.length + DEFAULT_SPACE.length)}`
-        )}${chalk.greenBright('latest').padStart(optionMaxLenMap.version)}${DEFAULT_SPACE}`
-      );
-      continue;
-    }
-
-    output.push(
-      `  ${chalk.white(
-        `${upgradeOption.package.padEnd(
-          optionMaxLenMap.package + DEFAULT_SPACE.length
-        )}${DEFAULT_SPACE}${`${upgradeOption.versionMode || ''}${upgradeOption.version}`.padEnd(
-          optionMaxLenMap.version
-        )}  ->  ${upgradeOption.versionMode || ''}${upgradeOption.latestVersion}`
-      )}${DEFAULT_SPACE}`
-    );
-  }
-
-  return output.join('\n');
-}
-
 interface Upgrade {
   isNextUIAll: boolean;
   allDependencies?: Record<string, SAFE_ANY>;
@@ -117,7 +63,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     outputBox({text: outputInfo, title: 'Components'});
 
     // PeerDep output
-    const outputPeerDepInfo = getUpgradeVersion(peerDepList);
+    const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
     outputBox({text: outputPeerDepInfo, title: 'PeerDependencies'});
 
@@ -145,7 +91,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
 
     // PeerDep output
     const peerDepList = [...upgradePeerList.flat()];
-    const outputPeerDepInfo = getUpgradeVersion(peerDepList);
+    const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
     outputBox({color: 'yellow', text: outputPeerDepInfo, title: chalk.yellow('PeerDependencies')});
 
@@ -153,6 +99,70 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
   }
 
   return result;
+}
+
+/**
+ * Get upgrade version
+ * @param upgradeOptionList
+ * @param peer Use for peerDependencies change the latest to fulfillment
+ */
+export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = false) {
+  if (!upgradeOptionList.length) {
+    return '';
+  }
+
+  const output: string[] = [];
+
+  const optionMaxLenMap = {
+    latestVersion: 0,
+    package: 0,
+    version: 0
+  };
+
+  for (const upgradeOption of upgradeOptionList) {
+    for (const key in upgradeOption) {
+      if (!Object.prototype.hasOwnProperty.call(upgradeOption, key)) {
+        continue;
+      }
+
+      optionMaxLenMap[key] = Math.max(optionMaxLenMap[key], upgradeOption[key].length);
+
+      if (key === 'version') {
+        // Remove the duplicate character '^'
+        upgradeOption[key] = upgradeOption[key].replace('^', '');
+      }
+    }
+  }
+
+  for (const upgradeOption of upgradeOptionList) {
+    if (upgradeOption.isLatest) {
+      if (peer) {
+        // If it is peerDependencies, then skip output the latest version
+        continue;
+      }
+
+      output.push(
+        `  ${chalk.white(
+          `${`${upgradeOption.package}@${upgradeOption.versionMode || ''}${
+            upgradeOption.latestVersion
+          }`.padEnd(optionMaxLenMap.package + DEFAULT_SPACE.length + DEFAULT_SPACE.length)}`
+        )}${chalk.greenBright('latest').padStart(optionMaxLenMap.version)}${DEFAULT_SPACE}`
+      );
+      continue;
+    }
+
+    output.push(
+      `  ${chalk.white(
+        `${upgradeOption.package.padEnd(
+          optionMaxLenMap.package + DEFAULT_SPACE.length
+        )}${DEFAULT_SPACE}${`${upgradeOption.versionMode || ''}${upgradeOption.version}`.padEnd(
+          optionMaxLenMap.version
+        )}  ->  ${upgradeOption.versionMode || ''}${upgradeOption.latestVersion}`
+      )}${DEFAULT_SPACE}`
+    );
+  }
+
+  return output.join('\n');
 }
 
 async function getPackagePeerDep(

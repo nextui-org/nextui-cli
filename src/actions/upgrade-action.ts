@@ -150,11 +150,10 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     });
 
     await exec(
-      `${packageManager} ${install} ${result.reduce((acc, component) => {
-        return `${acc} ${component.package}@${component.latestVersion.replace(
-          colorMatchRegex,
-          ''
-        )}`;
+      `${packageManager} ${install} ${result.reduce((acc, component, index) => {
+        return `${acc}${index === 0 ? '' : ' '}${
+          component.package
+        }@${component.latestVersion.replace(colorMatchRegex, '')}`;
       }, '')}`
     );
   }

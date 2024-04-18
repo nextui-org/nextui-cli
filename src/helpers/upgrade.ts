@@ -221,6 +221,7 @@ function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOpt
   const outputInfo = getUpgradeVersion(outputList);
   const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
-  outputBox({...outputDefault.components, text: outputInfo});
-  outputBox({...outputDefault.peerDependencies, text: outputPeerDepInfo});
+  outputInfo.length && outputBox({...outputDefault.components, text: outputInfo});
+  outputPeerDepInfo.length &&
+    outputBox({...outputDefault.peerDependencies, text: outputPeerDepInfo});
 }

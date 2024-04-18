@@ -12,12 +12,7 @@ import {getPackageManagerInfo} from './utils';
 export async function removeDependencies(components: string[], packageManager: string) {
   const {remove} = getPackageManagerInfo(packageManager);
 
-  await exec(
-    `${packageManager} ${remove} ${components.reduce(
-      (acc, component) => `${acc} ${component}`,
-      ''
-    )}`
-  );
+  await exec(`${packageManager} ${remove} ${components.join(' ')}`);
 
   return;
 }

@@ -152,21 +152,24 @@ export function checkTailwind(
   tailwindPath: string,
   currentComponents?: NextUIComponents,
   isPnpm?: boolean,
-  content?: string
+  content?: string,
+  logWarning?: boolean
 ): CheckResult;
 export function checkTailwind(
   type: 'partial',
   tailwindPath: string,
   currentComponents: NextUIComponents,
   isPnpm: boolean,
-  content?: string
+  content?: string,
+  logWarning?: boolean
 ): CheckResult;
 export function checkTailwind(
   type: CheckType,
   tailwindPath: string,
   currentComponents?: NextUIComponents,
   isPnpm?: boolean,
-  content?: string
+  content?: string,
+  logWarning?: boolean
 ): CheckResult {
   if (type === 'partial' && !currentComponents!.length) {
     return [true];
@@ -197,10 +200,29 @@ export function checkTailwind(
     !isPluginsCorrect && result.push(tailwindRequired.plugins);
   } else if (type === 'partial') {
     const individualContent = individualTailwindRequired.content(currentComponents!, isPnpm!);
-    // Add tailwindRequired.content check to the contentMatch, cause it is all include in the individualContent
-    const isContentCorrect = contentMatch.some(
-      (content) => content.includes(individualContent) || content.includes(tailwindRequired.content)
-    );
+
+    let isHaveAllContent = false;
+    const isContentCorrect = contentMatch.some((content) => {
+      // Add tailwindRequired.content check to the contentMatch, cause it is all include in the individualContent
+      if (content.includes(tailwindRequired.content)) {
+        isHaveAllContent = true;
+
+        return true;
+      }
+
+      return content.includes(individualContent);
+    });
+
+    if (logWarning && isHaveAllContent) {
+      Logger.warn(
+        `Attention: Individual components from NextUI do not require the "${chalk.bold(
+          tailwindRequired.content
+        )}" in the tailwind config\nFor optimized bundle sizes, consider using "${chalk.bold(
+          individualContent
+        )}" instead\n`
+      );
+    }
+
     const isPluginsCorrect = pluginsMatch.some((plugins) =>
       tailwindRequired.checkPluginsRegex.test(plugins)
     );

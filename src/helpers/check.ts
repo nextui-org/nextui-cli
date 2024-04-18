@@ -197,7 +197,10 @@ export function checkTailwind(
     !isPluginsCorrect && result.push(tailwindRequired.plugins);
   } else if (type === 'partial') {
     const individualContent = individualTailwindRequired.content(currentComponents!, isPnpm!);
-    const isContentCorrect = contentMatch.some((content) => content.includes(individualContent));
+    // Add tailwindRequired.content check to the contentMatch, cause it is all include in the individualContent
+    const isContentCorrect = contentMatch.some(
+      (content) => content.includes(individualContent) || content.includes(tailwindRequired.content)
+    );
     const isPluginsCorrect = pluginsMatch.some((plugins) =>
       plugins.includes(tailwindRequired.plugins)
     );

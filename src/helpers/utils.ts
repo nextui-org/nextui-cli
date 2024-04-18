@@ -142,7 +142,11 @@ export function getPackageManagerInfo(packageManager: string): {install: string;
     yarn: {
       install: 'add',
       remove: 'remove'
-    }
+    },
+    bun: {
+      install: 'install',
+      remove: 'uninstall'
+    },
   };
 
   return packageManagerInfo[packageManager];

@@ -62,9 +62,8 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
 
     if (!isLatest) {
       result.push(...outputList);
-
-      result.push(...peerDepList.filter((c) => !c.isLatest));
     }
+    result.push(...peerDepList.filter((c) => !c.isLatest));
   } else {
     const transformUpgradeOptionList = upgradeOptionList.map((c) => ({
       ...c,
@@ -182,7 +181,11 @@ async function getPackagePeerDep(
     const currentVersion = allDependencies[peerPackage];
 
     if (!currentVersion) {
-      Logger.warn(`Missing peerDependencies: ${peerPackage}, check whether it is installed`);
+      Logger.warn(
+        `Missing peerDependencies: ${chalk.yellowBright.underline(
+          peerPackage
+        )}, check whether it is installed`
+      );
       continue;
     }
 
@@ -209,8 +212,9 @@ async function getPackagePeerDep(
 }
 
 function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOption[]) {
+  const componentName = outputList.length === 1 ? 'Component' : 'Components';
   const outputDefault = {
-    components: {color: 'blue', text: '', title: chalk.blue('Components')},
+    components: {color: 'blue', text: '', title: chalk.blue(componentName)},
     peerDependencies: {color: 'yellow', text: '', title: chalk.yellow('PeerDependencies')}
   } as const;
 

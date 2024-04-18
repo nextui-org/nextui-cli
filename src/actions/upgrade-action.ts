@@ -101,7 +101,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     isNextUIAll,
     upgradeOptionList
   });
-  let ignoreList: string[];
+  let ignoreList: string[] = [];
 
   if (result.length) {
     const isExecute = await getSelect('Would you like to proceed with the upgrade?', [
@@ -144,6 +144,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       }
     }
 
+    // Remove the components that need to be ignored
     result = result.filter((r) => {
       return !ignoreList.some((ignore) => r.package === ignore);
     });

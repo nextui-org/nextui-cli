@@ -58,14 +58,7 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     ];
     const peerDepList = [...nextUIPeerDepList, ...nextUIThemePeerDepList];
 
-    const outputInfo = getUpgradeVersion(outputList);
-
-    outputBox({text: outputInfo, title: 'Components'});
-
-    // PeerDep output
-    const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
-
-    outputBox({text: outputPeerDepInfo, title: 'PeerDependencies'});
+    outputDependencies(outputList, peerDepList);
 
     if (!isLatest) {
       result.push(...outputList);
@@ -85,15 +78,9 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     );
 
     const outputList = [...transformUpgradeOptionList];
-    const outputInfo = getUpgradeVersion(outputList);
-
-    outputBox({color: 'blue', text: outputInfo, title: chalk.blue('Components')});
-
-    // PeerDep output
     const peerDepList = [...upgradePeerList.flat()];
-    const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
-    outputBox({color: 'yellow', text: outputPeerDepInfo, title: chalk.yellow('PeerDependencies')});
+    outputDependencies(outputList, peerDepList);
 
     result = [...outputList, ...peerDepList].filter((upgradeOption) => !upgradeOption.isLatest);
   }
@@ -219,4 +206,17 @@ async function getPackagePeerDep(
   }
 
   return upgradeOptionList;
+}
+
+function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOption[]) {
+  const outputDefault = {
+    components: {color: 'blue', text: '', title: chalk.blue('Components')},
+    peerDependencies: {color: 'yellow', text: '', title: chalk.yellow('PeerDependencies')}
+  } as const;
+
+  const outputInfo = getUpgradeVersion(outputList);
+  const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
+
+  outputBox({...outputDefault.components, text: outputInfo});
+  outputBox({...outputDefault.peerDependencies, text: outputPeerDepInfo});
 }

@@ -182,7 +182,7 @@ async function getPackagePeerDep(
     const currentVersion = allDependencies[peerPackage];
 
     if (!currentVersion) {
-      Logger.warn(`Losing peerDependencies: ${peerPackage}, check whether it is installed`);
+      Logger.warn(`Missing peerDependencies: ${peerPackage}, check whether it is installed`);
       continue;
     }
 

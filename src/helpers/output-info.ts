@@ -234,28 +234,24 @@ export function outputBox({
         const spaceFir = Math.floor(titleHeaderLength / 2) - 1;
         const spaceSec = Math.ceil(titleHeaderLength / 2) - 1;
 
-        const padFir = spaceFir > 0 ? rounded.horizontal.repeat(spaceFir) : '';
-        const padSec = spaceSec > 0 ? rounded.horizontal.repeat(spaceSec) : '';
+        const padFir = spaceFir > 0 ? mergedRounded.horizontal.repeat(spaceFir) : '';
+        const padSec = spaceSec > 0 ? mergedRounded.horizontal.repeat(spaceSec) : '';
 
         return `${padFir} ${title} ${padSec}`;
       } else if (align === 'left') {
-        return ` ${title} ${rounded.horizontal.repeat(titleHeaderLength - 2)}`;
+        return ` ${title} ${mergedRounded.horizontal.repeat(titleHeaderLength - 2)}`;
       } else {
-        return `${rounded.horizontal.repeat(titleHeaderLength - 2)} ${title} `;
+        return `${mergedRounded.horizontal.repeat(titleHeaderLength - 2)} ${title} `;
       }
     }
 
-    return rounded.horizontal
-      .padEnd(maxLength, rounded.horizontal)
-      .replaceAll(rounded.horizontal, mergedRounded.horizontal);
+    return mergedRounded.horizontal.repeat(maxLength);
   })();
 
   const boxHeader = mergedRounded.topLeft + boxHeaderContent + mergedRounded.topRight;
   const boxFooter =
     mergedRounded.bottomLeft +
-    rounded.horizontal
-      .padEnd(maxLength, rounded.horizontal)
-      .replaceAll(rounded.horizontal, mergedRounded.horizontal) +
+    mergedRounded.horizontal.repeat(maxLength) +
     mergedRounded.bottomRight;
 
   let boxContent = contentArr.reduce((acc, cur) => {

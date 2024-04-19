@@ -69,7 +69,7 @@ https://www.conventionalcommits.org/ or check out the
 
 3. Make and commit your changes following the
    [commit convention](https://github.com/nextui-org/nextui-cli/blob/main/CONTRIBUTING.md#commit-convention).
-   As you develop, you can run `pnpm build/` and
+   As you develop, you can run `pnpm build` and
    `pnpm lint` e.g. `pnpm build & pnpm lint` to make sure everything works as expected.
 
 4. Please note that you might have to run `git fetch origin main:master` (where

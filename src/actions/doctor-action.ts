@@ -157,7 +157,9 @@ export async function doctorAction(options: DoctorActionOptions) {
           'partial',
           tailwindPath,
           currentComponents,
-          isPnpm
+          isPnpm,
+          undefined,
+          true
         );
 
         if (!isCorrectTailwind) {

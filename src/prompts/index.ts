@@ -10,7 +10,21 @@ const defaultPromptOptions: prompts.Options = {
   }
 };
 
-export async function getInput(message: string, choices?: prompts.Choice[]) {
+export async function getText(message: string, initial: string) {
+  const result = await prompts(
+    {
+      initial,
+      message,
+      name: 'value',
+      type: 'text'
+    },
+    defaultPromptOptions
+  );
+
+  return result.value;
+}
+
+export async function getAutocomplete(message: string, choices?: prompts.Choice[]) {
   const result = await prompts(
     {
       message,

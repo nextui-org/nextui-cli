@@ -88,7 +88,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (filterCurrentComponents.length) {
     Logger.prefix(
       'error',
-      `❌ You have added the following components: ${filterCurrentComponents
+      `❌ You have already added the following components: ${filterCurrentComponents
         .map((c) => chalk.underline(c))
         .join(', ')}`
     );

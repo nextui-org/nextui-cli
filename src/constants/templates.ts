@@ -6,6 +6,9 @@ export const PAGES_REPO = 'https://codeload.github.com/nextui-org/next-pages-tem
 export const APP_DIR = 'next-app-template-main';
 export const PAGES_DIR = 'next-pages-template-main';
 
+export const APP_NAME = 'next-app-template';
+export const PAGES_NAME = 'next-pages-template';
+
 export function tailwindTemplate(type: 'all', content?: string): string;
 export function tailwindTemplate(type: 'partial', content: string): string;
 export function tailwindTemplate(type: CheckType, content?: string) {

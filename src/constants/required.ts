@@ -25,6 +25,7 @@ export const DOCS_PROVIDER_SETUP = 'https://nextui.org/docs/guide/installation#p
 
 // Record the required content of tailwind.config file
 export const tailwindRequired = {
+  checkPluginsRegex: /nextui(([\w\W]+)?)/,
   content: './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   darkMode: 'darkMode: "class"',
   importContent: (isTypescript = false) => {

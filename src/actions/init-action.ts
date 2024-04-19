@@ -5,6 +5,7 @@ import {oraPromise} from 'ora';
 
 import {downloadTemplate} from '@helpers/fetch';
 import {Logger} from '@helpers/logger';
+import {outputBox} from '@helpers/output-info';
 
 import {ROOT} from '../../src/constants/path';
 import {
@@ -21,6 +22,11 @@ export interface InitActionOptions {
   template?: 'app' | 'pages';
   package?: 'npm' | 'yarn' | 'pnpm';
 }
+
+const templatesMap: Record<Required<InitActionOptions>['template'], string> = {
+  app: APP_NAME,
+  pages: PAGES_NAME
+};
 
 export async function initAction(projectName: string, options: InitActionOptions) {
   let {package: packageName, template} = options;
@@ -61,9 +67,9 @@ export async function initAction(projectName: string, options: InitActionOptions
   }
 
   if (!projectName) {
-    const templateTitle = template === 'app' ? APP_NAME : PAGES_NAME;
+    const templateTitle = templatesMap[template!];
 
-    projectName = await getText('Enter the project name', templateTitle);
+    projectName = await getText('New project name: ', templateTitle);
   }
 
   /** ======================== Generate template ======================== */
@@ -74,6 +80,15 @@ export async function initAction(projectName: string, options: InitActionOptions
     await generateTemplate(PAGES_REPO);
     projectName && renameTemplate(PAGES_DIR, projectName);
   }
+
+  /** ======================== Add guide ======================== */
+  Logger.newLine();
+  outputBox({
+    align: 'left',
+    padding: 1,
+    text: `cd ${chalk.cyanBright(projectName)}\n${chalk.cyanBright('npm')} install`,
+    title: '👉 Next steps'
+  });
 
   process.exit(0);
 }

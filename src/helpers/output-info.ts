@@ -180,6 +180,7 @@ export function outputInfo() {
  * @param padding
  */
 export function outputBox({
+  align = 'center',
   borderStyle = 'round',
   center = false,
   color,
@@ -195,6 +196,7 @@ export function outputBox({
   title?: string;
   borderStyle?: keyof typeof boxRound;
   padding?: number;
+  align?: 'left' | 'center' | 'right';
 }) {
   const rounded = boxRound[borderStyle];
   const mergedRounded = color
@@ -226,15 +228,27 @@ export function outputBox({
   // Update the titleHeaderLength
   titleHeaderLength = maxLength - titleLength;
 
-  const boxHeaderContent = title
-    ? `${rounded.horizontal
-        .padEnd(Math.floor(titleHeaderLength / 2) - 1, rounded.horizontal)
-        .replaceAll(rounded.horizontal, mergedRounded.horizontal)} ${title} ${rounded.horizontal
-        .padEnd(Math.ceil(titleHeaderLength / 2) - 1, rounded.horizontal)
-        .replaceAll(rounded.horizontal, mergedRounded.horizontal)}`
-    : rounded.horizontal
-        .padEnd(maxLength, rounded.horizontal)
-        .replaceAll(rounded.horizontal, mergedRounded.horizontal);
+  const boxHeaderContent = (() => {
+    if (title) {
+      if (align === 'center') {
+        const spaceFir = Math.floor(titleHeaderLength / 2) - 1;
+        const spaceSec = Math.ceil(titleHeaderLength / 2) - 1;
+
+        const padFir = spaceFir > 0 ? rounded.horizontal.repeat(spaceFir) : '';
+        const padSec = spaceSec > 0 ? rounded.horizontal.repeat(spaceSec) : '';
+
+        return `${padFir} ${title} ${padSec}`;
+      } else if (align === 'left') {
+        return ` ${title} ${rounded.horizontal.repeat(titleHeaderLength - 2)}`;
+      } else {
+        return `${rounded.horizontal.repeat(titleHeaderLength - 2)} ${title} `;
+      }
+    }
+
+    return rounded.horizontal
+      .padEnd(maxLength, rounded.horizontal)
+      .replaceAll(rounded.horizontal, mergedRounded.horizontal);
+  })();
 
   const boxHeader = mergedRounded.topLeft + boxHeaderContent + mergedRounded.topRight;
   const boxFooter =
@@ -259,17 +273,27 @@ export function outputBox({
     // Over 2 cause one vertical line == 2 spaces
     // paddingLength = Math.floor(Math.max(paddingLength, spaceFir, spaceSec) / 2);
 
-    mergedPadding
-      ? acc.push(
-          `${mergedRounded.vertical}${spaceLength ? `${padFir}${cur}${padSec}` : cur}${
-            mergedRounded.vertical
-          }`
-        )
-      : acc.push(
-          `${mergedRounded.vertical}${spaceLength > 0 ? `${cur}${pad}` : cur}${
-            mergedRounded.vertical
-          }`
-        );
+    if (center) {
+      acc.push(
+        `${mergedRounded.vertical}${spaceLength ? `${padFir}${cur}${padSec}` : cur}${
+          mergedRounded.vertical
+        }`
+      );
+    } else if (padding) {
+      const endLen = spaceLength - paddingLength * 2;
+
+      acc.push(
+        `${mergedRounded.vertical}${' '.repeat(paddingLength * 2)}${cur}${' '.repeat(endLen)}${
+          mergedRounded.vertical
+        }`
+      );
+    } else {
+      acc.push(
+        `${mergedRounded.vertical}${spaceLength > 0 ? `${cur}${pad}` : cur}${
+          mergedRounded.vertical
+        }`
+      );
+    }
 
     return acc;
   }, [] as string[]);

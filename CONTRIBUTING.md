@@ -69,8 +69,8 @@ https://www.conventionalcommits.org/ or check out the
 
 3. Make and commit your changes following the
    [commit convention](https://github.com/nextui-org/nextui-cli/blob/main/CONTRIBUTING.md#commit-convention).
-   As you develop, you can run `pnpm build` and
-   `pnpm lint` e.g. `pnpm build & pnpm lint` to make sure everything works as expected.
+   As you develop, you can run `pnpm lint` and
+   `pnpm build` e.g. `pnpm lint && pnpm build` to make sure everything works as expected.
 
 4. Please note that you might have to run `git fetch origin main:master` (where
    origin will be your fork on GitHub).
@@ -123,7 +123,7 @@ After cloning the repository, execute the following commands in the root folder:
 5. Build the CLI
 
    ```bash
-   pnpm build & pnpm lint
+   pnpm lint && pnpm build
    ```
 
 6. Send your pull request:

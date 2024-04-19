@@ -123,7 +123,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
         return;
       }
       const {install} = packageManagerInfo;
-      
+
       await exec(
         `${packageManager} ${install} ${result.reduce((acc, component) => {
           return `${acc} ${component.package}@${component.latestVersion}`;

@@ -69,23 +69,11 @@ https://www.conventionalcommits.org/ or check out the
 
 3. Make and commit your changes following the
    [commit convention](https://github.com/nextui-org/nextui-cli/blob/main/CONTRIBUTING.md#commit-convention).
-   As you develop, you can run `pnpm build --filter=<module>` and
-   `pnpm test packages/<module>/<pkg>` e.g. `pnpm build --filter=avatar & pnpm test packages/components/avatar` to make sure everything works as expected.
+   As you develop, you can run `pnpm build/` and
+   `pnpm lint` e.g. `pnpm build & pnpm lint` to make sure everything works as expected.
 
-   > To know more about the `--filter` option, please check the turborepo [docs](https://turborepo.org/docs/core-concepts/filtering).
-
-4. Run `pnpm changeset` to create a detailed description of your changes. This
-   will be used to generate a changelog when we publish an update.
-   [Learn more about Changeset](https://github.com/atlassian/changesets/tree/master/packages/cli).
-   Please note that you might have to run `git fetch origin main:master` (where
-   origin will be your fork on GitHub) before `pnpm changeset` works.
-5. Also, if you provide `jsx` snippets to the changeset, please turn off the
-   live preview by doing the following at the beginning of the snippet:
-   ` ```jsx live=false`
-
-> If you made minor changes like CI config, prettier, etc, you can run
-> `pnpm changeset add --empty` to generate an empty changeset file to document
-> your changes.
+4. Please note that you might have to run `git fetch origin main:master` (where
+   origin will be your fork on GitHub).
 
 ## Development Setup
 
@@ -94,11 +82,11 @@ After cloning the repository, execute the following commands in the root folder:
 1. Install dependencies
 
    ```bash
-   pnpm i --hoist
+   pnpm i
 
    #or
 
-   pnpm install --hoist
+   pnpm install
    ```
 
 2. Run dev to start development
@@ -126,7 +114,7 @@ After cloning the repository, execute the following commands in the root folder:
 
    ```bash
    ## make sure pnpm dev is running
-   pnpm link:cli
+   npm link
    ## then run nextui-cli locally and test
    ```
 
@@ -135,7 +123,7 @@ After cloning the repository, execute the following commands in the root folder:
 5. Build the CLI
 
    ```bash
-   pnpm build
+   pnpm build & pnpm lint
    ```
 
 6. Send your pull request:

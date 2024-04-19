@@ -7,8 +7,15 @@ import {downloadTemplate} from '@helpers/fetch';
 import {Logger} from '@helpers/logger';
 
 import {ROOT} from '../../src/constants/path';
-import {APP_DIR, APP_REPO, PAGES_DIR, PAGES_REPO} from '../../src/constants/templates';
-import {getSelect} from '../../src/prompts';
+import {
+  APP_DIR,
+  APP_NAME,
+  APP_REPO,
+  PAGES_DIR,
+  PAGES_NAME,
+  PAGES_REPO
+} from '../../src/constants/templates';
+import {getSelect, getText} from '../../src/prompts';
 
 export interface InitActionOptions {
   template?: 'app' | 'pages';
@@ -51,6 +58,12 @@ export async function initAction(projectName: string, options: InitActionOptions
     //     value: 'pnpm'
     //   }
     // ]);
+  }
+
+  if (!projectName) {
+    const templateTitle = template === 'app' ? APP_NAME : PAGES_NAME;
+
+    projectName = await getText('Enter the project name', templateTitle);
   }
 
   /** ======================== Generate template ======================== */

@@ -209,6 +209,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   Logger.success('✅ Components added successfully');
 
   // Warn the user to check the NextUIProvider whether in the correct place
+  Logger.newLine();
   Logger.warn(
     `Please check the ${chalk.bold(
       'NextUIProvider'

@@ -88,7 +88,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (filterCurrentComponents.length) {
     Logger.prefix(
       'error',
-      `❌ You have added the following components: ${filterCurrentComponents
+      `❌ You have already added the following components: ${filterCurrentComponents
         .map((c) => chalk.underline(c))
         .join(', ')}`
     );
@@ -159,7 +159,14 @@ export async function addAction(components: string[], options: AddActionOptions)
     Logger.newLine();
     Logger.info(`Tailwind CSS configuration file created at: ${tailwindPath}`);
   } else {
-    const [, ...errorInfoList] = checkTailwind(type, tailwindPath, currentComponents, isPnpm);
+    const [, ...errorInfoList] = checkTailwind(
+      type,
+      tailwindPath,
+      currentComponents,
+      isPnpm,
+      undefined,
+      true
+    );
 
     fixTailwind(type, {errorInfoList, format: prettier, tailwindPath});
 

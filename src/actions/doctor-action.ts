@@ -211,6 +211,7 @@ export async function doctorAction(options: DoctorActionOptions) {
 
   /** ======================== Return when there is no problem ======================== */
   if (!problemRecord.length) {
+    Logger.newLine();
     Logger.success('✅ Your project has no detected issues.');
 
     return;

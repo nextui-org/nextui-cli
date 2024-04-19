@@ -149,5 +149,14 @@ export function getPackageManagerInfo(packageManager: string): {install: string;
     }
   };
 
+  if (!packageManagerInfo[packageManager]) {
+    Logger.prefix(
+      'error',
+      `${packageManager} (package manager) is not supported yet. Please report it as a feature request`
+    );
+
+    process.exit(1);
+  }
+
   return packageManagerInfo[packageManager];
 }

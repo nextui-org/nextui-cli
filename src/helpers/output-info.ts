@@ -178,6 +178,7 @@ export function outputInfo() {
  * @param title
  * @param borderStyle
  * @param padding
+ * @param align
  */
 export function outputBox({
   align = 'center',

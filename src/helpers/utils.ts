@@ -152,7 +152,7 @@ export function getPackageManagerInfo(packageManager: string): {install: string;
   if (!packageManagerInfo[packageManager]) {
     Logger.prefix(
       'error',
-      `${packageManager} (package manager) is not supported yet. Please report it as a feature request`
+      `${packageManager} (package manager) is not supported yet. Please report it as a feature request\nReference https://github.com/nextui-org/nextui-cli/issues/new/choose`
     );
 
     process.exit(1);

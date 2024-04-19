@@ -112,7 +112,17 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
     if (isExecute) {
       const packageManager = await detect();
-      const {install} = getPackageManagerInfo(packageManager);
+      const packageManagerInfo = getPackageManagerInfo(packageManager);
+
+      if (!packageManagerInfo) {
+        Logger.prefix(
+          'error',
+          `${packageManager} (package manager) is not supported yet. Please report it as a feature request`
+        );
+
+        return;
+      }
+      const {install} = packageManagerInfo;
 
       await exec(
         `${packageManager} ${install} ${result.reduce((acc, component) => {

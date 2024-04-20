@@ -54,9 +54,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     return;
   }
 
-  if (isNextUIAll) {
-    components = [NEXT_UI];
-  } else if (all) {
+  if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(

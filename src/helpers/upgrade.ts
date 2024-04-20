@@ -11,7 +11,7 @@ import {Logger} from './logger';
 import {outputBox} from './output-info';
 import {getColorVersion, getVersionAndMode, transformPeerVersion} from './utils';
 
-interface UpgradeOption {
+export interface UpgradeOption {
   package: string;
   version: string;
   latestVersion: string;
@@ -37,52 +37,69 @@ type ExtractUpgrade<T extends Upgrade> = T extends {isNextUIAll: infer U}
 export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgrade<T>) {
   const {allDependencies, isNextUIAll, upgradeOptionList} = options as Required<Upgrade>;
   let result: UpgradeOption[] = [];
+  const missingDepSet = new Set<string>();
   const latestVersion = store.latestVersion;
 
-  if (isNextUIAll) {
-    const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
-    const colorVersion = getColorVersion(currentVersion, latestVersion);
-    const isLatest = compareVersions(currentVersion, latestVersion) >= 0;
+  const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
+  const colorVersion = getColorVersion(currentVersion, latestVersion);
+  const isLatest = compareVersions(currentVersion, latestVersion) >= 0;
 
-    const nextUIPeerDepList = await getPackagePeerDep(NEXT_UI, allDependencies);
-    const nextUIThemePeerDepList = await getPackagePeerDep(THEME_UI, allDependencies);
+  const nextUIPeerDepList = await getPackagePeerDep(NEXT_UI, allDependencies, missingDepSet);
+  const nextUIThemePeerDepList = await getPackagePeerDep(THEME_UI, allDependencies, missingDepSet);
 
-    const outputList = [
-      {
-        isLatest,
-        latestVersion: colorVersion,
-        package: NEXT_UI,
-        version: currentVersion,
-        versionMode
-      }
-    ];
-    const peerDepList = [...nextUIPeerDepList, ...nextUIThemePeerDepList];
-
-    outputDependencies(outputList, peerDepList);
-
-    if (!isLatest) {
-      result.push(...outputList);
+  const allOutputList = [
+    {
+      isLatest,
+      latestVersion: colorVersion,
+      package: NEXT_UI,
+      version: currentVersion,
+      versionMode
     }
-    result.push(...peerDepList.filter((c) => !c.isLatest));
-  } else {
-    const transformUpgradeOptionList = upgradeOptionList.map((c) => ({
-      ...c,
-      latestVersion: getColorVersion(c.version, c.latestVersion)
-    }));
+  ];
+  const allPeerDepList = [...nextUIPeerDepList, ...nextUIThemePeerDepList];
+  const allOutputData = isNextUIAll
+    ? {
+        allOutputList,
+        allPeerDepList
+      }
+    : {allOutputList: [], allPeerDepList: []};
 
-    const upgradePeerList = await Promise.all(
-      upgradeOptionList.map((upgradeOption) =>
-        getPackagePeerDep(upgradeOption.package, allDependencies, upgradeOption.peerDependencies)
+  const transformUpgradeOptionList = upgradeOptionList.map((c) => ({
+    ...c,
+    latestVersion: getColorVersion(c.version, c.latestVersion)
+  }));
+
+  const upgradePeerList = await Promise.all(
+    upgradeOptionList.map((upgradeOption) =>
+      getPackagePeerDep(
+        upgradeOption.package,
+        allDependencies,
+        missingDepSet,
+        upgradeOption.peerDependencies
       )
-    );
+    )
+  );
 
-    const outputList = [...transformUpgradeOptionList];
-    const peerDepList = [...upgradePeerList.flat()];
+  const outputList = [...transformUpgradeOptionList, ...allOutputData.allOutputList];
+  const peerDepList = [...upgradePeerList.flat(), ...allOutputData.allPeerDepList].filter(
+    (upgradeOption, index, arr) =>
+      index === arr.findIndex((c) => c.package === upgradeOption.package)
+  );
 
-    outputDependencies(outputList, peerDepList);
+  // Output missing peerDependencies
+  Logger.warn(
+    `Missing peerDependencies: ${chalk.yellowBright(
+      [...missingDepSet].map((c) => chalk.underline(c)).join(', ')
+    )}, check whether it is installed`
+  );
 
-    result = [...outputList, ...peerDepList].filter((upgradeOption) => !upgradeOption.isLatest);
-  }
+  // Output dependencies box
+  outputDependencies(outputList, peerDepList);
+
+  result = [...outputList, ...peerDepList].filter(
+    (upgradeOption, index, arr) =>
+      !upgradeOption.isLatest && index === arr.findIndex((c) => c.package === upgradeOption.package)
+  );
 
   return result;
 }
@@ -154,6 +171,7 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
 async function getPackagePeerDep(
   packageName: string,
   allDependencies: Dependencies,
+  missingDepList: Set<string>,
   peerDependencies?: Dependencies
 ): Promise<UpgradeOption[]> {
   peerDependencies =
@@ -181,11 +199,7 @@ async function getPackagePeerDep(
     const currentVersion = allDependencies[peerPackage];
 
     if (!currentVersion) {
-      Logger.warn(
-        `Missing peerDependencies: ${chalk.yellowBright.underline(
-          peerPackage
-        )}, check whether it is installed`
-      );
+      missingDepList.add(peerPackage);
       continue;
     }
 

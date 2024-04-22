@@ -159,7 +159,14 @@ export async function addAction(components: string[], options: AddActionOptions)
     Logger.newLine();
     Logger.info(`Tailwind CSS configuration file created at: ${tailwindPath}`);
   } else {
-    const [, ...errorInfoList] = checkTailwind(type, tailwindPath, currentComponents, isPnpm);
+    const [, ...errorInfoList] = checkTailwind(
+      type,
+      tailwindPath,
+      currentComponents,
+      isPnpm,
+      undefined,
+      true
+    );
 
     fixTailwind(type, {errorInfoList, format: prettier, tailwindPath});
 
@@ -202,6 +209,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   Logger.success('✅ Components added successfully');
 
   // Warn the user to check the NextUIProvider whether in the correct place
+  Logger.newLine();
   Logger.warn(
     `Please check the ${chalk.bold(
       'NextUIProvider'

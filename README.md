@@ -31,7 +31,7 @@ npx nextui-cli@latest
 ### Global Installation
 
 ```bash
-npm install -g @nextui-cli
+npm install -g nextui-cli
 ```
 
 ## Usage

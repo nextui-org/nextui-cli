@@ -87,7 +87,7 @@ export async function initAction(projectName: string, options: InitActionOptions
     align: 'left',
     padding: 1,
     text: `cd ${chalk.cyanBright(projectName)}\n${chalk.cyanBright('npm')} install`,
-    title: '👉 Next steps'
+    title: 'Next steps'
   });
 
   process.exit(0);

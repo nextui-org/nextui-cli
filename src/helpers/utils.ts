@@ -129,8 +129,14 @@ export function getVersionAndMode(allDependencies: Record<string, SAFE_ANY>, pac
   };
 }
 
-export function getPackageManagerInfo(packageManager: string): {install: string; remove: string} {
-  const packageManagerInfo = {
+type PackageManagerInfo = {
+  [key: string]: {install: string; remove: string};
+};
+
+export function getPackageManagerInfo<T extends keyof PackageManagerInfo>(
+  packageManager: T
+): PackageManagerInfo[T] {
+  const packageManagerInfo: PackageManagerInfo = {
     bun: {
       install: 'add',
       remove: 'remove'

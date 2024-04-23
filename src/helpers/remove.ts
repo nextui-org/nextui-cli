@@ -56,7 +56,7 @@ export async function removeTailwind(
     tailwindContent = replaceMatchArray('plugins', tailwindContent, pluginsMatch);
 
     // Remove the import nextui content
-    tailwindContent = tailwindContent.replace(/(const|var|let|import)[\w\W]+?nextui.*?;\n/, '');
+    tailwindContent = tailwindContent.replace(/(const|var|let|import)[\W\w]+?nextui.*?;\n/, '');
   }
 
   // If there are already have all nextui content include then don't need to remove the content

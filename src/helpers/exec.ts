@@ -1,6 +1,6 @@
 import type {AppendKeyValue} from './type';
 
-import {type CommonExecOptions, execSync} from 'child_process';
+import {type CommonExecOptions, execSync} from 'node:child_process';
 
 import {Logger} from './logger';
 import {omit} from './utils';

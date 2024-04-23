@@ -158,7 +158,7 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
       `  ${chalk.white(
         `${upgradeOption.package.padEnd(
           optionMaxLenMap.package + DEFAULT_SPACE.length
-        )}${DEFAULT_SPACE}${`${upgradeOption.versionMode || ''}${upgradeOption.version}`.padEnd(
+        )}${DEFAULT_SPACE}${upgradeOption.versionMode || ''}${upgradeOption.version.padEnd(
           optionMaxLenMap.version
         )}  ->  ${upgradeOption.versionMode || ''}${upgradeOption.latestVersion}`
       )}${DEFAULT_SPACE}`

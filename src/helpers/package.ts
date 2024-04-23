@@ -1,3 +1,5 @@
+import type {UpgradeOption} from './upgrade';
+
 import {readFileSync} from 'fs';
 
 import {type NextUIComponents} from 'src/constants/component';
@@ -7,6 +9,7 @@ import {getLatestVersion} from 'src/scripts/helpers';
 
 import {exec} from './exec';
 import {Logger} from './logger';
+import {colorMatchRegex} from './output-info';
 import {getVersionAndMode} from './utils';
 
 /**
@@ -118,4 +121,15 @@ export async function transformPackageDetail(
   }
 
   return result;
+}
+
+/**
+ * Get the complete version
+ * @example getCompleteVersion({latestVersion: '1.0.0', versionMode: '^'}) --> '^1.0.0'
+ */
+export function getCompleteVersion(upgradeOption: UpgradeOption) {
+  return `${upgradeOption.versionMode || ''}${upgradeOption.latestVersion.replace(
+    colorMatchRegex,
+    ''
+  )}`;
 }

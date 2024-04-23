@@ -1,6 +1,6 @@
 import type {UpgradeOption} from './upgrade';
 
-import {readFileSync} from 'fs';
+import {readFileSync} from 'node:fs';
 
 import {type NextUIComponents} from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';

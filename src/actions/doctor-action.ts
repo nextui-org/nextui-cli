@@ -1,4 +1,4 @@
-import {basename} from 'path';
+import {basename} from 'node:path';
 
 import chalk from 'chalk';
 
@@ -211,6 +211,7 @@ export async function doctorAction(options: DoctorActionOptions) {
 
   /** ======================== Return when there is no problem ======================== */
   if (!problemRecord.length) {
+    Logger.newLine();
     Logger.success('✅ Your project has no detected issues.');
 
     return;

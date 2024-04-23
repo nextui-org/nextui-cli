@@ -10,13 +10,13 @@ const defaultPromptOptions: prompts.Options = {
   }
 };
 
-export async function getText(message: string, initial: string) {
+export async function getText(message: string, initial?: string) {
   const result = await prompts(
     {
-      initial,
       message,
       name: 'value',
-      type: 'text'
+      type: 'text',
+      ...(initial ? {initial} : {})
     },
     defaultPromptOptions
   );

@@ -34,7 +34,8 @@
     "noImplicitAny": false,
     "paths": {
       "@helpers/*": ["src/helpers/*"],
-      "src/*": ["src/*"]
+      "src/*": ["src/*"],
+      "build/*": ["plugins/*"]
     }
   },
   "include": ["**/*.js", "**/*.cjs", "**/*.mjs", "**/*.ts", "**/*.tsx", "**/*.d.ts"],

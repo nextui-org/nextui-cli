@@ -1,6 +1,8 @@
 import type {NextUIComponents} from 'src/constants/component';
 
-import {existsSync, readFileSync, writeFileSync} from 'fs';
+import {existsSync, readFileSync, writeFileSync} from 'node:fs';
+
+import {tailwindRequired} from 'src/constants/required';
 
 import {type CheckType, checkTailwind} from './check';
 import {exec} from './exec';
@@ -39,6 +41,8 @@ export async function removeTailwind(
   const contentMatch = getMatchArray('content', tailwindContent);
   const pluginsMatch = getMatchArray('plugins', tailwindContent);
 
+  const insIncludeAll = contentMatch.some((c) => c.includes(tailwindRequired.content));
+
   // Not installed NextUI components then remove the tailwind content about nextui
   if (!currentComponents.length && !isNextUIAll) {
     const index = pluginsMatch.findIndex((c) => c.includes('nextui'));
@@ -49,14 +53,18 @@ export async function removeTailwind(
     // Remove the import nextui content
     tailwindContent = tailwindContent.replace(/(const|var|let|import)[\w\W]+?nextui.*?;\n/, '');
   }
-  // Remove the nextui content
-  while (contentMatch.some((c) => c.includes('nextui'))) {
-    contentMatch.splice(
-      contentMatch.findIndex((c) => c.includes('nextui')),
-      1
-    );
+
+  // If there are already have all nextui content include then don't need to remove the content
+  if (!insIncludeAll) {
+    // Remove the nextui content
+    while (contentMatch.some((c) => c.includes('nextui'))) {
+      contentMatch.splice(
+        contentMatch.findIndex((c) => c.includes('nextui')),
+        1
+      );
+    }
+    tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
   }
-  tailwindContent = replaceMatchArray('content', tailwindContent, contentMatch);
   //  if (!currentComponents.length && isNextUIAll) {
   //   const index = contentMatch.findIndex(c => c.includes('nextui'));
 
@@ -81,7 +89,9 @@ export async function removeTailwind(
     type as 'partial',
     tailwindPath!,
     currentComponents,
-    isPnpm
+    isPnpm,
+    undefined,
+    true
   );
 
   fixTailwind(type, {errorInfoList, format: prettier, tailwindPath: tailwindPath!});

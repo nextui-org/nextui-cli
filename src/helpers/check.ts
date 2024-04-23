@@ -1,7 +1,7 @@
 import type {RequiredKey, SAFE_ANY} from './type';
 import type {ProblemRecord} from 'src/actions/doctor-action';
 
-import {readFileSync} from 'fs';
+import {readFileSync} from 'node:fs';
 
 import chalk from 'chalk';
 
@@ -215,11 +215,11 @@ export function checkTailwind(
 
     if (logWarning && isHaveAllContent) {
       Logger.warn(
-        `Attention: Individual components from NextUI do not require the "${chalk.bold(
+        `\nAttention: Individual components from NextUI do not require the "${chalk.bold(
           tailwindRequired.content
         )}" in the tailwind config\nFor optimized bundle sizes, consider using "${chalk.bold(
           individualContent
-        )}" instead\n`
+        )}" instead`
       );
     }
 

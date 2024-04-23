@@ -31,7 +31,7 @@ npx nextui-cli@latest
 ### Global Installation
 
 ```bash
-npm install -g @nextui-cli
+npm install -g nextui-cli
 ```
 
 ## Usage
@@ -387,6 +387,27 @@ Environment Info:
   Binaries:
     Node: v18.18.2
 ```
+
+## Documentation
+
+Visit [https://nextui.org/docs/guide/cli](https://nextui.org/docs/guide/cli) to view the full documentation.
+
+### Community
+
+We're excited to see the community adopt NextUI CLI, raise issues, and provide feedback.
+Whether it's a feature request, bug report, or a project to showcase, please get involved!
+
+- [Discord](https://discord.gg/9b6yyZKmH4)
+- [Twitter](https://twitter.com/getnextui)
+- [GitHub Discussions](https://github.com/nextui-org/nextui-cli/discussions)
+
+## Contributing
+
+Contributions are always welcome!
+
+See [CONTRIBUTING.md](https://github.com/nextui-org/nextui-cli/blob/main/CONTRIBUTING.md) for ways to get started.
+
+Please adhere to this project's [CODE_OF_CONDUCT](https://github.com/nextui-org/nextui-cli/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 

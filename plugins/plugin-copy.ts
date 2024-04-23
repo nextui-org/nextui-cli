@@ -1,6 +1,6 @@
 import type {Options} from 'tsup';
 
-import {copyFileSync} from 'fs';
+import {copyFileSync} from 'node:fs';
 
 import {resolver} from 'src/constants/path';
 

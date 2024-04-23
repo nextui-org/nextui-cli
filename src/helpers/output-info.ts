@@ -82,7 +82,8 @@ export function outputComponents({
         const newVersion = value.match(/new:\s([\d.]+)/)?.[1];
 
         if (currentVersion === newVersion) {
-          value = value.replace(/\snew:\s([\d.]+)/, '');
+          // Add (\s)? to make sure space cause version 2.0.x compare 2.0.xx is got extra space
+          value = value.replace(/\snew:\s([\d.]+)(\s)?/, '');
           value = `${value} 🚀latest`.padEnd(componentKeyLengthMap[key]);
           value = value.replace('latest', chalk.magentaBright.underline('latest'));
         } else if (newVersion) {

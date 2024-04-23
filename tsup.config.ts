@@ -1,5 +1,7 @@
 import {defineConfig} from 'tsup';
 
+import {pluginCopyComponents} from 'build/plugin-copy';
+
 export default defineConfig((options) => {
   return {
     banner: {js: '#!/usr/bin/env node'},
@@ -9,6 +11,7 @@ export default defineConfig((options) => {
     format: ['esm'],
     minify: !options.watch,
     outDir: 'dist',
+    plugins: [pluginCopyComponents()],
     skipNodeModulesBundle: true,
     sourcemap: true,
     splitting: false,

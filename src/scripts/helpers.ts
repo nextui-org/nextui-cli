@@ -1,4 +1,4 @@
-import {exec} from 'child_process';
+import {exec} from 'node:child_process';
 import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
 import retry from 'async-retry';

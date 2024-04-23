@@ -4,7 +4,7 @@
  * @param str
  */
 export function getMatchImport(str: string) {
-  const importRegexAll = /import {?\s*([\w\W]+?)\s*}? from ['"](.+)['"]/g;
+  const importRegexAll = /import {?\s*([\W\w]+?)\s*}? from ["'](.+)["']/g;
 
   const matchAll = str.match(importRegexAll) ?? [];
   const result: string[][] = [];
@@ -16,7 +16,7 @@ export function getMatchImport(str: string) {
   return result.length ? result : [];
 
   function matchImport(itemImport: string) {
-    const importRegex = /import {?\s*([\w\W]+?)\s*}? from ['"](.+)['"]/;
+    const importRegex = /import {?\s*([\W\w]+?)\s*}? from ["'](.+)["']/;
     const match = itemImport.match(importRegex) ?? [];
 
     return [match[1] ?? '', match[2] ?? ''];
@@ -37,7 +37,7 @@ export function getMatchArray(key: string, target: string) {
       target
         .match(mixinReg)?.[1]
         ?.split(/,\n/)
-        .map((i) => i.trim().replace(/[`'"]/g, ''))
+        .map((i) => i.trim().replace(/["'`]/g, ''))
         .filter(Boolean) ?? []
     );
 
@@ -77,7 +77,7 @@ export function replaceMatchArray(
     : targetArray.splice(
         insertIndex + 1,
         0,
-        `  ${key}: [${value.map((v) => v.replace(/['"`]/g, ''))}],`
+        `  ${key}: [${value.map((v) => v.replace(/["'`]/g, ''))}],`
       );
 
   return targetArray.join('\n');

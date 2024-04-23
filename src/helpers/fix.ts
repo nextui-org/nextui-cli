@@ -33,7 +33,7 @@ export function fixProvider(appPath: string, options: FixProvider) {
 }
 
 function wrapWithNextUIProvider(content: string) {
-  const returnRegex = /return\s*\(([\s\S]*?)\);/g;
+  const returnRegex = /return\s*\(([\S\s]*?)\);/g;
   const wrappedCode = content.replace(returnRegex, (_, p1) => {
     return `return (
       <NextUIProvider>

@@ -13,7 +13,8 @@
     "unused-imports",
     "sort-keys-fix",
     "sort-destructure-keys",
-    "prettier"
+    "prettier",
+    "unicorn"
   ],
   "parserOptions": {
     "sourceType": "module",
@@ -98,6 +99,8 @@
           "caseInsensitive": true
         }
       }
-    ]
+    ],
+    "unicorn/better-regex": "error",
+    "unicorn/prefer-node-protocol": "error"
   }
 }

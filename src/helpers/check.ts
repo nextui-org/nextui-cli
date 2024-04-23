@@ -1,7 +1,7 @@
 import type {RequiredKey, SAFE_ANY} from './type';
 import type {ProblemRecord} from 'src/actions/doctor-action';
 
-import {readFileSync} from 'fs';
+import {readFileSync} from 'node:fs';
 
 import chalk from 'chalk';
 

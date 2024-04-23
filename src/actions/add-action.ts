@@ -1,7 +1,7 @@
 /* eslint-disable no-var */
 import type {SAFE_ANY} from '@helpers/type';
 
-import {existsSync, writeFileSync} from 'fs';
+import {existsSync, writeFileSync} from 'node:fs';
 
 import chalk from 'chalk';
 

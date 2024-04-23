@@ -1,4 +1,4 @@
-import {rename} from 'fs';
+import {rename} from 'node:fs';
 
 import chalk from 'chalk';
 import {oraPromise} from 'ora';

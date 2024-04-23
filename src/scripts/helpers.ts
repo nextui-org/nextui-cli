@@ -152,7 +152,7 @@ export async function downloadFile(url: string): Promise<Components> {
         process.exit(1);
       },
       successText: (() => {
-        return chalk.greenBright('Components data update successfully!\n');
+        return chalk.greenBright('Components data updated successfully!\n');
       })(),
       text: 'Fetching components data...'
     }

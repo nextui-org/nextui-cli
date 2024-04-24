@@ -1,3 +1,4 @@
+import type {Agent} from './detect';
 import type {PascalCase, SAFE_ANY} from './type';
 
 import chalk from 'chalk';
@@ -129,7 +130,7 @@ export function getVersionAndMode(allDependencies: Record<string, SAFE_ANY>, pac
   };
 }
 
-export function getPackageManagerInfo(packageManager: string): {install: string; remove: string} {
+export function getPackageManagerInfo<T extends Agent = Agent>(packageManager: T) {
   const packageManagerInfo = {
     bun: {
       install: 'add',
@@ -147,7 +148,7 @@ export function getPackageManagerInfo(packageManager: string): {install: string;
       install: 'add',
       remove: 'remove'
     }
-  };
+  } as const;
 
-  return packageManagerInfo[packageManager];
+  return packageManagerInfo[packageManager] as (typeof packageManagerInfo)[T];
 }

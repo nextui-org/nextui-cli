@@ -26,43 +26,21 @@ interface Upgrade {
   isNextUIAll: boolean;
   allDependencies?: Record<string, SAFE_ANY>;
   upgradeOptionList?: UpgradeOption[];
+  all?: boolean;
 }
 
 type ExtractUpgrade<T extends Upgrade> = T extends {isNextUIAll: infer U}
   ? U extends true
-    ? RequiredKey<Upgrade, 'allDependencies'>
+    ? RequiredKey<Upgrade, 'allDependencies' | 'all'>
     : RequiredKey<Upgrade, 'upgradeOptionList'>
   : T;
 
 export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgrade<T>) {
-  const {allDependencies, isNextUIAll, upgradeOptionList} = options as Required<Upgrade>;
+  const {all, allDependencies, isNextUIAll, upgradeOptionList} = options as Required<Upgrade>;
   let result: UpgradeOption[] = [];
   const missingDepSet = new Set<string>();
-  const latestVersion = store.latestVersion;
 
-  const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
-  const colorVersion = getColorVersion(currentVersion, latestVersion);
-  const isLatest = compareVersions(currentVersion, latestVersion) >= 0;
-
-  const nextUIPeerDepList = await getPackagePeerDep(NEXT_UI, allDependencies, missingDepSet);
-  const nextUIThemePeerDepList = await getPackagePeerDep(THEME_UI, allDependencies, missingDepSet);
-
-  const allOutputList = [
-    {
-      isLatest,
-      latestVersion: colorVersion,
-      package: NEXT_UI,
-      version: currentVersion,
-      versionMode
-    }
-  ];
-  const allPeerDepList = [...nextUIPeerDepList, ...nextUIThemePeerDepList];
-  const allOutputData = isNextUIAll
-    ? {
-        allOutputList,
-        allPeerDepList
-      }
-    : {allOutputList: [], allPeerDepList: []};
+  const allOutputData = await getAllOutputData(all, isNextUIAll, allDependencies, missingDepSet);
 
   const transformUpgradeOptionList = upgradeOptionList.map((c) => ({
     ...c,
@@ -238,4 +216,49 @@ function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOpt
   outputInfo.length && outputBox({...outputDefault.components, text: outputInfo});
   outputPeerDepInfo.length &&
     outputBox({...outputDefault.peerDependencies, text: outputPeerDepInfo});
+}
+
+/**
+ * Get all output data
+ * @example
+ * getAllOutputData(true, allDependencies, missingDepSet) --> {allOutputList: [], allPeerDepList: []}
+ */
+export async function getAllOutputData(
+  all: boolean,
+  isNextUIAll: boolean,
+  allDependencies: Record<string, SAFE_ANY>,
+  missingDepSet: Set<string>
+) {
+  if (!all || !isNextUIAll) {
+    return {
+      allOutputList: [],
+      allPeerDepList: []
+    };
+  }
+
+  const latestVersion = store.latestVersion;
+
+  const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
+  const colorVersion = getColorVersion(currentVersion, latestVersion);
+  const isLatest = compareVersions(currentVersion, latestVersion) >= 0;
+
+  const nextUIPeerDepList = await getPackagePeerDep(NEXT_UI, allDependencies, missingDepSet);
+  const nextUIThemePeerDepList = await getPackagePeerDep(THEME_UI, allDependencies, missingDepSet);
+
+  const allOutputList = [
+    {
+      isLatest,
+      latestVersion: colorVersion,
+      package: NEXT_UI,
+      version: currentVersion,
+      versionMode
+    }
+  ];
+  const allPeerDepList = [...nextUIPeerDepList, ...nextUIThemePeerDepList];
+  const allOutputData = {
+    allOutputList,
+    allPeerDepList
+  };
+
+  return allOutputData;
 }

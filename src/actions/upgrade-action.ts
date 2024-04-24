@@ -95,6 +95,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   const upgradeOptionList = transformComponents.filter((c) => components.includes(c.package));
 
   let result = await upgrade({
+    all,
     allDependencies,
     isNextUIAll,
     upgradeOptionList

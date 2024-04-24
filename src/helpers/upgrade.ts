@@ -8,7 +8,7 @@ import {type Dependencies, compareVersions} from 'src/scripts/helpers';
 
 import {exec} from './exec';
 import {Logger} from './logger';
-import {outputBox} from './output-info';
+import {colorMatchRegex, outputBox} from './output-info';
 import {getColorVersion, getVersionAndMode, transformPeerVersion} from './utils';
 
 export interface UpgradeOption {
@@ -214,6 +214,17 @@ function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOpt
   const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
   outputInfo.length && outputBox({...outputDefault.components, text: outputInfo});
+  Logger.newLine();
+  Logger.log(
+    chalk.gray(
+      `Required min version: ${peerDepList
+        .filter((c) => !c.isLatest)
+        .map((c) => {
+          return `${c.package}>=${c.latestVersion.replace(colorMatchRegex, '')}`;
+        })
+        .join(', ')}`
+    )
+  );
   outputPeerDepInfo.length &&
     outputBox({...outputDefault.peerDependencies, text: outputPeerDepInfo});
 }

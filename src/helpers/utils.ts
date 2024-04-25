@@ -6,6 +6,9 @@ import fg, {type Options} from 'fast-glob';
 import {ROOT} from 'src/constants/path';
 
 import {Logger} from './logger';
+import {colorMatchRegex} from './output-info';
+
+export const versionModeRegex = /([\^~])/;
 
 export function getCommandDescAndLog(log: string, desc: string) {
   Logger.gradient(log);
@@ -122,7 +125,6 @@ export function isPatchUpdate(currentVersion: string, latestVersion: string) {
 }
 
 export function getVersionAndMode(allDependencies: Record<string, SAFE_ANY>, packageName: string) {
-  const versionModeRegex = /([\^~])/;
   const currentVersion = allDependencies[packageName].replace(versionModeRegex, '');
   const versionMode = allDependencies[packageName].match(versionModeRegex)?.[1] || '';
 
@@ -161,4 +163,11 @@ export function getPackageManagerInfo(packageManager: string): {install: string;
  */
 export function transformPeerVersion(version: string) {
   return version.replace(/\^|~|>=|<=|>|</g, '');
+}
+
+export function fillAnsiLength(str: string, length: number) {
+  const stripStr = str.replace(colorMatchRegex, '');
+  const fillSpace = length - stripStr.length > 0 ? ' '.repeat(length - stripStr.length) : '';
+
+  return `${str}${fillSpace}`;
 }

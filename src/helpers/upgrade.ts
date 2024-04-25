@@ -4,12 +4,18 @@ import chalk from 'chalk';
 
 import {NEXT_UI, THEME_UI} from 'src/constants/required';
 import {store} from 'src/constants/store';
-import {type Dependencies, compareVersions} from 'src/scripts/helpers';
+import {type Dependencies, compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
 import {exec} from './exec';
 import {Logger} from './logger';
 import {colorMatchRegex, outputBox} from './output-info';
-import {getColorVersion, getVersionAndMode, transformPeerVersion} from './utils';
+import {
+  fillAnsiLength,
+  getColorVersion,
+  getVersionAndMode,
+  transformPeerVersion,
+  versionModeRegex
+} from './utils';
 
 export interface UpgradeOption {
   package: string;
@@ -58,17 +64,16 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     )
   );
 
+  const missingDepList = await getPackageUpgradeData([...missingDepSet]);
+
   const outputList = [...transformUpgradeOptionList, ...allOutputData.allOutputList];
-  const peerDepList = [...upgradePeerList.flat(), ...allOutputData.allPeerDepList].filter(
+  const peerDepList = [
+    ...upgradePeerList.flat(),
+    ...allOutputData.allPeerDepList,
+    ...missingDepList
+  ].filter(
     (upgradeOption, index, arr) =>
       index === arr.findIndex((c) => c.package === upgradeOption.package)
-  );
-
-  // Output missing peerDependencies
-  Logger.warn(
-    `Missing peerDependencies: ${chalk.yellowBright(
-      [...missingDepSet].map((c) => chalk.underline(c)).join(', ')
-    )}, check whether it is installed`
   );
 
   // Output dependencies box
@@ -102,16 +107,21 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
 
   for (const upgradeOption of upgradeOptionList) {
     for (const key in upgradeOption) {
-      if (!Object.prototype.hasOwnProperty.call(upgradeOption, key)) {
+      if (!Object.prototype.hasOwnProperty.call(upgradeOption, key) || !upgradeOption[key]) {
         continue;
       }
 
-      optionMaxLenMap[key] = Math.max(optionMaxLenMap[key], upgradeOption[key].length);
-
       if (key === 'version') {
         // Remove the duplicate character '^'
-        upgradeOption[key] = upgradeOption[key].replace('^', '');
+        upgradeOption[key] = upgradeOption[key].replace(versionModeRegex, '');
       }
+
+      const compareLength =
+        key === 'version'
+          ? upgradeOption[key].replace(colorMatchRegex, '').length
+          : upgradeOption[key].length;
+
+      optionMaxLenMap[key] = Math.max(optionMaxLenMap[key], compareLength);
     }
   }
 
@@ -131,12 +141,12 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
       );
       continue;
     }
-
     output.push(
       `  ${chalk.white(
         `${upgradeOption.package.padEnd(
           optionMaxLenMap.package + DEFAULT_SPACE.length
-        )}${DEFAULT_SPACE}${upgradeOption.versionMode || ''}${upgradeOption.version.padEnd(
+        )}${DEFAULT_SPACE}${fillAnsiLength(
+          `${upgradeOption.versionMode || ''}${upgradeOption.version}`,
           optionMaxLenMap.version
         )}  ->  ${upgradeOption.versionMode || ''}${upgradeOption.latestVersion}`
       )}${DEFAULT_SPACE}`
@@ -272,4 +282,24 @@ export async function getAllOutputData(
   };
 
   return allOutputData;
+}
+
+export async function getPackageUpgradeData(packageNameList: string[]) {
+  const result: UpgradeOption[] = [];
+
+  for (const packageName of packageNameList) {
+    const latestVersion = await getLatestVersion(packageName);
+
+    const allOutputList = {
+      isLatest: false,
+      latestVersion,
+      package: packageName,
+      version: chalk.red('Missing'),
+      versionMode: ''
+    };
+
+    result.push(allOutputList);
+  }
+
+  return result;
 }

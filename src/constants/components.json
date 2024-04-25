@@ -3,7 +3,7 @@
     {
       "name": "accordion",
       "package": "@nextui-org/accordion",
-      "version": "2.0.31",
+      "version": "2.0.32",
       "docs": "https://nextui.org/docs/components/accordion",
       "description": "Collapse display a list of high-level options that can expand/collapse to reveal more information.",
       "status": "stable",
@@ -20,7 +20,7 @@
     {
       "name": "autocomplete",
       "package": "@nextui-org/autocomplete",
-      "version": "2.0.15",
+      "version": "2.0.16",
       "docs": "https://nextui.org/docs/components/autocomplete",
       "description": "An autocomplete combines a text input with a listbox, allowing users to filter a list of options to items matching a query.",
       "status": "stable",
@@ -84,7 +84,7 @@
     {
       "name": "button",
       "package": "@nextui-org/button",
-      "version": "2.0.30",
+      "version": "2.0.31",
       "docs": "https://nextui.org/docs/components/button",
       "description": "Buttons allow users to perform actions and choose with a single tap.",
       "status": "stable",
@@ -101,7 +101,7 @@
     {
       "name": "calendar",
       "package": "@nextui-org/calendar",
-      "version": "2.0.3",
+      "version": "2.0.4",
       "docs": "https://nextui.org/docs/components/calendar",
       "description": "A calendar displays one or more date grids and allows users to select a single date.",
       "status": "new",
@@ -117,7 +117,7 @@
     {
       "name": "card",
       "package": "@nextui-org/card",
-      "version": "2.0.27",
+      "version": "2.0.28",
       "docs": "https://nextui.org/docs/components/card",
       "description": "Card is a container for text, photos, and actions in the context of a single subject.",
       "status": "stable",
@@ -197,7 +197,7 @@
     {
       "name": "date-picker",
       "package": "@nextui-org/date-picker",
-      "version": "2.0.6",
+      "version": "2.0.7",
       "docs": "https://nextui.org/docs/components/date-picker",
       "description": "A date picker combines a DateInput and a Calendar popover to allow users to enter or select a date and time value.",
       "status": "new",
@@ -228,7 +228,7 @@
     {
       "name": "dropdown",
       "package": "@nextui-org/dropdown",
-      "version": "2.1.22",
+      "version": "2.1.23",
       "docs": "https://nextui.org/docs/components/dropdown",
       "description": "A dropdown displays a list of actions or options that a user can choose.",
       "status": "stable",
@@ -261,7 +261,7 @@
     {
       "name": "input",
       "package": "@nextui-org/input",
-      "version": "2.1.20",
+      "version": "2.1.21",
       "docs": "https://nextui.org/docs/components/input",
       "description": "The input component is designed for capturing user input within a text field.",
       "status": "stable",
@@ -324,7 +324,7 @@
     {
       "name": "menu",
       "package": "@nextui-org/menu",
-      "version": "2.0.21",
+      "version": "2.0.22",
       "docs": "https://nextui.org/docs/components/menu",
       "description": "A menu displays a list of options and allows a user to select one or more of them.",
       "status": "stable",
@@ -390,7 +390,7 @@
     {
       "name": "popover",
       "package": "@nextui-org/popover",
-      "version": "2.1.20",
+      "version": "2.1.21",
       "docs": "https://nextui.org/docs/components/popover",
       "description": "A popover is an overlay element positioned relative to a trigger.",
       "status": "stable",
@@ -439,7 +439,7 @@
     {
       "name": "ripple",
       "package": "@nextui-org/ripple",
-      "version": "2.0.27",
+      "version": "2.0.28",
       "docs": "https://nextui.org/docs/components/ripple",
       "description": "A simple implementation to display a ripple animation when the source component is clicked",
       "status": "stable",
@@ -472,7 +472,7 @@
     {
       "name": "select",
       "package": "@nextui-org/select",
-      "version": "2.1.26",
+      "version": "2.1.27",
       "docs": "https://nextui.org/docs/components/select",
       "description": "A select displays a collapsible list of options and allows a user to select one of them.",
       "status": "stable",
@@ -520,7 +520,7 @@
     {
       "name": "snippet",
       "package": "@nextui-org/snippet",
-      "version": "2.0.34",
+      "version": "2.0.35",
       "docs": "https://nextui.org/docs/components/snippet",
       "description": "Display a snippet of copyable code for the command line.",
       "status": "stable",
@@ -583,7 +583,7 @@
     {
       "name": "table",
       "package": "@nextui-org/table",
-      "version": "2.0.32",
+      "version": "2.0.33",
       "docs": "https://nextui.org/docs/components/table",
       "description": "Tables are used to display tabular data using rows and columns. ",
       "status": "stable",
@@ -647,5 +647,5 @@
       }
     }
   ],
-  "version": "2.3.5"
+  "version": "2.3.6"
 }

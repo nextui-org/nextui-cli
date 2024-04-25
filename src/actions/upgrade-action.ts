@@ -109,7 +109,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
         value: true
       },
       {
-        description: 'Turn to choose whether need to ignore some package upgrade',
+        description: 'Select this if you wish to exclude certain packages from the upgrade',
         title: 'No',
         value: false
       }
@@ -120,18 +120,25 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
     if (!isExecute) {
       // Ask whether need to remove some package not to upgrade
-      const isNeedRemove = await getSelect('Do you want to ignore some package to upgrade?', [
-        {
-          description: 'Turn to choose components to ignore',
-          title: 'Yes',
-          value: true
-        },
-        {description: 'Upgrade exit', title: 'No', value: false}
-      ]);
+      const isNeedRemove = await getSelect(
+        'Would you like to exclude any packages from the upgrade?',
+        [
+          {
+            description: 'Select this to choose packages to exclude',
+            title: 'Yes',
+            value: true
+          },
+          {
+            description: 'Select this to proceed without excluding any packages',
+            title: 'No',
+            value: false
+          }
+        ]
+      );
 
       if (isNeedRemove) {
         ignoreList = await getMultiselect(
-          'Which components do you want to ignore?',
+          'Select the packages you want to exclude from the upgrade:',
           result.map((c) => {
             return {
               description: `${c.version} -> ${getColorVersion(c.version, c.latestVersion)}`,

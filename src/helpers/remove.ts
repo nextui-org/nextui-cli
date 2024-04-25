@@ -12,7 +12,7 @@ import {getMatchArray, replaceMatchArray} from './match';
 import {getPackageManagerInfo} from './utils';
 
 export async function removeDependencies(components: string[], packageManager: string) {
-  const {remove} = getPackageManagerInfo(packageManager);
+  const {remove} = getPackageManagerInfo(packageManager as 'npm' | 'bun' | 'pnpm' | 'yarn');
 
   await exec(`${packageManager} ${remove} ${components.join(' ')}`);
 

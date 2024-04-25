@@ -7,6 +7,7 @@ import fg, {type Options} from 'fast-glob';
 import {ROOT} from 'src/constants/path';
 
 import {Logger} from './logger';
+import {colorMatchRegex} from './output-info';
 
 export function getCommandDescAndLog(log: string, desc: string) {
   Logger.gradient(log);
@@ -151,4 +152,23 @@ export function getPackageManagerInfo<T extends Agent = Agent>(packageManager: T
   } as const;
 
   return packageManagerInfo[packageManager] as (typeof packageManagerInfo)[T];
+}
+
+/**
+ * @example transformPeerVersion('>=1.0.0') // '1.0.0'
+ * @param version
+ */
+export function transformPeerVersion(version: string) {
+  return version.replace(/\^|~|>=|<=|>|</g, '');
+}
+
+export function fillAnsiLength(str: string, length: number) {
+  const stripStr = str.replace(colorMatchRegex, '');
+  const fillSpace = length - stripStr.length > 0 ? ' '.repeat(length - stripStr.length) : '';
+
+  return `${str}${fillSpace}`;
+}
+
+export function strip(str: string) {
+  return str.replace(colorMatchRegex, '');
 }

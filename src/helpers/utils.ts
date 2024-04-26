@@ -9,6 +9,8 @@ import {ROOT} from 'src/constants/path';
 import {Logger} from './logger';
 import {colorMatchRegex} from './output-info';
 
+export const versionModeRegex = /([\^~])/;
+
 export function getCommandDescAndLog(log: string, desc: string) {
   Logger.gradient(log);
 
@@ -72,6 +74,9 @@ export function getUpgradeType({
 }
 
 export function getColorVersion(currentVersion: string, latestVersion: string) {
+  currentVersion = transformPeerVersion(currentVersion);
+  latestVersion = transformPeerVersion(latestVersion);
+
   if (isMajorUpdate(currentVersion, latestVersion)) {
     return isMajorUpdate(currentVersion, latestVersion);
   } else if (isMinorUpdate(currentVersion, latestVersion)) {
@@ -121,7 +126,6 @@ export function isPatchUpdate(currentVersion: string, latestVersion: string) {
 }
 
 export function getVersionAndMode(allDependencies: Record<string, SAFE_ANY>, packageName: string) {
-  const versionModeRegex = /([\^~])/;
   const currentVersion = allDependencies[packageName].replace(versionModeRegex, '');
   const versionMode = allDependencies[packageName].match(versionModeRegex)?.[1] || '';
 

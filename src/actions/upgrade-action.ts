@@ -6,6 +6,7 @@ import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
+import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
 import {upgrade} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo} from '@helpers/utils';
@@ -13,8 +14,8 @@ import {type NextUIComponents} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {NEXT_UI} from 'src/constants/required';
 import {store} from 'src/constants/store';
-import {getAutocompleteMultiselect, getSelect} from 'src/prompts';
-import {getLatestVersion} from 'src/scripts/helpers';
+import {getAutocompleteMultiselect, getMultiselect, getSelect} from 'src/prompts';
+import {compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
 interface UpgradeActionOptions {
   packagePath?: string;
@@ -41,7 +42,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
     transformComponents.push({
       ...component,
-      isLatest: component.version === latestVersion,
+      isLatest: compareVersions(component.version, latestVersion) >= 0,
       latestVersion
     });
   }
@@ -53,9 +54,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     return;
   }
 
-  if (isNextUIAll) {
-    components = [NEXT_UI];
-  } else if (all) {
+  if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(
@@ -95,11 +94,13 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   /** ======================== Upgrade ======================== */
   const upgradeOptionList = transformComponents.filter((c) => components.includes(c.package));
 
-  const result = await upgrade({
+  let result = await upgrade({
+    all,
     allDependencies,
     isNextUIAll,
     upgradeOptionList
   });
+  let ignoreList: string[] = [];
 
   if (result.length) {
     const isExecute = await getSelect('Would you like to proceed with the upgrade?', [
@@ -107,19 +108,60 @@ export async function upgradeAction(components: string[], options: UpgradeAction
         title: 'Yes',
         value: true
       },
-      {title: 'No', value: false}
+      {
+        description: 'Select this if you wish to exclude certain packages from the upgrade',
+        title: 'No',
+        value: false
+      }
     ]);
 
-    if (isExecute) {
-      const packageManager = await detect();
-      const {install} = getPackageManagerInfo(packageManager);
+    const packageManager = await detect();
+    const {install} = getPackageManagerInfo(packageManager);
 
-      await exec(
-        `${packageManager} ${install} ${result.reduce((acc, component) => {
-          return `${acc} ${component.package}@${component.latestVersion}`;
-        }, '')}`
+    if (!isExecute) {
+      // Ask whether need to remove some package not to upgrade
+      const isNeedRemove = await getSelect(
+        'Would you like to exclude any packages from the upgrade?',
+        [
+          {
+            description: 'Select this to choose packages to exclude',
+            title: 'Yes',
+            value: true
+          },
+          {
+            description: 'Select this to proceed without excluding any packages',
+            title: 'No',
+            value: false
+          }
+        ]
       );
+
+      if (isNeedRemove) {
+        ignoreList = await getMultiselect(
+          'Select the packages you want to exclude from the upgrade:',
+          result.map((c) => {
+            return {
+              description: `${c.version} -> ${getColorVersion(c.version, c.latestVersion)}`,
+              title: c.package,
+              value: c.package
+            };
+          })
+        );
+      }
     }
+
+    // Remove the components that need to be ignored
+    result = result.filter((r) => {
+      return !ignoreList.some((ignore) => r.package === ignore);
+    });
+
+    await exec(
+      `${packageManager} ${install} ${result.reduce((acc, component, index) => {
+        return `${acc}${index === 0 ? '' : ' '}${
+          component.package
+        }@${component.latestVersion.replace(colorMatchRegex, '')}`;
+      }, '')}`
+    );
   }
 
   Logger.newLine();

@@ -52,6 +52,7 @@ export function outputComponents({
     name: 0,
     originVersion: 0,
     package: 0,
+    peerDependencies: 0,
     status: 0,
     style: 0,
     version: 0

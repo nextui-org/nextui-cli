@@ -1,3 +1,4 @@
+import type {Agent} from './detect';
 import type {NextUIComponents} from 'src/constants/component';
 
 import {existsSync, readFileSync, writeFileSync} from 'node:fs';
@@ -11,8 +12,8 @@ import {Logger} from './logger';
 import {getMatchArray, replaceMatchArray} from './match';
 import {getPackageManagerInfo} from './utils';
 
-export async function removeDependencies(components: string[], packageManager: string) {
-  const {remove} = getPackageManagerInfo(packageManager as 'npm' | 'bun' | 'pnpm' | 'yarn');
+export async function removeDependencies(components: string[], packageManager: Agent) {
+  const {remove} = getPackageManagerInfo(packageManager);
 
   await exec(`${packageManager} ${remove} ${components.join(' ')}`);
 

@@ -172,3 +172,7 @@ export function fillAnsiLength(str: string, length: number) {
 
   return `${str}${fillSpace}`;
 }
+
+export function strip(str: string) {
+  return str.replace(colorMatchRegex, '');
+}

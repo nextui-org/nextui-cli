@@ -147,7 +147,8 @@ nextui.hook('preAction', async (command) => {
     initStoreComponentsData(nextUIComponents);
   }
 
-  const cliLatestVersion = await getStore('cliLatestVersion');
+  // const cliLatestVersion = await getStore('cliLatestVersion');
+  const cliLatestVersion = '0.2.2';
   const latestVersion = await getStore('latestVersion');
 
   // Init latest version
@@ -159,13 +160,14 @@ nextui.hook('preAction', async (command) => {
 
   if (compareVersions(currentVersion, cliLatestVersion) === -1) {
     outputBox({
+      center: true,
       color: 'yellow',
       padding: 1,
       text: `${chalk.gray(
         `Available upgrade: v${currentVersion} -> ${chalk.greenBright(
           `v${cliLatestVersion}`
         )}\nRun \`${chalk.cyan(
-          'npm install nextui-cli@latest'
+          'npm install -g nextui-cli@latest'
         )}\` to upgrade\nChangelog: ${chalk.underline(
           'https://github.com/nextui-org/nextui-cli/releases'
         )}`

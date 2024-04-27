@@ -147,8 +147,7 @@ nextui.hook('preAction', async (command) => {
     initStoreComponentsData(nextUIComponents);
   }
 
-  // const cliLatestVersion = await getStore('cliLatestVersion');
-  const cliLatestVersion = '0.2.2';
+  const cliLatestVersion = await getStore('cliLatestVersion');
   const latestVersion = await getStore('latestVersion');
 
   // Init latest version

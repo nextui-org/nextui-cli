@@ -26,7 +26,13 @@ interface UpgradeActionOptions {
 }
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
-  const {all = false, packagePath = resolver('package.json')} = options;
+  const {
+    all = false,
+    major = false,
+    minor = false,
+    packagePath = resolver('package.json'),
+    patch = false
+  } = options;
   const {allDependencies, currentComponents} = getPackageInfo(packagePath, false);
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
@@ -56,6 +62,14 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   if (all) {
     components = currentComponents.map((component) => component.package);
+  } else if (major || minor || patch) {
+    const compareIndex = major ? 0 : minor ? 1 : 2;
+
+    components = transformComponents
+      .filter(
+        (c) => c.version.split('.')[compareIndex] !== c.latestVersion.split('.')[compareIndex]
+      )
+      .map((c) => c.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',

@@ -63,12 +63,23 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (major || minor || patch) {
-    const compareIndex = major ? 0 : minor ? 1 : 2;
-
     components = transformComponents
-      .filter(
-        (c) => c.version.split('.')[compareIndex] !== c.latestVersion.split('.')[compareIndex]
-      )
+      .filter((c) => {
+        const [currentMajor, currentMinor, currentPatch] = c.version.split('.').map(Number);
+        const [latestMajor, latestMinor, latestPatch] = c.latestVersion.split('.').map(Number);
+
+        if (major) {
+          return currentMajor !== latestMajor;
+        } else if (minor) {
+          return currentMajor === latestMajor && currentMinor !== latestMinor;
+        } else {
+          return (
+            currentMajor === latestMajor &&
+            currentMinor === latestMinor &&
+            currentPatch !== latestPatch
+          );
+        }
+      })
       .map((c) => c.package);
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(

@@ -173,9 +173,9 @@ nextui upgrade [components...] [options]
 - `-p --packagePath` [string] The path to the package.json file
 - `-a --all` [boolean] Upgrade all the NextUI components (default: `false`)
 - `-h, --help` Display help for command
-- `-ma --major [boolean]` Detach major updatable versions (default: `false`)
-- `-mi --minor [boolean]` Detach minor updatable versions (default: `false`)
-- `-pa --patch [boolean]` Detach patch updatable versions (default: `false`)
+- `-ma --major` [boolean] Detach major updatable versions (default: `false`)
+- `-mi --minor` [boolean] Detach minor updatable versions (default: `false`)
+- `-pa --patch` [boolean] Detach patch updatable versions (default: `false`)
 
 ##### Example
 

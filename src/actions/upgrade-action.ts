@@ -8,7 +8,7 @@ import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
-import {upgrade} from '@helpers/upgrade';
+import {filterComponent, upgrade} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo} from '@helpers/utils';
 import {type NextUIComponents} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
@@ -17,13 +17,17 @@ import {store} from 'src/constants/store';
 import {getAutocompleteMultiselect, getMultiselect, getSelect} from 'src/prompts';
 import {compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
-interface UpgradeActionOptions {
+export interface UpgradeActionOptions {
   packagePath?: string;
   all?: boolean;
   major?: boolean;
   minor?: boolean;
   patch?: boolean;
 }
+
+export type transformComponent = Required<
+  AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
+>;
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
   const {
@@ -37,9 +41,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
 
-  const transformComponents: Required<
-    AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
-  >[] = [];
+  const transformComponents: transformComponent[] = [];
 
   for (const component of currentComponents) {
     const latestVersion =
@@ -63,24 +65,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (major || minor || patch) {
-    components = transformComponents
-      .filter((c) => {
-        const [currentMajor, currentMinor, currentPatch] = c.version.split('.').map(Number);
-        const [latestMajor, latestMinor, latestPatch] = c.latestVersion.split('.').map(Number);
-
-        if (major) {
-          return currentMajor !== latestMajor;
-        } else if (minor) {
-          return currentMajor === latestMajor && currentMinor !== latestMinor;
-        } else {
-          return (
-            currentMajor === latestMajor &&
-            currentMinor === latestMinor &&
-            currentPatch !== latestPatch
-          );
-        }
-      })
-      .map((c) => c.package);
+    components = await filterComponent(transformComponents, {major, minor, patch});
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',

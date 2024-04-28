@@ -1,4 +1,5 @@
 import type {RequiredKey, SAFE_ANY} from './type';
+import type {UpgradeActionOptions, transformComponent} from 'src/actions/upgrade-action';
 
 import chalk from 'chalk';
 
@@ -26,7 +27,21 @@ export interface UpgradeOption {
   peerDependencies?: Dependencies;
 }
 
+interface upgradeCount {
+  majorNum: number;
+  minorNum: number;
+  options: UpgradeActionOptions;
+  patchNum: number;
+}
+
 const DEFAULT_SPACE = ''.padEnd(7);
+
+let upgradeCount: upgradeCount = {
+  majorNum: 0,
+  minorNum: 0,
+  options: {major: false, minor: false, patch: false},
+  patchNum: 0
+};
 
 interface Upgrade {
   isNextUIAll: boolean;
@@ -219,11 +234,29 @@ function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOpt
     components: {color: 'blue', text: '', title: chalk.blue(componentName)},
     peerDependencies: {color: 'yellow', text: '', title: chalk.yellow('PeerDependencies')}
   } as const;
+  const {majorNum, minorNum, patchNum} = upgradeCount;
+
+  let res = '';
+
+  if (majorNum > 0) {
+    res = `${chalk.yellowBright(majorNum)} Major, `;
+  }
+  if (minorNum > 0) {
+    res += `${chalk.yellowBright(minorNum)} Minor, `;
+  }
+  if (patchNum > 0) {
+    res += `${chalk.yellowBright(patchNum)} Patch`;
+  }
+  res = res.replace(/,\s*$/, '');
 
   const outputInfo = getUpgradeVersion(outputList);
   const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
   outputInfo.length && outputBox({...outputDefault.components, text: outputInfo});
+  if (res) {
+    Logger.newLine();
+    Logger.log(res);
+  }
   Logger.newLine();
   Logger.log(
     chalk.gray(
@@ -302,4 +335,68 @@ export async function getPackageUpgradeData(packageNameList: string[]) {
   }
 
   return result;
+}
+
+export async function filterComponent(
+  transformComponents: transformComponent[],
+  option: UpgradeActionOptions
+) {
+  const {major, minor} = option;
+  const components: string[] = [];
+
+  const isMajorUpdate = (currentVersion: string[], latestVersion: string[]): boolean => {
+    return currentVersion[0] !== latestVersion[0];
+  };
+
+  const isMinorUpdate = (currentVersion: string[], latestVersion: string[]): boolean => {
+    return currentVersion[0] === latestVersion[0] && currentVersion[1] !== latestVersion[1];
+  };
+
+  const isPatchUpdate = (currentVersion: string[], latestVersion: string[]): boolean => {
+    return (
+      currentVersion[0] === latestVersion[0] &&
+      currentVersion[1] === latestVersion[1] &&
+      currentVersion[2] !== latestVersion[2]
+    );
+  };
+
+  upgradeCount = {
+    majorNum: 0,
+    minorNum: 0,
+    options: option,
+    patchNum: 0
+  };
+
+  for (const c of transformComponents) {
+    const currentVersionArr = c.version.split('.');
+    const latestVersionArr = c.latestVersion.split('.');
+
+    if (major) {
+      if (isMajorUpdate(currentVersionArr, latestVersionArr)) {
+        upgradeCount.majorNum++;
+        components.push(c.package);
+      } else if (isMinorUpdate(currentVersionArr, latestVersionArr)) {
+        upgradeCount.minorNum++;
+        components.push(c.package);
+      } else if (isPatchUpdate(currentVersionArr, latestVersionArr)) {
+        upgradeCount.patchNum++;
+        components.push(c.package);
+      }
+    } else if (minor) {
+      if (isMinorUpdate(currentVersionArr, latestVersionArr)) {
+        upgradeCount.minorNum++;
+        components.push(c.package);
+      } else if (isPatchUpdate(currentVersionArr, latestVersionArr)) {
+        upgradeCount.patchNum++;
+        components.push(c.package);
+      }
+    } else {
+      if (isPatchUpdate(currentVersionArr, latestVersionArr)) {
+        upgradeCount.patchNum++;
+        components.push(c.package);
+      }
+    }
+  }
+
+  return components;
 }

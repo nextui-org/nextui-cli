@@ -1,6 +1,6 @@
 import type {Agent} from '@helpers/detect';
 
-import {renameSync} from 'node:fs';
+import {existsSync, renameSync} from 'node:fs';
 
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
@@ -47,7 +47,7 @@ export async function initAction(_projectName: string, options: InitActionOption
 
   /** ======================== Generate template ======================== */
   // Detect if the project name already exists
-  if (resolver(`${ROOT}/${projectName}`)) {
+  if (existsSync(resolver(`${ROOT}/${projectName}`))) {
     p.cancel(`The project name ${chalk.redBright(projectName)} already exists`);
     process.exit(1);
   }

@@ -43,7 +43,7 @@ export async function initAction(_projectName: string, options: InitActionOption
     _projectName,
     _template
   );
-  const {install, run} = getPackageManagerInfo(packageName);
+  const {run} = getPackageManagerInfo(packageName);
 
   /** ======================== Generate template ======================== */
   // Detect if the project name already exists
@@ -71,7 +71,7 @@ export async function initAction(_projectName: string, options: InitActionOption
 
   /** ======================== Add guide ======================== */
   p.note(
-    `cd ${chalk.cyanBright(projectName)}\n${chalk.cyanBright(packageName)} ${install}`,
+    `cd ${chalk.cyanBright(projectName)}\n${chalk.cyanBright(packageName)} install`,
     'Next steps'
   );
 

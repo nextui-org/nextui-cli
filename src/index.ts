@@ -81,8 +81,7 @@ nextui
   .description('Initializes a new project')
   .argument('[projectName]', 'Name of the project to initialize')
   .option('-t --template [string]', 'Specify a template for the new project, e.g., app, pages')
-  /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
-  // .option('-p --package [string]', 'The package manager to use for the new project')
+  .option('-p --package [string]', 'The package manager to use for the new project', 'npm')
   .action(initAction);
 
 nextui

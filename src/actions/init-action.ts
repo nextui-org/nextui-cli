@@ -46,6 +46,12 @@ export async function initAction(_projectName: string, options: InitActionOption
   const {install, run} = getPackageManagerInfo(packageName);
 
   /** ======================== Generate template ======================== */
+  // Detect if the project name already exists
+  if (resolver(`${ROOT}/${projectName}`)) {
+    p.cancel(`The project name ${chalk.redBright(projectName)} already exists`);
+    process.exit(1);
+  }
+
   if (template === 'app') {
     await generateTemplate(APP_REPO);
     renameTemplate(APP_DIR, projectName);

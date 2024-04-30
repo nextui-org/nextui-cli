@@ -13,6 +13,9 @@ import {
   fillAnsiLength,
   getColorVersion,
   getVersionAndMode,
+  isMajorUpdate,
+  isMinorUpdate,
+  strip,
   transformPeerVersion,
   versionModeRegex
 } from './utils';
@@ -27,6 +30,8 @@ export interface UpgradeOption {
 }
 
 const DEFAULT_SPACE = ''.padEnd(7);
+
+const MISSING = 'Missing';
 
 interface Upgrade {
   isNextUIAll: boolean;
@@ -83,6 +88,9 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     (upgradeOption, index, arr) =>
       !upgradeOption.isLatest && index === arr.findIndex((c) => c.package === upgradeOption.package)
   );
+
+  // Output upgrade count
+  outputUpgradeCount(result);
 
   return result;
 }
@@ -294,7 +302,7 @@ export async function getPackageUpgradeData(packageNameList: string[]) {
       isLatest: false,
       latestVersion,
       package: packageName,
-      version: chalk.red('Missing'),
+      version: chalk.red(MISSING),
       versionMode: ''
     };
 
@@ -302,4 +310,45 @@ export async function getPackageUpgradeData(packageNameList: string[]) {
   }
 
   return result;
+}
+
+function outputUpgradeCount(outputList: UpgradeOption[]) {
+  const count = {
+    major: 0,
+    minor: 0,
+    patch: 0
+  };
+
+  for (const component of outputList) {
+    if (component.version === MISSING) {
+      count.major++;
+      continue;
+    }
+    const stripLatestVersion = strip(component.latestVersion);
+
+    if (isMajorUpdate(component.version, stripLatestVersion)) {
+      count.major++;
+    } else if (isMinorUpdate(component.version, stripLatestVersion)) {
+      count.minor++;
+    } else {
+      count.patch++;
+    }
+  }
+
+  const outputInfo = Object.entries(count)
+    .reduce((acc, [key, value]) => {
+      if (!value) {
+        return acc;
+      }
+
+      return `${acc}${chalk.yellowBright(value)} ${key}, `;
+    }, '')
+    .replace(/, $/, '');
+
+  if (outputInfo) {
+    Logger.log(outputInfo);
+    Logger.newLine();
+  }
+
+  return count;
 }

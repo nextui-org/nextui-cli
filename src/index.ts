@@ -103,9 +103,6 @@ nextui
   .argument('[components...]', 'Names of components to upgrade')
   .option('-p --packagePath [string]', 'Specify the path to the package.json file')
   .option('-a --all [boolean]', 'Upgrade all components', false)
-  .option('-mj --major [boolean]', 'Detach all updatable versions', false)
-  .option('-mi --minor [boolean]', 'Detach minor patch updatable versions', false)
-  .option('-pa --patch [boolean]', 'Detach patch updatable versions', false)
   .action(upgradeAction);
 
 nextui

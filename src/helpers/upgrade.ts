@@ -1,5 +1,4 @@
 import type {RequiredKey, SAFE_ANY} from './type';
-import type {UpgradeActionOptions, transformComponent} from 'src/actions/upgrade-action';
 
 import chalk from 'chalk';
 
@@ -14,6 +13,9 @@ import {
   fillAnsiLength,
   getColorVersion,
   getVersionAndMode,
+  isMajorUpdate,
+  isMinorUpdate,
+  strip,
   transformPeerVersion,
   versionModeRegex
 } from './utils';
@@ -27,21 +29,9 @@ export interface UpgradeOption {
   peerDependencies?: Dependencies;
 }
 
-interface upgradeCount {
-  majorNum: number;
-  minorNum: number;
-  options: UpgradeActionOptions;
-  patchNum: number;
-}
-
 const DEFAULT_SPACE = ''.padEnd(7);
 
-let upgradeCount: upgradeCount = {
-  majorNum: 0,
-  minorNum: 0,
-  options: {major: false, minor: false, patch: false},
-  patchNum: 0
-};
+const MISSING = 'Missing';
 
 interface Upgrade {
   isNextUIAll: boolean;
@@ -98,6 +88,9 @@ export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgra
     (upgradeOption, index, arr) =>
       !upgradeOption.isLatest && index === arr.findIndex((c) => c.package === upgradeOption.package)
   );
+
+  // Output upgrade count
+  outputUpgradeCount(result);
 
   return result;
 }
@@ -234,29 +227,11 @@ function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOpt
     components: {color: 'blue', text: '', title: chalk.blue(componentName)},
     peerDependencies: {color: 'yellow', text: '', title: chalk.yellow('PeerDependencies')}
   } as const;
-  const {majorNum, minorNum, patchNum} = upgradeCount;
-
-  let res = '';
-
-  if (majorNum > 0) {
-    res = `${chalk.yellowBright(majorNum)} Major, `;
-  }
-  if (minorNum > 0) {
-    res += `${chalk.yellowBright(minorNum)} Minor, `;
-  }
-  if (patchNum > 0) {
-    res += `${chalk.yellowBright(patchNum)} Patch`;
-  }
-  res = res.replace(/,\s*$/, '');
 
   const outputInfo = getUpgradeVersion(outputList);
   const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
 
   outputInfo.length && outputBox({...outputDefault.components, text: outputInfo});
-  if (res) {
-    Logger.newLine();
-    Logger.log(res);
-  }
   Logger.newLine();
   Logger.log(
     chalk.gray(
@@ -327,7 +302,7 @@ export async function getPackageUpgradeData(packageNameList: string[]) {
       isLatest: false,
       latestVersion,
       package: packageName,
-      version: chalk.red('Missing'),
+      version: chalk.red(MISSING),
       versionMode: ''
     };
 
@@ -337,66 +312,43 @@ export async function getPackageUpgradeData(packageNameList: string[]) {
   return result;
 }
 
-export async function filterComponent(
-  transformComponents: transformComponent[],
-  option: UpgradeActionOptions
-) {
-  const {major, minor} = option;
-  const components: string[] = [];
-
-  const isMajorUpdate = (currentVersion: string[], latestVersion: string[]): boolean => {
-    return currentVersion[0] !== latestVersion[0];
+function outputUpgradeCount(outputList: UpgradeOption[]) {
+  const count = {
+    major: 0,
+    minor: 0,
+    patch: 0
   };
 
-  const isMinorUpdate = (currentVersion: string[], latestVersion: string[]): boolean => {
-    return currentVersion[0] === latestVersion[0] && currentVersion[1] !== latestVersion[1];
-  };
+  for (const component of outputList) {
+    if (component.version === MISSING) {
+      count.major++;
+      continue;
+    }
+    const stripLatestVersion = strip(component.latestVersion);
 
-  const isPatchUpdate = (currentVersion: string[], latestVersion: string[]): boolean => {
-    return (
-      currentVersion[0] === latestVersion[0] &&
-      currentVersion[1] === latestVersion[1] &&
-      currentVersion[2] !== latestVersion[2]
-    );
-  };
-
-  upgradeCount = {
-    majorNum: 0,
-    minorNum: 0,
-    options: option,
-    patchNum: 0
-  };
-
-  for (const c of transformComponents) {
-    const currentVersionArr = c.version.split('.');
-    const latestVersionArr = c.latestVersion.split('.');
-
-    if (major) {
-      if (isMajorUpdate(currentVersionArr, latestVersionArr)) {
-        upgradeCount.majorNum++;
-        components.push(c.package);
-      } else if (isMinorUpdate(currentVersionArr, latestVersionArr)) {
-        upgradeCount.minorNum++;
-        components.push(c.package);
-      } else if (isPatchUpdate(currentVersionArr, latestVersionArr)) {
-        upgradeCount.patchNum++;
-        components.push(c.package);
-      }
-    } else if (minor) {
-      if (isMinorUpdate(currentVersionArr, latestVersionArr)) {
-        upgradeCount.minorNum++;
-        components.push(c.package);
-      } else if (isPatchUpdate(currentVersionArr, latestVersionArr)) {
-        upgradeCount.patchNum++;
-        components.push(c.package);
-      }
+    if (isMajorUpdate(component.version, stripLatestVersion)) {
+      count.major++;
+    } else if (isMinorUpdate(component.version, stripLatestVersion)) {
+      count.minor++;
     } else {
-      if (isPatchUpdate(currentVersionArr, latestVersionArr)) {
-        upgradeCount.patchNum++;
-        components.push(c.package);
-      }
+      count.patch++;
     }
   }
 
-  return components;
+  const outputInfo = Object.entries(count)
+    .reduce((acc, [key, value]) => {
+      if (!value) {
+        return acc;
+      }
+
+      return `${acc}${chalk.yellowBright(value)} ${key}, `;
+    }, '')
+    .replace(/, $/, '');
+
+  if (outputInfo) {
+    Logger.log(outputInfo);
+    Logger.newLine();
+  }
+
+  return count;
 }

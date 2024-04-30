@@ -8,7 +8,7 @@ import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
-import {filterComponent, upgrade} from '@helpers/upgrade';
+import {upgrade} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo} from '@helpers/utils';
 import {type NextUIComponents} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
@@ -17,7 +17,7 @@ import {store} from 'src/constants/store';
 import {getAutocompleteMultiselect, getMultiselect, getSelect} from 'src/prompts';
 import {compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
-export interface UpgradeActionOptions {
+interface UpgradeActionOptions {
   packagePath?: string;
   all?: boolean;
   major?: boolean;
@@ -25,23 +25,15 @@ export interface UpgradeActionOptions {
   patch?: boolean;
 }
 
-export type transformComponent = Required<
-  AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
->;
-
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
-  const {
-    all = false,
-    major = false,
-    minor = false,
-    packagePath = resolver('package.json'),
-    patch = false
-  } = options;
+  const {all = false, packagePath = resolver('package.json')} = options;
   const {allDependencies, currentComponents} = getPackageInfo(packagePath, false);
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
 
-  const transformComponents: transformComponent[] = [];
+  const transformComponents: Required<
+    AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
+  >[] = [];
 
   for (const component of currentComponents) {
     const latestVersion =
@@ -64,8 +56,6 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   if (all) {
     components = currentComponents.map((component) => component.package);
-  } else if (major || minor || patch) {
-    components = await filterComponent(transformComponents, {major, minor, patch});
   } else if (!components.length) {
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',

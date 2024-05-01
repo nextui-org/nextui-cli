@@ -20,6 +20,7 @@ import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
 import {initStoreComponentsData} from './constants/component';
 import {getStore, store} from './constants/store';
+import {initCache} from './scripts/cache/cache';
 import {compareVersions, getComponents} from './scripts/helpers';
 
 const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
@@ -145,6 +146,7 @@ nextui.hook('preAction', async (command) => {
     const nextUIComponents = (await getComponents()).components;
 
     initStoreComponentsData(nextUIComponents);
+    initCache();
   }
 
   const cliLatestVersion = await getStore('cliLatestVersion');

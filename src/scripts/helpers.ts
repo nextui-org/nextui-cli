@@ -3,7 +3,7 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
 import retry from 'async-retry';
 import chalk from 'chalk';
-import {oraPromise} from 'ora';
+import ora, {oraPromise} from 'ora';
 
 import {Logger} from '@helpers/logger';
 import {transformPeerVersion} from '@helpers/utils';
@@ -66,7 +66,7 @@ export async function updateComponents() {
 
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
-  const latestVersion = await getStore('latestVersion');
+  const latestVersion = '2.3.6';
 
   if (compareVersions(currentVersion, latestVersion) === -1) {
     // After the first time, check the version and update
@@ -91,7 +91,29 @@ export async function getComponents() {
 }
 
 export async function getLatestVersion(packageName: string): Promise<string> {
-  return new Promise((resolve, reject) => {
+  const spinner = ora({
+    // Open ctrl + c cancel
+    discardStdin: false,
+    spinner: {
+      frames: [
+        `⠋ ${chalk.gray(`Fetching ${packageName} latest version.`)}`,
+        `⠙ ${chalk.gray(`Fetching ${packageName} latest version..`)}`,
+        `⠹ ${chalk.gray(`Fetching ${packageName} latest version...`)}`,
+        `⠸ ${chalk.gray(`Fetching ${packageName} latest version.`)}`,
+        `⠼ ${chalk.gray(`Fetching ${packageName} latest version..`)}`,
+        `⠴ ${chalk.gray(`Fetching ${packageName} latest version...`)}`,
+        `⠦ ${chalk.gray(`Fetching ${packageName} latest version.`)}`,
+        `⠧ ${chalk.gray(`Fetching ${packageName} latest version..`)}`,
+        `⠇ ${chalk.gray(`Fetching ${packageName} latest version...`)}`,
+        `⠏ ${chalk.gray(`Fetching ${packageName} latest version.`)}`
+      ],
+      interval: 150
+    }
+  });
+
+  spinner.start();
+
+  const result = await new Promise((resolve, reject) => {
     exec(`npm view ${packageName} version`, (error, stdout) => {
       if (error) {
         Logger.error(`Get latest ${packageName} error: ${error}`);
@@ -100,6 +122,10 @@ export async function getLatestVersion(packageName: string): Promise<string> {
       resolve(stdout.trim());
     });
   });
+
+  spinner.stop();
+
+  return result as string;
 }
 
 const getUnpkgUrl = (version: string) =>

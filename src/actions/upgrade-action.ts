@@ -9,7 +9,7 @@ import {Logger} from '@helpers/logger';
 import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
 import {upgrade} from '@helpers/upgrade';
-import {getColorVersion, getPackageManagerInfo} from '@helpers/utils';
+import {getColorVersion, getPackageManagerInfo, transformPeerVersion} from '@helpers/utils';
 import {type NextUIComponents} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
 import {NEXT_UI} from 'src/constants/required';
@@ -25,15 +25,17 @@ interface UpgradeActionOptions {
   patch?: boolean;
 }
 
+type TransformComponent = Required<
+  AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
+>;
+
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
   const {all = false, packagePath = resolver('package.json')} = options;
   const {allDependencies, currentComponents} = getPackageInfo(packagePath, false);
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
 
-  const transformComponents: Required<
-    AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
-  >[] = [];
+  const transformComponents: TransformComponent[] = [];
 
   for (const component of currentComponents) {
     const latestVersion =
@@ -61,6 +63,17 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     if (transformComponents.every((component) => component.isLatest)) {
       Logger.success('✅ All NextUI packages are up to date');
       process.exit(0);
+    }
+
+    // If have the main nextui then add
+    if (isNextUIAll) {
+      const nextuiData = {
+        latestVersion: store.latestVersion,
+        package: NEXT_UI,
+        version: transformPeerVersion(allDependencies[NEXT_UI])
+      } as TransformComponent;
+
+      transformComponents.push(nextuiData);
     }
 
     components = await getAutocompleteMultiselect(

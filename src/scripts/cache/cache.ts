@@ -9,7 +9,9 @@ export interface CacheData {
   [packageName: string]: {
     version: string;
     date: Date;
+    formatDate: string;
     expiredDate: number;
+    expiredFormatDate: string;
   };
 }
 
@@ -42,11 +44,15 @@ export function cacheData(
   initCache();
 
   const data = cacheData ?? getCacheData();
+  const now = new Date();
+  const expiredDate = +now + cacheTTL;
 
   data[packageName] = {
     ...packageData,
-    date: new Date(),
-    expiredDate: +new Date() + cacheTTL
+    date: now,
+    expiredDate,
+    expiredFormatDate: new Date(expiredDate).toString(),
+    formatDate: now.toString()
   };
 
   writeFileSync(CACHE_PATH, JSON.stringify(data, undefined, 2), 'utf-8');

@@ -57,6 +57,12 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
+    // If all package is latest then pass
+    if (transformComponents.every((component) => component.isLatest)) {
+      Logger.success('✅ All NextUI packages are up to date');
+      process.exit(0);
+    }
+
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',
       transformComponents.map((component) => {

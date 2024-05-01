@@ -1,6 +1,6 @@
 import {existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync} from 'node:fs';
 
-import {getLatestVersion} from '../helpers';
+import {oraExecCmd} from '../helpers';
 import {CACHE_DIR, CACHE_PATH} from '../path';
 
 const cacheTTL = 30 * 60_000; // 30min
@@ -49,7 +49,7 @@ export function cacheData(
     expiredDate: +new Date() + cacheTTL
   };
 
-  writeFileSync(CACHE_PATH, JSON.stringify(data), 'utf-8');
+  writeFileSync(CACHE_PATH, JSON.stringify(data, undefined, 2), 'utf-8');
 }
 
 export function removeCache() {
@@ -70,7 +70,7 @@ function isExpired(packageName: string, cacheData?: CacheData) {
 
   if (!pkgData?.expiredDate) return true;
 
-  if (ttl(pkgData.expiredDate) < cacheTTL) {
+  if (ttl(pkgData.expiredDate) > 0) {
     return true;
   }
 
@@ -81,17 +81,15 @@ export async function getPackageData(packageName: string) {
   const data = getCacheData();
   const isExpiredPkg = isExpired(packageName, data);
 
+  // If expired or don't exist then init data
   if (isExpiredPkg) {
-    const version = await getLatestVersion(packageName);
+    const version = await oraExecCmd(
+      `Fetching ${packageName} latest version`,
+      `npm view ${packageName} version`
+    );
 
-    data[packageName] = {
-      date: new Date(),
-      expiredDate: +new Date() + cacheTTL,
-      version
-    };
-
-    writeFileSync(CACHE_PATH, JSON.stringify(data), 'utf8');
+    cacheData(packageName, {version}, data);
   }
 
-  return data[packageName];
+  return data[packageName]!;
 }

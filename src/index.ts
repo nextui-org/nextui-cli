@@ -141,12 +141,14 @@ nextui
 nextui.hook('preAction', async (command) => {
   const args = command.args?.[0];
 
+  // Init cache
+  initCache();
+
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json
     const nextUIComponents = (await getComponents()).components;
 
     initStoreComponentsData(nextUIComponents);
-    initCache();
   }
 
   const cliLatestVersion = await getStore('cliLatestVersion');

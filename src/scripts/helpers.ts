@@ -10,6 +10,8 @@ import {transformPeerVersion} from '@helpers/utils';
 import {COMPONENTS_PATH} from 'src/constants/path';
 import {getStore} from 'src/constants/store';
 
+import {getPackageData} from './cache/cache';
+
 export type Dependencies = Record<string, string>;
 
 export type Components = {
@@ -90,22 +92,22 @@ export async function getComponents() {
   return components;
 }
 
-export async function getLatestVersion(packageName: string): Promise<string> {
+export async function oraExecCmd(text: string, cmd: string) {
   const spinner = ora({
     // Open ctrl + c cancel
     discardStdin: false,
     spinner: {
       frames: [
-        `⠋ ${chalk.gray(`Fetching ${packageName} latest version.`)}`,
-        `⠙ ${chalk.gray(`Fetching ${packageName} latest version..`)}`,
-        `⠹ ${chalk.gray(`Fetching ${packageName} latest version...`)}`,
-        `⠸ ${chalk.gray(`Fetching ${packageName} latest version.`)}`,
-        `⠼ ${chalk.gray(`Fetching ${packageName} latest version..`)}`,
-        `⠴ ${chalk.gray(`Fetching ${packageName} latest version...`)}`,
-        `⠦ ${chalk.gray(`Fetching ${packageName} latest version.`)}`,
-        `⠧ ${chalk.gray(`Fetching ${packageName} latest version..`)}`,
-        `⠇ ${chalk.gray(`Fetching ${packageName} latest version...`)}`,
-        `⠏ ${chalk.gray(`Fetching ${packageName} latest version.`)}`
+        `⠋ ${chalk.gray(`${text}.`)}`,
+        `⠙ ${chalk.gray(`${text}..`)}`,
+        `⠹ ${chalk.gray(`${text}...`)}`,
+        `⠸ ${chalk.gray(`${text}.`)}`,
+        `⠼ ${chalk.gray(`${text}..`)}`,
+        `⠴ ${chalk.gray(`${text}...`)}`,
+        `⠦ ${chalk.gray(`${text}.`)}`,
+        `⠧ ${chalk.gray(`${text}..`)}`,
+        `⠇ ${chalk.gray(`${text}...`)}`,
+        `⠏ ${chalk.gray(`${text}.`)}`
       ],
       interval: 150
     }
@@ -113,11 +115,11 @@ export async function getLatestVersion(packageName: string): Promise<string> {
 
   spinner.start();
 
-  const result = await new Promise((resolve, reject) => {
-    exec(`npm view ${packageName} version`, (error, stdout) => {
+  const result = await new Promise((resolve) => {
+    exec(cmd, (error, stdout) => {
       if (error) {
-        Logger.error(`Get latest ${packageName} error: ${error}`);
-        reject(error);
+        Logger.error(`Exec cmd ${cmd} error`);
+        process.exit(1);
       }
       resolve(stdout.trim());
     });
@@ -126,6 +128,12 @@ export async function getLatestVersion(packageName: string): Promise<string> {
   spinner.stop();
 
   return result as string;
+}
+
+export async function getLatestVersion(packageName: string): Promise<string> {
+  const result = await getPackageData(packageName);
+
+  return result.version;
 }
 
 const getUnpkgUrl = (version: string) =>

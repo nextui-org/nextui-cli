@@ -107,12 +107,12 @@ async function getTableInfo(packageName?: string, projectName?: string, template
     options: [
       {
         hint: 'A Next.js 14 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.',
-        label: chalk.blue('App'),
+        label: chalk.gray('App'),
         value: 'app'
       },
       {
         hint: 'A Next.js 14 with pages directory template pre-configured with NextUI (v2) and Tailwind CSS.',
-        label: chalk.red('Pages'),
+        label: chalk.gray('Pages'),
         value: 'pages'
       }
     ]
@@ -129,19 +129,19 @@ async function getTableInfo(packageName?: string, projectName?: string, template
     message: 'Select a package manager (Enter to select)',
     options: [
       {
-        label: chalk.green('npm'),
+        label: chalk.gray('npm'),
         value: 'npm'
       },
       {
-        label: chalk.red('yarn'),
+        label: chalk.gray('yarn'),
         value: 'yarn'
       },
       {
-        label: chalk.cyan('pnpm'),
+        label: chalk.gray('pnpm'),
         value: 'pnpm'
       },
       {
-        label: chalk.magenta('bun'),
+        label: chalk.gray('bun'),
         value: 'bun'
       }
     ]

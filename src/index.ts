@@ -29,7 +29,7 @@ const nextui = new Command();
 nextui
   .name('nextui')
   .usage('[command]')
-  .description(`${chalk.blue(getCommandDescAndLog(`\nNextUI CLI v${pkg.version}\n`, ''))}`)
+  .description(getCommandDescAndLog(`\nNextUI CLI v${pkg.version}\n`, ''))
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
   .allowUnknownOption()

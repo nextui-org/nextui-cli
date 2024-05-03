@@ -139,19 +139,23 @@ export function getPackageManagerInfo<T extends Agent = Agent>(packageManager: T
   const packageManagerInfo = {
     bun: {
       install: 'add',
-      remove: 'remove'
+      remove: 'remove',
+      run: 'run'
     },
     npm: {
       install: 'install',
-      remove: 'uninstall'
+      remove: 'uninstall',
+      run: 'run'
     },
     pnpm: {
       install: 'add',
-      remove: 'remove'
+      remove: 'remove',
+      run: 'run'
     },
     yarn: {
       install: 'add',
-      remove: 'remove'
+      remove: 'remove',
+      run: 'run'
     }
   } as const;
 

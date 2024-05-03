@@ -67,12 +67,41 @@ nextui init [projectName] [options]
 #### Init Options
 
 - `-t --template [string]` The template to use for the new project e.g. app, pages
+- `-p --package [string]` The package manager to use for the new project (default: `npm`)
 
 ##### Example
 
 ```bash
 # Initialize a new NextUI project with the app template, named my-nextui-app
 nextui init my-nextui-app -t app
+```
+
+output:
+
+```bash
+NextUI CLI v0.2.0
+
+┌  Create a new project
+│
+◇  Select a template (Enter to select)
+│  App
+│
+◇  New project name (Enter to skip with default name)
+│  my-nextui-app
+│
+◇  Select a package manager (Enter to select)
+│  npm
+│
+◇  Template created successfully!
+│
+◇  Next steps ───────────╮
+│                               │
+│  cd next-app-template         │
+│  npm install                  │
+│                               │
+├───────────────────╯
+│
+└  🚀 Get started with npm run dev
 ```
 
 ### Add

@@ -132,18 +132,31 @@ function transformErrorInfo(errorInfo: string): [keyof typeof tailwindRequired, 
   }
 }
 
-export function fixPnpm(npmrcPath: string, write = true, runInstall = true) {
+export function fixPnpm(
+  npmrcPath: string,
+  write = true,
+  runInstall = true,
+  logger: (({message, runInstall}) => void) | undefined = undefined
+) {
   let content = readFileSync(npmrcPath, 'utf-8');
 
   content = `${pnpmRequired.content}\n${content}`;
 
   write && writeFileSync(npmrcPath, content, 'utf-8');
-  Logger.newLine();
-  Logger.info(`Added the required content in file: ${npmrcPath}`);
 
-  if (runInstall) {
+  if (!logger) {
     Logger.newLine();
-    Logger.info('Pnpm restructure will be run now');
-    runInstall && execSync('pnpm install', {stdio: 'inherit'});
+    Logger.info(`Added the required content in file: ${npmrcPath}`);
+
+    if (runInstall) {
+      Logger.newLine();
+      Logger.info('Pnpm restructure will be run now');
+      runInstall && execSync('pnpm install', {stdio: 'inherit'});
+    }
+
+    return;
   }
+
+  // Custom logger
+  logger({message: `Added the required content in file: ${npmrcPath}`, runInstall});
 }

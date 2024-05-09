@@ -70,11 +70,7 @@ function isExpired(packageName: string, cacheData?: CacheData) {
 
   if (!pkgData?.expiredDate) return true;
 
-  if (ttl(pkgData.expiredDate) > 0) {
-    return true;
-  }
-
-  return false;
+  return ttl(pkgData.expiredDate) > 0;
 }
 
 export async function getPackageData(packageName: string) {

@@ -68,7 +68,7 @@ export async function updateComponents() {
 
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
-  const latestVersion = '2.3.6';
+  const latestVersion = await getStore('latestVersion');
 
   if (compareVersions(currentVersion, latestVersion) === -1) {
     // After the first time, check the version and update

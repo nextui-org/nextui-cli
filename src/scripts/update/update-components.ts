@@ -1,3 +1,6 @@
-import {updateComponents} from '../helpers';
+import {isGithubAction, updateComponents} from '../helpers';
 
-updateComponents();
+if (!isGithubAction) {
+  // Won't run on GitHub Actions
+  updateComponents();
+}

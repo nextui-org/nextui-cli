@@ -194,3 +194,5 @@ export async function downloadFile(url: string): Promise<Components> {
 
   return data;
 }
+
+export const isGithubAction = process.env['CI'] === 'true';

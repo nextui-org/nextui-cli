@@ -68,7 +68,7 @@ export async function updateComponents() {
 
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
-  const latestVersion = '2.3.6';
+  const latestVersion = await getStore('latestVersion');
 
   if (compareVersions(currentVersion, latestVersion) === -1) {
     // After the first time, check the version and update
@@ -92,7 +92,9 @@ export async function getComponents() {
   return components;
 }
 
-export async function oraExecCmd(text: string, cmd: string) {
+export async function oraExecCmd(cmd: string, text?: string) {
+  text = text ?? `Executing ${cmd}`;
+
   const spinner = ora({
     // Open ctrl + c cancel
     discardStdin: false,
@@ -194,3 +196,5 @@ export async function downloadFile(url: string): Promise<Components> {
 
   return data;
 }
+
+export const isGithubAction = process.env['CI'] === 'true';

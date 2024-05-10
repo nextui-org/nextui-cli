@@ -8,6 +8,7 @@ export const PAGES_DIR = 'next-pages-template-main';
 
 export const APP_NAME = 'next-app-template';
 export const PAGES_NAME = 'next-pages-template';
+export const DEFAULT_PROJECT_NAME = 'nextui-app';
 
 export function tailwindTemplate(type: 'all', content?: string): string;
 export function tailwindTemplate(type: 'partial', content: string): string;

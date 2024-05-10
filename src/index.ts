@@ -3,7 +3,6 @@ import type {CommandName} from '@helpers/type';
 import chalk from 'chalk';
 import {Command} from 'commander';
 
-import {exec} from '@helpers/exec';
 import {Logger, gradientString} from '@helpers/logger';
 import {findMostMatchText} from '@helpers/math-diff';
 import {outputBox} from '@helpers/output-info';
@@ -20,7 +19,7 @@ import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
 import {initStoreComponentsData} from './constants/component';
 import {getStore, store} from './constants/store';
-import {initCache} from './scripts/cache/cache';
+import {getCacheExecData, initCache} from './scripts/cache/cache';
 import {compareVersions, getComponents} from './scripts/helpers';
 
 const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
@@ -30,7 +29,7 @@ const nextui = new Command();
 nextui
   .name('nextui')
   .usage('[command]')
-  .description(`${chalk.blue(getCommandDescAndLog(`\nNextUI CLI v${pkg.version}\n`, ''))}`)
+  .description(getCommandDescAndLog(`\nNextUI CLI v${pkg.version}\n`, ''))
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
   .allowUnknownOption()
@@ -56,7 +55,7 @@ nextui
     }
 
     if (!isArgs) {
-      const helpInfo = (await exec('nextui --help', {logCmd: false, stdio: 'pipe'})) as string;
+      const helpInfo = (await getCacheExecData('nextui --help')) as string;
 
       let helpInfoArr = helpInfo.split('\n');
 
@@ -82,8 +81,7 @@ nextui
   .description('Initializes a new project')
   .argument('[projectName]', 'Name of the project to initialize')
   .option('-t --template [string]', 'Specify a template for the new project, e.g., app, pages')
-  /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
-  // .option('-p --package [string]', 'The package manager to use for the new project')
+  .option('-p --package [string]', 'The package manager to use for the new project', 'npm')
   .action(initAction);
 
 nextui

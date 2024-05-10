@@ -1,3 +1,11 @@
+## [0.2.1](https://github.com/nextui-org/nextui-cli/compare/v0.2.0...v0.2.1) (2024-05-03)
+
+### Features
+
+- add upgrade version output ([#58](https://github.com/nextui-org/nextui-cli/issues/58)) ([fe30335](https://github.com/nextui-org/nextui-cli/commit/fe303359a127faa9e484c9da741332df8ab6058f))
+- **init:** add package manager and use clack prompt instead ([#59](https://github.com/nextui-org/nextui-cli/issues/59)) ([2a6d593](https://github.com/nextui-org/nextui-cli/commit/2a6d593624e4b3c65b4d971a8728b5916185be0f))
+- optimize warn output ([#57](https://github.com/nextui-org/nextui-cli/issues/57)) ([507bd6c](https://github.com/nextui-org/nextui-cli/commit/507bd6cdfc8ea4ebe88e72ae765a85a4834bc8d4))
+
 # [0.2.0](https://github.com/nextui-org/nextui-cli/compare/v0.1.5...v0.2.0) (2024-04-26)
 
 ### Bug Fixes

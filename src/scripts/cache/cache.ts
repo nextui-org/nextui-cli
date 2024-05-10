@@ -1,3 +1,5 @@
+import type {SAFE_ANY} from '@helpers/type';
+
 import {existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync} from 'node:fs';
 
 import {oraExecCmd} from '../helpers';
@@ -10,6 +12,7 @@ export interface CacheData {
     version: string;
     date: Date;
     expiredDate: number;
+    execResult: SAFE_ANY;
   };
 }
 
@@ -35,7 +38,8 @@ export function getCacheData(): CacheData {
 export function cacheData(
   packageName: string,
   packageData: {
-    version: string;
+    version?: string;
+    execResult?: SAFE_ANY;
   },
   cacheData?: CacheData
 ) {
@@ -44,7 +48,7 @@ export function cacheData(
   const data = cacheData ?? getCacheData();
 
   data[packageName] = {
-    ...packageData,
+    ...(packageData as SAFE_ANY),
     date: new Date(),
     expiredDate: +new Date() + cacheTTL
   };
@@ -64,7 +68,7 @@ function ttl(n: number) {
   return now() - n;
 }
 
-function isExpired(packageName: string, cacheData?: CacheData) {
+export function isExpired(packageName: string, cacheData?: CacheData) {
   const data = cacheData ?? getCacheData();
   const pkgData = data[packageName];
 
@@ -80,12 +84,26 @@ export async function getPackageData(packageName: string) {
   // If expired or don't exist then init data
   if (isExpiredPkg) {
     const version = await oraExecCmd(
-      `Fetching ${packageName} latest version`,
-      `npm view ${packageName} version`
+      `npm view ${packageName} version`,
+      `Fetching ${packageName} latest version`
     );
 
     cacheData(packageName, {version}, data);
   }
 
   return data[packageName]!;
+}
+
+export async function getCacheExecData(key: string) {
+  const data = getCacheData();
+  const isExpiredPkg = isExpired(key, data);
+
+  // If expired or don't exist then init data
+  if (isExpiredPkg) {
+    const execResult = await oraExecCmd(key);
+
+    cacheData(key, {execResult}, data);
+  }
+
+  return data[key]!.execResult;
 }

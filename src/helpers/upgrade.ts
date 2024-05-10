@@ -4,9 +4,9 @@ import chalk from 'chalk';
 
 import {NEXT_UI, THEME_UI} from 'src/constants/required';
 import {store} from 'src/constants/store';
+import {getCacheExecData} from 'src/scripts/cache/cache';
 import {type Dependencies, compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
-import {exec} from './exec';
 import {Logger} from './logger';
 import {colorMatchRegex, outputBox} from './output-info';
 import {
@@ -173,10 +173,7 @@ async function getPackagePeerDep(
   peerDependencies =
     peerDependencies ||
     JSON.parse(
-      (await exec(`npm show ${packageName} peerDependencies --json`, {
-        logCmd: false,
-        stdio: 'pipe'
-      })) as SAFE_ANY
+      (await getCacheExecData(`npm show ${packageName} peerDependencies --json`)) as SAFE_ANY
     ) ||
     {};
 

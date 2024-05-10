@@ -7,6 +7,11 @@ import {omit} from './utils';
 
 const execCache = new Map<string, string>();
 
+/**
+ * Execute a command and return the output
+ *
+ * Recommend use `getCacheExecData` instead if you want to cache the output
+ */
 export async function exec(
   cmd: string,
   commonExecOptions?: AppendKeyValue<CommonExecOptions, 'logCmd', boolean> & {

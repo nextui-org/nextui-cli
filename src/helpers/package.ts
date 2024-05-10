@@ -5,9 +5,9 @@ import {readFileSync} from 'node:fs';
 import {type NextUIComponents} from 'src/constants/component';
 import {NEXT_UI} from 'src/constants/required';
 import {store} from 'src/constants/store';
+import {getCacheExecData} from 'src/scripts/cache/cache';
 import {getLatestVersion} from 'src/scripts/helpers';
 
-import {exec} from './exec';
 import {Logger} from './logger';
 import {colorMatchRegex} from './output-info';
 import {getVersionAndMode} from './utils';
@@ -89,16 +89,10 @@ export async function transformPackageDetail(
     let {currentVersion} = getVersionAndMode(allDependencies, component);
     const {versionMode} = getVersionAndMode(allDependencies, component);
     const docs = (
-      ((await exec(`npm show ${component} homepage`, {
-        logCmd: false,
-        stdio: 'pipe'
-      })) || '') as string
+      ((await getCacheExecData(`npm show ${component} homepage`)) || '') as string
     ).replace(/\n/, '');
     const description = (
-      ((await exec(`npm show ${component} description`, {
-        logCmd: false,
-        stdio: 'pipe'
-      })) || '') as string
+      ((await getCacheExecData(`npm show ${component} description`)) || '') as string
     ).replace(/\n/, '');
     const latestVersion =
       store.nextUIComponentsPackageMap[component]?.version || (await getLatestVersion(component));

@@ -92,7 +92,9 @@ export async function getComponents() {
   return components;
 }
 
-export async function oraExecCmd(text: string, cmd: string) {
+export async function oraExecCmd(cmd: string, text?: string) {
+  text = text ?? `Executing ${cmd}`;
+
   const spinner = ora({
     // Open ctrl + c cancel
     discardStdin: false,

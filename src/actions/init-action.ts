@@ -1,11 +1,15 @@
-import {rename} from 'node:fs';
+import type {Agent} from '@helpers/detect';
 
+import {existsSync, renameSync} from 'node:fs';
+
+import * as p from '@clack/prompts';
 import chalk from 'chalk';
-import {oraPromise} from 'ora';
 
 import {downloadTemplate} from '@helpers/fetch';
-import {Logger} from '@helpers/logger';
-import {outputBox} from '@helpers/output-info';
+import {fixPnpm} from '@helpers/fix';
+import {getPackageManagerInfo} from '@helpers/utils';
+import {selectClack, taskClack, textClack} from 'src/prompts/clack';
+import {resolver} from 'src/scripts/path';
 
 import {ROOT} from '../../src/constants/path';
 import {
@@ -16,7 +20,6 @@ import {
   PAGES_NAME,
   PAGES_REPO
 } from '../../src/constants/templates';
-import {getSelect, getText} from '../../src/prompts';
 
 export interface InitActionOptions {
   template?: 'app' | 'pages';
@@ -28,90 +31,125 @@ const templatesMap: Record<Required<InitActionOptions>['template'], string> = {
   pages: PAGES_NAME
 };
 
-export async function initAction(projectName: string, options: InitActionOptions) {
-  let {package: packageName, template} = options;
+export async function initAction(_projectName: string, options: InitActionOptions) {
+  const {package: _package = 'npm', template: _template} = options;
 
-  if (!template) {
-    template = await getSelect('Select a template', [
-      {
-        description:
-          'A Next.js 13 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.',
-        title: chalk.blue('App'),
-        value: 'app'
-      },
-      {
-        description:
-          'A Next.js 13 with pages directory template pre-configured with NextUI (v2) and Tailwind CSS.',
-        title: chalk.red('Pages'),
-        value: 'pages'
-      }
-    ]);
-  }
-  if (!packageName) {
-    /** ======================== TODO:(winches)Temporary use npm with default value ======================== */
-    packageName = 'npm';
-    // packageName = await getSelect('Select a package manager', [
-    //   {
-    //     title: chalk.blue('NPM'),
-    //     value: 'npm'
-    //   },
-    //   {
-    //     title: chalk.red('Yarn'),
-    //     value: 'yarn'
-    //   },
-    //   {
-    //     title: chalk.magenta('PNPM'),
-    //     value: 'pnpm'
-    //   }
-    // ]);
-  }
+  /** ======================== Welcome title ======================== */
+  p.intro(chalk.cyanBright('Create a new project'));
 
-  if (!projectName) {
-    const templateTitle = templatesMap[template!];
-
-    projectName = await getText('New project name: ', templateTitle);
-  }
+  /** ======================== Get the init info ======================== */
+  const {packageName, projectName, template} = await getTableInfo(
+    _package,
+    _projectName,
+    _template
+  );
+  const {run} = getPackageManagerInfo(packageName);
 
   /** ======================== Generate template ======================== */
+  // Detect if the project name already exists
+  if (existsSync(resolver(`${ROOT}/${projectName}`))) {
+    p.cancel(`The project name ${chalk.redBright(projectName)} already exists`);
+    process.exit(1);
+  }
+
   if (template === 'app') {
     await generateTemplate(APP_REPO);
-    projectName && renameTemplate(APP_DIR, projectName);
+    renameTemplate(APP_DIR, projectName);
   } else if (template === 'pages') {
     await generateTemplate(PAGES_REPO);
-    projectName && renameTemplate(PAGES_DIR, projectName);
+    renameTemplate(PAGES_DIR, projectName);
+  }
+
+  /** ======================== Pnpm setup (optional) ======================== */
+  if (packageName === 'pnpm') {
+    const npmrcFile = resolver(`${ROOT}/${projectName}/.npmrc`);
+
+    fixPnpm(npmrcFile, true, false, ({message}) => {
+      p.log.message(message);
+    });
   }
 
   /** ======================== Add guide ======================== */
-  Logger.newLine();
-  outputBox({
-    align: 'left',
-    padding: 1,
-    text: `cd ${chalk.cyanBright(projectName)}\n${chalk.cyanBright('npm')} install`,
-    title: 'Next steps'
-  });
+  p.note(
+    `cd ${chalk.cyanBright(projectName)}\n${chalk.cyanBright(packageName)} install`,
+    'Next steps'
+  );
+
+  p.outro(`🚀 Get started with ${chalk.cyanBright(`${packageName} ${run} dev`)}`);
 
   process.exit(0);
 }
 
+/** ======================== Helper function ======================== */
 async function generateTemplate(url: string) {
-  await oraPromise(downloadTemplate(ROOT, url), {
-    failText(error) {
-      Logger.prefix('error', `downloadTemplate Error: ${error}`);
-      process.exit(1);
-    },
-    successText: (() => {
-      Logger.newLine();
-
-      return chalk.greenBright('Template created successfully!');
-    })(),
+  await taskClack({
+    failText: 'Template creation failed',
+    successText: 'Template created successfully!',
+    task: downloadTemplate(ROOT, url),
     text: 'Creating template...'
   });
 }
 
 function renameTemplate(originName: string, projectName: string) {
-  rename(`${ROOT}/${originName}`, `${ROOT}/${projectName}`, (err) => {
-    if (err) {
-      Logger.prefix('warn', `rename Error: ${err}`);
+  try {
+    renameSync(`${ROOT}/${originName}`, `${ROOT}/${projectName}`);
+  } catch (error) {
+    if (error) {
+      p.cancel(`rename Error: ${error}`);
     }
-  });
+  }
+}
+
+async function getTableInfo(packageName?: string, projectName?: string, template?: string) {
+  template = (await selectClack({
+    initialValue: template,
+    message: 'Select a template (Enter to select)',
+    options: [
+      {
+        hint: 'A Next.js 14 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.',
+        label: chalk.gray('App'),
+        value: 'app'
+      },
+      {
+        hint: 'A Next.js 14 with pages directory template pre-configured with NextUI (v2) and Tailwind CSS.',
+        label: chalk.gray('Pages'),
+        value: 'pages'
+      }
+    ]
+  })) as string;
+
+  projectName = (await textClack({
+    initialValue: projectName ?? templatesMap[template],
+    message: 'New project name (Enter to skip with default name)',
+    placeholder: projectName ?? templatesMap[template]
+  })) as string;
+
+  packageName = (await selectClack({
+    initialValue: packageName,
+    message: 'Select a package manager (Enter to select)',
+    options: [
+      {
+        label: chalk.gray('npm'),
+        value: 'npm'
+      },
+      {
+        label: chalk.gray('yarn'),
+        value: 'yarn'
+      },
+      {
+        label: chalk.gray('pnpm'),
+        value: 'pnpm'
+      },
+      {
+        label: chalk.gray('bun'),
+        value: 'bun'
+      }
+    ]
+  })) as Agent;
+
+  return {
+    packageName: packageName as Agent,
+    projectName,
+    template
+  };
 }

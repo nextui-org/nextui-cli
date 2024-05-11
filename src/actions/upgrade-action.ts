@@ -74,7 +74,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
           title: `${component.package}${
             isUpToDate
               ? ''
-              : `${chalk.gray(`${component.version} ->`)} ${getColorVersion(
+              : `${chalk.gray(`${component.version} -> `)}${getColorVersion(
                   component.version,
                   component.latestVersion
                 )}`

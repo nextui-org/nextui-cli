@@ -70,9 +70,10 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
         return {
           disabled: isUpToDate,
-          title: `${component.package} ${
+          disabledMessage: 'Already up to date',
+          title: `${component.package}${
             isUpToDate
-              ? chalk.greenBright('Already up to date')
+              ? ''
               : `${chalk.gray(`${component.version} ->`)} ${getColorVersion(
                   component.version,
                   component.latestVersion

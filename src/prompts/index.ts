@@ -1,5 +1,5 @@
+import prompts from '@winches/prompts';
 import chalk from 'chalk';
-import prompts from 'prompts';
 
 import {Logger} from '@helpers/logger';
 

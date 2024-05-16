@@ -68,13 +68,13 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'warn',
       name: 'redundantDependencies',
       outputFn: () => {
-        Logger.warn(
+        Logger.log(
           'You have installed some unnecessary dependencies. Consider removing them for optimal performance.'
         );
         Logger.newLine();
-        Logger.info('The following dependencies are redundant:');
+        Logger.log('The following dependencies are redundant:');
         currentComponents.forEach((component) => {
-          Logger.info(`- ${component.package}`);
+          Logger.log(`- ${component.package}`);
         });
       }
     });
@@ -85,8 +85,9 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingTailwind',
       outputFn: () => {
-        Logger.error(
-          'Missing tailwind.config.(j|t)s file. To set up, visit: ' + DOCS_TAILWINDCSS_SETUP
+        Logger.log(
+          'Missing tailwind.config.(j|t)s file. To set up, visit: ' +
+            chalk.underline(DOCS_TAILWINDCSS_SETUP)
         );
       }
     });
@@ -97,7 +98,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingApp',
       outputFn: () => {
-        Logger.error(
+        Logger.log(
           'App.(j|t)sx file not found. Please specify the path using: doctor --appPath=[yourAppPath]'
         );
       }
@@ -194,14 +195,14 @@ export async function doctorAction(options: DoctorActionOptions) {
           level: 'error',
           name: 'incorrectPnpm',
           outputFn: () => {
-            Logger.error(
-              'The pnpm setup is incorrect. Please update your configuration according to the guidelines provided at: ' +
-                DOCS_PNPM_SETUP
+            Logger.log(
+              'The pnpm setup is incorrect \nPlease update your configuration according to the guidelines provided at: ' +
+                chalk.underline(DOCS_PNPM_SETUP)
             );
             Logger.newLine();
-            Logger.info('Required changes:');
+            Logger.log('Required changes:');
             errorInfo.forEach((info) => {
-              Logger.info(`- Add ${info}`);
+              Logger.log(`- Add ${info}`);
             });
           }
         });

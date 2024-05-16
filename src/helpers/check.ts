@@ -55,14 +55,14 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'missingDependencies',
       outputFn: () => {
-        Logger.error('You have not installed the required dependencies');
+        Logger.log('You have not installed the required dependencies');
         Logger.newLine();
-        Logger.info('The required dependencies are:');
+        Logger.log('The required dependencies are:');
         missingDependencies.forEach((dependency) => {
-          Logger.info(`- ${dependency}`);
+          Logger.log(`- ${dependency}`);
         });
         Logger.newLine();
-        Logger.info(`See more info here: ${DOCS_INSTALLED}`);
+        Logger.log(`See more info here: ${chalk.underline(DOCS_INSTALLED)}`);
       }
     };
   } else if (type === 'incorrectTailwind') {
@@ -70,14 +70,14 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'incorrectTailwind',
       outputFn: () => {
-        Logger.error(`Your ${tailwindName} is incorrect`);
+        Logger.log(`Your ${tailwindName} is incorrect`);
         Logger.newLine();
-        Logger.info('The missing part is:');
+        Logger.log('The missing part is:');
         errorInfo.forEach((info) => {
-          Logger.info(`- need to add ${info}`);
+          Logger.log(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.error(`See more info here: ${DOCS_TAILWINDCSS_SETUP}-1`);
+        Logger.log(`See more info here: ${chalk.underline(DOCS_TAILWINDCSS_SETUP)}-1`);
       }
     };
   } else {
@@ -85,14 +85,14 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'incorrectApp',
       outputFn: () => {
-        Logger.error('Your App.tsx is incorrect');
+        Logger.log('Your App.tsx is incorrect');
         Logger.newLine();
-        Logger.info('The missing part is:');
+        Logger.log('The missing part is:');
         errorInfo.forEach((info) => {
-          Logger.info(`- need to add ${info}`);
+          Logger.log(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.error(`See more info here: ${DOCS_INSTALLED}`);
+        Logger.log(`See more info here: ${chalk.underline(DOCS_INSTALLED)}`);
       }
     };
   }

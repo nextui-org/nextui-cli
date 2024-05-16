@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@clack/prompts": "0.7.0",
+    "@winches/prompts": "0.0.6",
     "async-retry": "1.3.3",
     "chalk": "5.3.0",
     "commander": "11.0.0",
@@ -66,7 +67,6 @@
     "find-up": "7.0.0",
     "gradient-string": "2.0.2",
     "ora": "8.0.1",
-    "prompts": "2.4.2",
     "tar": "6.2.1"
   },
   "devDependencies": {
@@ -74,7 +74,6 @@
     "@commitlint/config-conventional": "17.7.0",
     "@types/gradient-string": "1.1.3",
     "@types/node": "20.11.30",
-    "@types/prompts": "2.4.9",
     "@typescript-eslint/eslint-plugin": "6.7.2",
     "@typescript-eslint/parser": "6.7.2",
     "bumpp": "9.4.0",

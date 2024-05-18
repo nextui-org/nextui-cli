@@ -20,10 +20,13 @@ import {
   tailwindRequired
 } from 'src/constants/required';
 import {store} from 'src/constants/store';
+import {compareVersions} from 'src/scripts/helpers';
 
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
 import {findMostMatchText} from './math-diff';
+import {getPackagePeerDep} from './upgrade';
+import {strip} from './utils';
 
 export type CheckType = 'all' | 'partial';
 export type CombineType = 'missingDependencies' | 'incorrectTailwind' | 'incorrectApp';
@@ -98,25 +101,48 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
   }
 }
 
+interface CheckPeerDependenciesConfig {
+  peerDependencies?: boolean;
+  allDependencies?: Record<string, SAFE_ANY>;
+  packageNames?: string[];
+}
+
 /**
  * Check if the required content is installed
  * @example return result and missing required [false, '@nextui-org/react', 'framer-motion']
  * @param type
  * @param dependenciesKeys
+ * @param checkPeerDependenciesConfig
  * @returns
  */
-export function checkRequiredContentInstalled(
+export async function checkRequiredContentInstalled<
+  T extends CheckPeerDependenciesConfig = CheckPeerDependenciesConfig
+>(
   type: CheckType,
-  dependenciesKeys: Set<string>
-): CheckResult {
+  dependenciesKeys: Set<string>,
+  checkPeerDependenciesConfig?: T extends {peerDependencies: infer P}
+    ? P extends true
+      ? Required<CheckPeerDependenciesConfig>
+      : T
+    : T
+): Promise<CheckResult> {
   const result = [] as unknown as CheckResult;
+  const {allDependencies, packageNames, peerDependencies} = (checkPeerDependenciesConfig ??
+    {}) as Required<CheckPeerDependenciesConfig>;
+  const peerDependenciesList: string[] = [];
+
+  if (peerDependencies) {
+    const peerDepList = await checkPeerDependencies({allDependencies, packageNames});
+
+    peerDependenciesList.push(...peerDepList);
+  }
 
   if (type === 'all') {
     const hasAllComponents = dependenciesKeys.has(NEXT_UI);
     const hasFramerMotion = dependenciesKeys.has(FRAMER_MOTION);
     const hasTailwind = dependenciesKeys.has(TAILWINDCSS);
 
-    if (hasAllComponents && hasFramerMotion) {
+    if (hasAllComponents && hasFramerMotion && !peerDependenciesList.length) {
       return [true];
     }
     !hasAllComponents && result.push(NEXT_UI);
@@ -128,7 +154,7 @@ export function checkRequiredContentInstalled(
     const hasSystemUI = dependenciesKeys.has(SYSTEM_UI);
     const hasThemeUI = dependenciesKeys.has(THEME_UI);
 
-    if (hasFramerMotion && hasSystemUI && hasThemeUI) {
+    if (hasFramerMotion && hasSystemUI && hasThemeUI && !peerDependenciesList.length) {
       return [true];
     }
     !hasFramerMotion && result.push(FRAMER_MOTION);
@@ -137,7 +163,40 @@ export function checkRequiredContentInstalled(
     !hasTailwind && result.push(TAILWINDCSS);
   }
 
-  return [false, ...result];
+  return [false, ...result, ...(peerDependencies ? peerDependenciesList : [])];
+}
+
+export async function checkPeerDependencies(
+  config: Required<Omit<CheckPeerDependenciesConfig, 'peerDependencies'>>
+) {
+  const {allDependencies, packageNames} = config;
+  const peerDepList: string[] = [];
+
+  for (const packageName of packageNames) {
+    const result = await getPackagePeerDep(packageName, allDependencies, new Set());
+
+    for (const peerData of result) {
+      if (!peerData.isLatest) {
+        // If there are not the latest version, add the peerDependencies to the list
+        const findPeerDepIndex = peerDepList.findIndex((peerDep) =>
+          peerDep.includes(peerData.package)
+        );
+        const findPeerDep = strip(peerDepList[findPeerDepIndex] || '');
+        const findPeerDepVersion = findPeerDep?.match(/@([\d.]+)/)?.[1];
+
+        // If the peerDependencies is not the latest version, remove the old version and add the latest version
+        if (
+          findPeerDepVersion &&
+          compareVersions(findPeerDepVersion, strip(peerData.latestVersion)) <= 0
+        ) {
+          peerDepList.splice(findPeerDepIndex, 1);
+        }
+        peerDepList.push(`${peerData.package}@${peerData.latestVersion}`);
+      }
+    }
+  }
+
+  return peerDepList;
 }
 
 /**

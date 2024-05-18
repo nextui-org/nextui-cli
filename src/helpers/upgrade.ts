@@ -164,7 +164,7 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
   return output.join('\n');
 }
 
-async function getPackagePeerDep(
+export async function getPackagePeerDep(
   packageName: string,
   allDependencies: Dependencies,
   missingDepList: Set<string>,

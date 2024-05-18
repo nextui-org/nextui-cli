@@ -12,9 +12,9 @@ import {
 import {detect} from '@helpers/detect';
 import {Logger, type PrefixLogType} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
-import {findFiles, transformOption} from '@helpers/utils';
+import {findFiles, strip, transformOption} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
-import {DOCS_PNPM_SETUP, DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
+import {DOCS_PNPM_SETUP, DOCS_TAILWINDCSS_SETUP, NEXT_UI} from 'src/constants/required';
 
 interface DoctorActionOptions {
   packagePath?: string;
@@ -45,7 +45,8 @@ export async function doctorAction(options: DoctorActionOptions) {
   const enableCheckTailwind = transformOption(_enableCheckTailwind);
   const tailwindPaths = [tailwindPath].flat();
 
-  const {allDependenciesKeys, currentComponents, isAllComponents} = getPackageInfo(packagePath);
+  const {allDependencies, allDependenciesKeys, currentComponents, isAllComponents} =
+    getPackageInfo(packagePath);
 
   /** ======================== Output when there is no components installed ======================== */
   if (!currentComponents.length && !isAllComponents) {
@@ -108,10 +109,34 @@ export async function doctorAction(options: DoctorActionOptions) {
   /** ======================== Check if the allComponents required dependencies installed ======================== */
   if (isAllComponents) {
     // Check if framer-motion allComponents is installed
-    const [isCorrectInstalled, ...missingDependencies] = checkRequiredContentInstalled(
+    let [isCorrectInstalled, ...missingDependencies] = await checkRequiredContentInstalled(
       'all',
-      allDependenciesKeys
+      allDependenciesKeys,
+      {allDependencies, packageNames: [NEXT_UI], peerDependencies: true}
     );
+
+    // Check if other allComponents are installed
+    if (currentComponents.length) {
+      const [_isCorrectInstalled, ..._missingDependencies] = await checkRequiredContentInstalled(
+        'partial',
+        allDependenciesKeys,
+        {
+          allDependencies,
+          packageNames: currentComponents.map((c) => c.package),
+          peerDependencies: true
+        }
+      );
+
+      isCorrectInstalled = _isCorrectInstalled || isCorrectInstalled;
+      // Combine missing dependencies
+      missingDependencies = [..._missingDependencies, ...missingDependencies].filter(
+        (c, index, arr) => {
+          c = strip(c).replace(/@[\d.]+/g, '');
+
+          return arr.findIndex((d) => strip(d).replace(/@[\d.]+/g, '') === c) === index;
+        }
+      );
+    }
 
     if (!isCorrectInstalled) {
       problemRecord.push(combineProblemRecord('missingDependencies', {missingDependencies}));
@@ -140,9 +165,14 @@ export async function doctorAction(options: DoctorActionOptions) {
     }
   } else if (currentComponents.length) {
     // Individual components check
-    const [isCorrectInstalled, ...missingDependencies] = checkRequiredContentInstalled(
+    const [isCorrectInstalled, ...missingDependencies] = await checkRequiredContentInstalled(
       'partial',
-      allDependenciesKeys
+      allDependenciesKeys,
+      {
+        allDependencies,
+        packageNames: currentComponents.map((c) => c.package),
+        peerDependencies: true
+      }
     );
 
     if (!isCorrectInstalled) {

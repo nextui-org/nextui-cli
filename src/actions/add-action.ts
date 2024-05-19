@@ -111,7 +111,10 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   /** ======================== Step 1 Add dependencies required ======================== */
   if (all) {
-    const [, ...missingDependencies] = checkRequiredContentInstalled('all', allDependenciesKeys);
+    const [, ...missingDependencies] = await checkRequiredContentInstalled(
+      'all',
+      allDependenciesKeys
+    );
 
     if (missingDependencies.length) {
       Logger.info(
@@ -123,7 +126,7 @@ export async function addAction(components: string[], options: AddActionOptions)
       await exec(`${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`);
     }
   } else {
-    const [, ..._missingDependencies] = checkRequiredContentInstalled(
+    const [, ..._missingDependencies] = await checkRequiredContentInstalled(
       'partial',
       allDependenciesKeys
     );

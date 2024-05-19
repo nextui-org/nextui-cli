@@ -12,9 +12,9 @@ import {
 import {detect} from '@helpers/detect';
 import {Logger, type PrefixLogType} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
-import {findFiles, transformOption} from '@helpers/utils';
+import {findFiles, strip, transformOption} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
-import {DOCS_PNPM_SETUP, DOCS_TAILWINDCSS_SETUP} from 'src/constants/required';
+import {DOCS_PNPM_SETUP, DOCS_TAILWINDCSS_SETUP, NEXT_UI} from 'src/constants/required';
 
 interface DoctorActionOptions {
   packagePath?: string;
@@ -45,7 +45,8 @@ export async function doctorAction(options: DoctorActionOptions) {
   const enableCheckTailwind = transformOption(_enableCheckTailwind);
   const tailwindPaths = [tailwindPath].flat();
 
-  const {allDependenciesKeys, currentComponents, isAllComponents} = getPackageInfo(packagePath);
+  const {allDependencies, allDependenciesKeys, currentComponents, isAllComponents} =
+    getPackageInfo(packagePath);
 
   /** ======================== Output when there is no components installed ======================== */
   if (!currentComponents.length && !isAllComponents) {
@@ -68,13 +69,13 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'warn',
       name: 'redundantDependencies',
       outputFn: () => {
-        Logger.warn(
+        Logger.log(
           'You have installed some unnecessary dependencies. Consider removing them for optimal performance.'
         );
         Logger.newLine();
-        Logger.info('The following dependencies are redundant:');
+        Logger.log('The following dependencies are redundant:');
         currentComponents.forEach((component) => {
-          Logger.info(`- ${component.package}`);
+          Logger.log(`- ${component.package}`);
         });
       }
     });
@@ -85,8 +86,9 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingTailwind',
       outputFn: () => {
-        Logger.error(
-          'Missing tailwind.config.(j|t)s file. To set up, visit: ' + DOCS_TAILWINDCSS_SETUP
+        Logger.log(
+          'Missing tailwind.config.(j|t)s file. To set up, visit: ' +
+            chalk.underline(DOCS_TAILWINDCSS_SETUP)
         );
       }
     });
@@ -97,7 +99,7 @@ export async function doctorAction(options: DoctorActionOptions) {
       level: 'error',
       name: 'missingApp',
       outputFn: () => {
-        Logger.error(
+        Logger.log(
           'App.(j|t)sx file not found. Please specify the path using: doctor --appPath=[yourAppPath]'
         );
       }
@@ -107,10 +109,34 @@ export async function doctorAction(options: DoctorActionOptions) {
   /** ======================== Check if the allComponents required dependencies installed ======================== */
   if (isAllComponents) {
     // Check if framer-motion allComponents is installed
-    const [isCorrectInstalled, ...missingDependencies] = checkRequiredContentInstalled(
+    let [isCorrectInstalled, ...missingDependencies] = await checkRequiredContentInstalled(
       'all',
-      allDependenciesKeys
+      allDependenciesKeys,
+      {allDependencies, packageNames: [NEXT_UI], peerDependencies: true}
     );
+
+    // Check if other allComponents are installed
+    if (currentComponents.length) {
+      const [_isCorrectInstalled, ..._missingDependencies] = await checkRequiredContentInstalled(
+        'partial',
+        allDependenciesKeys,
+        {
+          allDependencies,
+          packageNames: currentComponents.map((c) => c.package),
+          peerDependencies: true
+        }
+      );
+
+      isCorrectInstalled = _isCorrectInstalled || isCorrectInstalled;
+      // Combine missing dependencies
+      missingDependencies = [..._missingDependencies, ...missingDependencies].filter(
+        (c, index, arr) => {
+          c = strip(c).replace(/@[\d.]+/g, '');
+
+          return arr.findIndex((d) => strip(d).replace(/@[\d.]+/g, '') === c) === index;
+        }
+      );
+    }
 
     if (!isCorrectInstalled) {
       problemRecord.push(combineProblemRecord('missingDependencies', {missingDependencies}));
@@ -139,9 +165,14 @@ export async function doctorAction(options: DoctorActionOptions) {
     }
   } else if (currentComponents.length) {
     // Individual components check
-    const [isCorrectInstalled, ...missingDependencies] = checkRequiredContentInstalled(
+    const [isCorrectInstalled, ...missingDependencies] = await checkRequiredContentInstalled(
       'partial',
-      allDependenciesKeys
+      allDependenciesKeys,
+      {
+        allDependencies,
+        packageNames: currentComponents.map((c) => c.package),
+        peerDependencies: true
+      }
     );
 
     if (!isCorrectInstalled) {
@@ -194,14 +225,14 @@ export async function doctorAction(options: DoctorActionOptions) {
           level: 'error',
           name: 'incorrectPnpm',
           outputFn: () => {
-            Logger.error(
-              'The pnpm setup is incorrect. Please update your configuration according to the guidelines provided at: ' +
-                DOCS_PNPM_SETUP
+            Logger.log(
+              'The pnpm setup is incorrect \nPlease update your configuration according to the guidelines provided at: ' +
+                chalk.underline(DOCS_PNPM_SETUP)
             );
             Logger.newLine();
-            Logger.info('Required changes:');
+            Logger.log('Required changes:');
             errorInfo.forEach((info) => {
-              Logger.info(`- Add ${info}`);
+              Logger.log(`- Add ${info}`);
             });
           }
         });

@@ -84,13 +84,17 @@ NextUI CLI v0.2.0
 ┌  Create a new project
 │
 ◇  Select a template (Enter to select)
-│  App
+│  ● App (A Next.js 14 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.)
+│  ○ Pages (A Next.js 14 with pages directory template pre-configured with NextUI (v2) and Tailwind CSS.)
 │
 ◇  New project name (Enter to skip with default name)
 │  my-nextui-app
 │
 ◇  Select a package manager (Enter to select)
-│  npm
+│  ● npm
+│  ○ yarn
+│  ○ pnpm
+│  ○ bun
 │
 ◇  Template created successfully!
 │
@@ -214,19 +218,34 @@ nextui upgrade button
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
-╭───────────────────────────────────────────────────────────╮
-│  @nextui-org/button              2.0.24  ->  2.0.27       │
-╰───────────────────────────────────────────────────────────╯
+╭───────────────────────── Component ─────────────────────────╮
+│  @nextui-org/button              ^2.0.11  ->  ^2.0.31       │
+╰─────────────────────────────────────────────────────────────╯
+
+Required min version: @nextui-org/theme>=2.1.0, tailwindcss>=3.4.0, react>=18.3.1, react-dom>=18.3.1
+╭───────────────────── PeerDependencies ─────────────────────╮
+│  @nextui-org/theme               2.0.1    ->  2.1.0        │
+│  tailwindcss                     ^3.2.3   ->  ^3.4.0       │
+│  react                           Missing  ->  18.3.1       │
+│  react-dom                       Missing  ->  18.3.1       │
+╰────────────────────────────────────────────────────────────╯
+2 major, 2 minor, 1 patch
+
 ? Would you like to proceed with the upgrade? › - Use arrow-keys. Return to submit.
 ❯   Yes
     No
 
-pnpm add  @nextui-org/button@2.0.27
-Already up to date
-Progress: resolved 474, reused 465, downloaded 0, added 0, done
-Done in 2.9s
+pnpm add @nextui-org/button@2.0.31 @nextui-org/theme@2.1.0 tailwindcss@3.4.0 react@18.3.1 react-dom@18.3.1
+
+dependencies:
+- @nextui-org/theme 2.0.1
++ @nextui-org/theme 2.1.0 (2.2.3 is available)
++ react 18.3.1
++ react-dom 18.3.1
+
+Done in 1.8s
 
 ✅ Upgrade complete. All components are up to date.
 ```
@@ -287,7 +306,7 @@ Remove the removed components tailwind content in file:/project-path/tailwind.co
 
 ### List
 
-List all the NextUI components.
+List all the current installed components.
 
 ```bash
 nextui list [options]
@@ -296,7 +315,7 @@ nextui list [options]
 #### List Options
 
 - `-p --packagePath` [string] The path to the package.json file
-- `-c --current` List the current installed components
+- `-r --remote` List all components available remotely
 
 ##### Example
 
@@ -335,6 +354,7 @@ nextui doctor [options]
 > 2. Check whether the NextUI components `required dependencies are installed` in the project
 > 3. Check the required `tailwind.config.js` file and the content is correct
 > 4. Check `.npmrc` is correct when using `pnpm`
+> 5. Check `peerDependencies with required version` are installed in the project
 
 #### Doctor Options
 

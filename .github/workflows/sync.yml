@@ -1,0 +1,53 @@
+name: Sync README to nextui-org/nextui
+
+on:
+  push:
+    paths:
+      - 'README.md'
+
+jobs:
+  sync-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          check-latest: true
+          node-version-file: '.nvmrc'
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "winchesHe"
+          git config --global user.email "329487092@qq.com"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Clone target repository
+        run: |
+          git clone https://github.com/nextui-org/nextui.git
+
+      - name: Run Sync docs
+        run: |
+          pnpm sync:docs
+
+      - name: Commit and push changes
+        run: |
+          cd nextui
+          git add .
+          git commit -m "docs: sync README.md from nextui-cli"
+          git push
+
+      - name: Create a pull request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          commit-message: docs: sync README.md from nextui-cli
+          branch: sync-readme
+          title: "docs: sync README.md from nextui-cli"
+          body: This PR was automatically created by GitHub Actions to sync README.md.

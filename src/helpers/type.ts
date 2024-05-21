@@ -86,3 +86,21 @@ export type ExtractStoreData<T extends StoreKeys> = T extends 'latestVersion' | 
   : T extends 'nextUIComponentsPackageMap'
   ? NextUIComponentsMap
   : never;
+
+/**
+ *  @example UnionToIntersection<{ foo: string } | { bar: string }> --> { foo: string } & { bar: string }
+ */
+export type UnionToIntersection<U> = (U extends any ? (arg: U) => any : never) extends (
+  arg: infer I
+) => any
+  ? I
+  : never;
+
+/**
+ * @example GetUnionLastValue<0 | 1 | 2> --> 2
+ */
+export type GetUnionLastValue<T> = UnionToIntersection<
+  T extends any ? () => T : never
+> extends () => infer R
+  ? R
+  : never;

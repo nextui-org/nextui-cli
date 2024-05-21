@@ -79,7 +79,7 @@ nextui init my-nextui-app -t app
 output:
 
 ```bash
-NextUI CLI v0.2.0
+NextUI CLI v0.2.1
 
 ┌  Create a new project
 │
@@ -142,7 +142,7 @@ nextui add
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 ? Which components would you like to add? › - Space to select. Return to submit
 Instructions:
@@ -174,7 +174,7 @@ nextui add button
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 Adding the required dependencies: @nextui-org/button
 
@@ -278,7 +278,7 @@ nextui remove button
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 ❗️ Components slated for removal:
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -326,7 +326,7 @@ nextui list
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 Current installed components:
 
@@ -376,7 +376,7 @@ Output:
 If there is a problem in your project, the `doctor` command will display the problem information.
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 NextUI CLI: ❌ Your project has 1 issue that require attention
 
@@ -388,7 +388,7 @@ Missing tailwind.config.(j|t)s file. To set up, visit: https://nextui.org/docs/g
 Otherwise, the `doctor` command will display the following message.
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 ✅ Your project has no detected issues.
 ```
@@ -416,7 +416,7 @@ nextui env
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 Current installed components:
 

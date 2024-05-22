@@ -6,6 +6,7 @@ import {oraExecCmd} from '../helpers';
 import {CACHE_DIR, CACHE_PATH} from '../path';
 
 const cacheTTL = 30 * 60_000; // 30min
+let noCache = false;
 
 export interface CacheData {
   [packageName: string]: {
@@ -18,7 +19,9 @@ export interface CacheData {
   };
 }
 
-export function initCache() {
+export function initCache(_noCache?: boolean) {
+  noCache = !!_noCache;
+
   const isExistCache = existsSync(CACHE_DIR);
 
   if (isExistCache) return;
@@ -75,6 +78,9 @@ function ttl(n: number) {
 }
 
 export function isExpired(packageName: string, cacheData?: CacheData) {
+  // If noCache then always return true
+  if (noCache) return true;
+
   const data = cacheData ?? getCacheData();
   const pkgData = data[packageName];
 

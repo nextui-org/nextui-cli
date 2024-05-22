@@ -41,6 +41,7 @@ Usage: nextui [command]
 
 Options:
   -v, --version                      Output the current version
+  --no-cache                         Disable cache, by default data will be cached for 30m after the first request
   -h, --help                         Display help information for commands
 
 Commands:

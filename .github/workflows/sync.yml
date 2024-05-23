@@ -15,8 +15,8 @@ jobs:
 
     - name: Set up Git  # 第二步：设置 Git 用户信息
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git config --global user.name 'winchesHe'
+        git config --global user.email '329487092@qq.com'
 
     - name: Clone B repository  # 第三步：克隆 B 仓库并创建一个新分支
       run: |

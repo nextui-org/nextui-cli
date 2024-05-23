@@ -36,11 +36,11 @@ jobs:
       uses: peter-evans/create-pull-request@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        repository: https://github.com/winchesHe/nextui/B-repo  # 替换为实际的 B 仓库路径
+        # repository: https://github.com/winchesHe/nextui/B-repo  # 替换为实际的 B 仓库路径
         head: update-branch
         base: main
         path: B-repo
         branch: update-branch
-        push-to-fork: winchesHe/B-repo
+        push-to-fork: winchesHe/nextui
         title: "Update from A repository"
         body: "This PR updates B repository with changes from A repository."

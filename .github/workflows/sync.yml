@@ -40,3 +40,5 @@ jobs:
         branch: update-branch
         title: "Update from A repository"
         body: "This PR updates B repository with changes from A repository."
+        committer: "winchesHe <329487092@qq.com>"
+        author: "winchesHe <329487092@qq.com>"

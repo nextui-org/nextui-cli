@@ -40,6 +40,6 @@ jobs:
         # head: update-branch
         base: main
         path: B-repo
-        branch: main
+        branch: example-branch
         title: "Update from A repository"
         body: "This PR updates B repository with changes from A repository."

@@ -37,9 +37,9 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         # repository: https://github.com/winchesHe/nextui/B-repo  # 替换为实际的 B 仓库路径
-        head: update-branch
+        # head: update-branch
         base: main
         path: B-repo
-        branch: update-branch
+        branch: main
         title: "Update from A repository"
         body: "This PR updates B repository with changes from A repository."

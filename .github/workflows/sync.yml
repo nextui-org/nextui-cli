@@ -32,13 +32,6 @@ jobs:
         git add .
         git commit -m "Update from A repository"
 
-    - name: Push changes to B repository  # 第五步：将更改推送到 B 仓库的新分支
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cd B-repo
-        git push https://github.com/winchesHe/nextui update-branch
-
     - name: Create Pull Request  # 第六步：创建一个 Pull Request
       uses: peter-evans/create-pull-request@v5
       with:

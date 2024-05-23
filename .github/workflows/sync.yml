@@ -37,7 +37,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd B-repo
-        git push origin update-branch
+        git push https://github.com/winchesHe/nextui update-branch
 
     - name: Create Pull Request  # 第六步：创建一个 Pull Request
       uses: peter-evans/create-pull-request@v5

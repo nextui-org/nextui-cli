@@ -41,6 +41,5 @@ jobs:
         base: main
         path: B-repo
         branch: update-branch
-        push-to-fork: winchesHe/nextui
         title: "Update from A repository"
         body: "This PR updates B repository with changes from A repository."

@@ -21,8 +21,6 @@ jobs:
     - name: Clone B repository  # 第三步：克隆 B 仓库并创建一个新分支
       run: |
         git clone https://github.com/winchesHe/nextui B-repo --depth 1  # 替换为实际的 B 仓库路径
-        cd B-repo
-        git checkout -b update-branch  # 创建一个新分支
 
     - name: Make changes to B repository  # 第四步：在 B 仓库中进行修改并提交更改
       run: |
@@ -38,8 +36,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         # repository: https://github.com/winchesHe/nextui/B-repo  # 替换为实际的 B 仓库路径
         # head: update-branch
-        base: main
         path: B-repo
-        branch: example-branch
+        branch: update-branch
         title: "Update from A repository"
         body: "This PR updates B repository with changes from A repository."

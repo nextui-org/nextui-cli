@@ -1,44 +1,61 @@
-name: Update B Repository  # 工作流程的名称
+name: sync docs
 
 on:
   push:
     branches:
-      - docs-sync  # test for now
+      - main
+    paths:
+      - README.md
 
 jobs:
-  update-b-repo:  # 工作流程中的一个任务
-    runs-on: ubuntu-latest  # 任务运行的环境
+  sync-docs:
+    runs-on: ubuntu-latest
 
-    steps:  # 任务中的步骤
-    - name: Checkout A repository  # 第一步：检出 A 仓库的代码
-      uses: actions/checkout@v3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Git  # 第二步：设置 Git 用户信息
-      run: |
-        git config --global user.name 'winchesHe'
-        git config --global user.email '329487092@qq.com'
+      - uses: actions/setup-node@v3
+        with:
+          check-latest: true
+          node-version-file: '.nvmrc'
 
-    - name: Clone B repository  # 第三步：克隆 B 仓库并创建一个新分支
-      run: |
-        git clone https://github.com/winchesHe/nextui B-repo --depth 1  # 替换为实际的 B 仓库路径
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
 
-    - name: Make changes to B repository  # 第四步：在 B 仓库中进行修改并提交更改
-      run: |
-        cd B-repo
-        # 在这里添加你的命令来修改 B 仓库
-        echo "Some changes" > some-file.txt
-        git add .
-        git commit -m "Update from A repository"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Set up Git
+        run: |
+          git config --global user.name 'winchesHe'
+          git config --global user.email '329487092@qq.com'
 
-    - name: Create Pull Request  # 第六步：创建一个 Pull Request
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # repository: https://github.com/winchesHe/nextui/B-repo  # 替换为实际的 B 仓库路径
-        # head: update-branch
-        path: B-repo
-        branch: update-branch
-        title: "Update from A repository"
-        body: "This PR updates B repository with changes from A repository."
-        committer: "winchesHe <329487092@qq.com>"
-        author: "winchesHe <329487092@qq.com>"
+      - name: Clone nextui repository
+        run: |
+          git clone https://github.com/nextui-org/nextui nextui --depth 1
+
+      - name: Run docs sync script
+        run: |
+          pnpm sync:docs
+
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "::set-output name=version::$VERSION"
+
+      - name: Commit changes to nextui repository
+        run: |
+          cd B-repo
+          git add .
+          git commit -m "docs: sync api from nextui-cli v${{ steps.get_version.outputs.version }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT }}
+          path: nextui
+          branch: sync-docs-${{ steps.get_version.outputs.version }}
+          title: "docs: sync api from nextui-cli v${{ steps.get_version.outputs.version }}"
+          body: Sync api from nextui-cli.

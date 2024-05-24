@@ -47,7 +47,7 @@ jobs:
 
       - name: Commit changes to nextui repository
         run: |
-          cd B-repo
+          cd nextui
           git add .
           git commit -m "docs: sync api from nextui-cli v${{ steps.get_version.outputs.version }}"
 

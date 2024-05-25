@@ -461,5 +461,3 @@ Please adhere to this project's [CODE_OF_CONDUCT](https://github.com/nextui-org/
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
-#

@@ -2,8 +2,8 @@ name: sync docs
 
 on:
   push:
-    # branches:
-    #   - main
+    branches:
+      - main
     paths:
       - README.md
 

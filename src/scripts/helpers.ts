@@ -3,12 +3,14 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
 import retry from 'async-retry';
 import chalk from 'chalk';
-import {oraPromise} from 'ora';
+import ora, {oraPromise} from 'ora';
 
 import {Logger} from '@helpers/logger';
 import {transformPeerVersion} from '@helpers/utils';
 import {COMPONENTS_PATH} from 'src/constants/path';
 import {getStore} from 'src/constants/store';
+
+import {getPackageData} from './cache/cache';
 
 export type Dependencies = Record<string, string>;
 
@@ -90,16 +92,50 @@ export async function getComponents() {
   return components;
 }
 
-export async function getLatestVersion(packageName: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    exec(`npm view ${packageName} version`, (error, stdout) => {
+export async function oraExecCmd(cmd: string, text?: string) {
+  text = text ?? `Executing ${cmd}`;
+
+  const spinner = ora({
+    // Open ctrl + c cancel
+    discardStdin: false,
+    spinner: {
+      frames: [
+        `⠋ ${chalk.gray(`${text}.`)}`,
+        `⠙ ${chalk.gray(`${text}..`)}`,
+        `⠹ ${chalk.gray(`${text}...`)}`,
+        `⠸ ${chalk.gray(`${text}.`)}`,
+        `⠼ ${chalk.gray(`${text}..`)}`,
+        `⠴ ${chalk.gray(`${text}...`)}`,
+        `⠦ ${chalk.gray(`${text}.`)}`,
+        `⠧ ${chalk.gray(`${text}..`)}`,
+        `⠇ ${chalk.gray(`${text}...`)}`,
+        `⠏ ${chalk.gray(`${text}.`)}`
+      ],
+      interval: 150
+    }
+  });
+
+  spinner.start();
+
+  const result = await new Promise((resolve) => {
+    exec(cmd, (error, stdout) => {
       if (error) {
-        Logger.error(`Get latest ${packageName} error: ${error}`);
-        reject(error);
+        Logger.error(`Exec cmd ${cmd} error`);
+        process.exit(1);
       }
       resolve(stdout.trim());
     });
   });
+
+  spinner.stop();
+
+  return result as string;
+}
+
+export async function getLatestVersion(packageName: string): Promise<string> {
+  const result = await getPackageData(packageName);
+
+  return result.version;
 }
 
 const getUnpkgUrl = (version: string) =>
@@ -160,3 +196,5 @@ export async function downloadFile(url: string): Promise<Components> {
 
   return data;
 }
+
+export const isGithubAction = process.env['CI'] === 'true';

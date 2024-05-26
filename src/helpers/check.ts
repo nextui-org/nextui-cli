@@ -20,10 +20,13 @@ import {
   tailwindRequired
 } from 'src/constants/required';
 import {store} from 'src/constants/store';
+import {compareVersions} from 'src/scripts/helpers';
 
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
 import {findMostMatchText} from './math-diff';
+import {getPackagePeerDep} from './upgrade';
+import {strip} from './utils';
 
 export type CheckType = 'all' | 'partial';
 export type CombineType = 'missingDependencies' | 'incorrectTailwind' | 'incorrectApp';
@@ -55,14 +58,14 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'missingDependencies',
       outputFn: () => {
-        Logger.error('You have not installed the required dependencies');
+        Logger.log('You have not installed the required dependencies');
         Logger.newLine();
-        Logger.info('The required dependencies are:');
+        Logger.log('The required dependencies are:');
         missingDependencies.forEach((dependency) => {
-          Logger.info(`- ${dependency}`);
+          Logger.log(`- ${dependency}`);
         });
         Logger.newLine();
-        Logger.info(`See more info here: ${DOCS_INSTALLED}`);
+        Logger.log(`See more info here: ${chalk.underline(DOCS_INSTALLED)}`);
       }
     };
   } else if (type === 'incorrectTailwind') {
@@ -70,14 +73,14 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'incorrectTailwind',
       outputFn: () => {
-        Logger.error(`Your ${tailwindName} is incorrect`);
+        Logger.log(`Your ${tailwindName} is incorrect`);
         Logger.newLine();
-        Logger.info('The missing part is:');
+        Logger.log('The missing part is:');
         errorInfo.forEach((info) => {
-          Logger.info(`- need to add ${info}`);
+          Logger.log(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.error(`See more info here: ${DOCS_TAILWINDCSS_SETUP}-1`);
+        Logger.log(`See more info here: ${chalk.underline(DOCS_TAILWINDCSS_SETUP)}-1`);
       }
     };
   } else {
@@ -85,17 +88,23 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
       level: 'error',
       name: 'incorrectApp',
       outputFn: () => {
-        Logger.error('Your App.tsx is incorrect');
+        Logger.log('Your App.tsx is incorrect');
         Logger.newLine();
-        Logger.info('The missing part is:');
+        Logger.log('The missing part is:');
         errorInfo.forEach((info) => {
-          Logger.info(`- need to add ${info}`);
+          Logger.log(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.error(`See more info here: ${DOCS_INSTALLED}`);
+        Logger.log(`See more info here: ${chalk.underline(DOCS_INSTALLED)}`);
       }
     };
   }
+}
+
+interface CheckPeerDependenciesConfig {
+  peerDependencies?: boolean;
+  allDependencies?: Record<string, SAFE_ANY>;
+  packageNames?: string[];
 }
 
 /**
@@ -103,20 +112,37 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
  * @example return result and missing required [false, '@nextui-org/react', 'framer-motion']
  * @param type
  * @param dependenciesKeys
+ * @param checkPeerDependenciesConfig
  * @returns
  */
-export function checkRequiredContentInstalled(
+export async function checkRequiredContentInstalled<
+  T extends CheckPeerDependenciesConfig = CheckPeerDependenciesConfig
+>(
   type: CheckType,
-  dependenciesKeys: Set<string>
-): CheckResult {
+  dependenciesKeys: Set<string>,
+  checkPeerDependenciesConfig?: T extends {peerDependencies: infer P}
+    ? P extends true
+      ? Required<CheckPeerDependenciesConfig>
+      : T
+    : T
+): Promise<CheckResult> {
   const result = [] as unknown as CheckResult;
+  const {allDependencies, packageNames, peerDependencies} = (checkPeerDependenciesConfig ??
+    {}) as Required<CheckPeerDependenciesConfig>;
+  const peerDependenciesList: string[] = [];
+
+  if (peerDependencies) {
+    const peerDepList = await checkPeerDependencies({allDependencies, packageNames});
+
+    peerDependenciesList.push(...peerDepList);
+  }
 
   if (type === 'all') {
     const hasAllComponents = dependenciesKeys.has(NEXT_UI);
     const hasFramerMotion = dependenciesKeys.has(FRAMER_MOTION);
     const hasTailwind = dependenciesKeys.has(TAILWINDCSS);
 
-    if (hasAllComponents && hasFramerMotion) {
+    if (hasAllComponents && hasFramerMotion && !peerDependenciesList.length) {
       return [true];
     }
     !hasAllComponents && result.push(NEXT_UI);
@@ -128,7 +154,7 @@ export function checkRequiredContentInstalled(
     const hasSystemUI = dependenciesKeys.has(SYSTEM_UI);
     const hasThemeUI = dependenciesKeys.has(THEME_UI);
 
-    if (hasFramerMotion && hasSystemUI && hasThemeUI) {
+    if (hasFramerMotion && hasSystemUI && hasThemeUI && !peerDependenciesList.length) {
       return [true];
     }
     !hasFramerMotion && result.push(FRAMER_MOTION);
@@ -137,7 +163,40 @@ export function checkRequiredContentInstalled(
     !hasTailwind && result.push(TAILWINDCSS);
   }
 
-  return [false, ...result];
+  return [false, ...result, ...(peerDependencies ? peerDependenciesList : [])];
+}
+
+export async function checkPeerDependencies(
+  config: Required<Omit<CheckPeerDependenciesConfig, 'peerDependencies'>>
+) {
+  const {allDependencies, packageNames} = config;
+  const peerDepList: string[] = [];
+
+  for (const packageName of packageNames) {
+    const result = await getPackagePeerDep(packageName, allDependencies, new Set());
+
+    for (const peerData of result) {
+      if (!peerData.isLatest) {
+        // If there are not the latest version, add the peerDependencies to the list
+        const findPeerDepIndex = peerDepList.findIndex((peerDep) =>
+          peerDep.includes(peerData.package)
+        );
+        const findPeerDep = strip(peerDepList[findPeerDepIndex] || '');
+        const findPeerDepVersion = findPeerDep?.match(/@([\d.]+)/)?.[1];
+
+        // If the peerDependencies is not the latest version, remove the old version and add the latest version
+        if (
+          findPeerDepVersion &&
+          compareVersions(findPeerDepVersion, strip(peerData.latestVersion)) <= 0
+        ) {
+          peerDepList.splice(findPeerDepIndex, 1);
+        }
+        peerDepList.push(`${peerData.package}@${peerData.latestVersion}`);
+      }
+    }
+  }
+
+  return peerDepList;
 }
 
 /**

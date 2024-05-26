@@ -1,9 +1,8 @@
-import type {CommandName} from '@helpers/type';
+import type {CommandName, SAFE_ANY} from '@helpers/type';
 
 import chalk from 'chalk';
 import {Command} from 'commander';
 
-import {exec} from '@helpers/exec';
 import {Logger, gradientString} from '@helpers/logger';
 import {findMostMatchText} from '@helpers/math-diff';
 import {outputBox} from '@helpers/output-info';
@@ -20,6 +19,7 @@ import {removeAction} from './actions/remove-action';
 import {upgradeAction} from './actions/upgrade-action';
 import {initStoreComponentsData} from './constants/component';
 import {getStore, store} from './constants/store';
+import {getCacheExecData, initCache} from './scripts/cache/cache';
 import {compareVersions, getComponents} from './scripts/helpers';
 
 const commandList: CommandName[] = ['add', 'env', 'init', 'list', 'upgrade', 'doctor', 'remove'];
@@ -33,6 +33,10 @@ nextui
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
   .allowUnknownOption()
+  .option(
+    '--no-cache',
+    'Disable cache, by default data will be cached for 30m after the first request'
+  )
   .action(async (_, command) => {
     let isArgs = false;
 
@@ -55,7 +59,7 @@ nextui
     }
 
     if (!isArgs) {
-      const helpInfo = (await exec('nextui --help', {logCmd: false, stdio: 'pipe'})) as string;
+      const helpInfo = (await getCacheExecData('nextui --help')) as string;
 
       let helpInfoArr = helpInfo.split('\n');
 
@@ -138,6 +142,11 @@ nextui
 
 nextui.hook('preAction', async (command) => {
   const args = command.args?.[0];
+  const options = (command as SAFE_ANY).rawArgs.slice(2);
+  const noCache = options.includes('--no-cache');
+
+  // Init cache
+  initCache(noCache);
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json

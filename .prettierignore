@@ -12,3 +12,4 @@ pnpm-lock.yaml
 .github
 .eslintrc
 .lintstagedrc.mjs
+src/helpers/**

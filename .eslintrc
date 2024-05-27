@@ -28,6 +28,7 @@
   },
   "rules": {
     "no-console": "warn",
+    "prettier/prettier": "off",
     "import/no-duplicates": "error",
     "sort-keys-fix/sort-keys-fix": "error",
     "unused-imports/no-unused-imports": "error",

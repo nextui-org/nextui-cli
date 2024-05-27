@@ -41,6 +41,7 @@ Usage: nextui [command]
 
 Options:
   -v, --version                      Output the current version
+  --no-cache                         Disable cache, by default data will be cached for 30m after the first request
   -h, --help                         Display help information for commands
 
 Commands:
@@ -66,7 +67,7 @@ nextui init [projectName] [options]
 
 #### Init Options
 
-- `-t --template [string]` The template to use for the new project e.g. app, pages
+- `-t --template [string]` The template to use for the new project e.g. app, pages, vite
 - `-p --package [string]` The package manager to use for the new project (default: `npm`)
 
 ##### Example
@@ -79,13 +80,14 @@ nextui init my-nextui-app -t app
 output:
 
 ```bash
-NextUI CLI v0.2.0
+NextUI CLI v0.2.1
 
 ┌  Create a new project
 │
 ◇  Select a template (Enter to select)
 │  ● App (A Next.js 14 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.)
 │  ○ Pages (A Next.js 14 with pages directory template pre-configured with NextUI (v2) and Tailwind CSS.)
+│  ○ Vite (A Vite template pre-configured with NextUI (v2) and Tailwind CSS.)
 │
 ◇  New project name (Enter to skip with default name)
 │  my-nextui-app
@@ -98,12 +100,12 @@ NextUI CLI v0.2.0
 │
 ◇  Template created successfully!
 │
-◇  Next steps ───────────────────╮
-│                                │
-│  cd next-app-template          │
-│  npm install                   │
-│                                │
-├────────────────────────────────╯
+◇  Next steps ───────╮
+│                    │
+│  cd my-nextui-app  │
+│  npm install       │
+│                    │
+├────────────────────╯
 │
 └  🚀 Get started with npm run dev
 ```
@@ -142,7 +144,7 @@ nextui add
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 ? Which components would you like to add? › - Space to select. Return to submit
 Instructions:
@@ -174,7 +176,7 @@ nextui add button
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 Adding the required dependencies: @nextui-org/button
 
@@ -278,7 +280,7 @@ nextui remove button
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 ❗️ Components slated for removal:
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -326,7 +328,7 @@ nextui list
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 Current installed components:
 
@@ -376,7 +378,7 @@ Output:
 If there is a problem in your project, the `doctor` command will display the problem information.
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 NextUI CLI: ❌ Your project has 1 issue that require attention
 
@@ -388,7 +390,7 @@ Missing tailwind.config.(j|t)s file. To set up, visit: https://nextui.org/docs/g
 Otherwise, the `doctor` command will display the following message.
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 ✅ Your project has no detected issues.
 ```
@@ -416,7 +418,7 @@ nextui env
 Output:
 
 ```bash
-NextUI CLI v0.1.2
+NextUI CLI v0.2.1
 
 Current installed components:
 

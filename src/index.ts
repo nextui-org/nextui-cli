@@ -1,4 +1,4 @@
-import type {CommandName} from '@helpers/type';
+import type {CommandName, SAFE_ANY} from '@helpers/type';
 
 import chalk from 'chalk';
 import {Command} from 'commander';
@@ -33,6 +33,10 @@ nextui
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
   .allowUnknownOption()
+  .option(
+    '--no-cache',
+    'Disable cache, by default data will be cached for 30m after the first request'
+  )
   .action(async (_, command) => {
     let isArgs = false;
 
@@ -138,6 +142,11 @@ nextui
 
 nextui.hook('preAction', async (command) => {
   const args = command.args?.[0];
+  const options = (command as SAFE_ANY).rawArgs.slice(2);
+  const noCache = options.includes('--no-cache');
+
+  // Init cache
+  initCache(noCache);
 
   // Init cache
   initCache();

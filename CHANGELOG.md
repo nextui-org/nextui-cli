@@ -1,3 +1,14 @@
+# [0.3.0](https://github.com/nextui-org/nextui-cli/compare/v0.2.1...v0.3.0) (2024-05-27)
+
+### Bug Fixes
+
+- add initCache in updateComponents script ([#69](https://github.com/nextui-org/nextui-cli/issues/69)) ([b79e334](https://github.com/nextui-org/nextui-cli/commit/b79e3344cd66c6293e0910a344be4beb9ce711ee))
+
+### Features
+
+- a new version ([fb4bf77](https://github.com/nextui-org/nextui-cli/commit/fb4bf7778648fdf39e1ca497bbf7fc61d2778a77))
+- all up to data do not show select and add fetch cache ([#61](https://github.com/nextui-org/nextui-cli/issues/61)) ([d4a1ecc](https://github.com/nextui-org/nextui-cli/commit/d4a1ecc608fc1203d9433053c4fe8d791613fffb)), closes [#62](https://github.com/nextui-org/nextui-cli/issues/62) [#63](https://github.com/nextui-org/nextui-cli/issues/63) [#64](https://github.com/nextui-org/nextui-cli/issues/64) [#65](https://github.com/nextui-org/nextui-cli/issues/65) [#67](https://github.com/nextui-org/nextui-cli/issues/67) [#68](https://github.com/nextui-org/nextui-cli/issues/68)
+
 ## [0.2.1](https://github.com/nextui-org/nextui-cli/compare/v0.2.0...v0.2.1) (2024-05-03)
 
 ### Features

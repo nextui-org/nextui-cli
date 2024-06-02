@@ -148,9 +148,6 @@ nextui.hook('preAction', async (command) => {
   // Init cache
   initCache(noCache);
 
-  // Init cache
-  initCache();
-
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json
     const nextUIComponents = (await getComponents()).components;

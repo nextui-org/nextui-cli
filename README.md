@@ -167,6 +167,7 @@ Filtered results for: Enter something to filter
 ◯  code
 ```
 
+t
 If you want to add a specific component, you can specify the component name.
 
 ```bash

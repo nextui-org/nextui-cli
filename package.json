@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "homepage": "https://github.com/nextui-org/nextui-cli#readme",
   "description": "A CLI tool that unlocks seamless NextUI integration",
   "keywords": [
@@ -52,8 +52,8 @@
     "lint:fix": "eslint . -max-warnings=0 --fix",
     "check:prettier": "prettier --check .",
     "check:types": "tsc --noEmit",
-    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . && git add .",
-    "release": "bumpp --execute='pnpm run changelog'",
+    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s --commit-path .",
+    "release": "bumpp --execute='pnpm run changelog' --all",
     "prepare": "husky install",
     "postbuild": "pnpm run update:components",
     "prepublishOnly": "pnpm run build"

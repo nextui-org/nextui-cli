@@ -1,7 +1,7 @@
 import type {CheckType} from './check';
 
 import {execSync} from 'node:child_process';
-import {readFileSync, writeFileSync} from 'node:fs';
+import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
 import {pnpmRequired, tailwindRequired} from 'src/constants/required';
 
@@ -138,11 +138,15 @@ export function fixPnpm(
   runInstall = true,
   logger: (({message, runInstall}) => void) | undefined = undefined
 ) {
-  let content = readFileSync(npmrcPath, 'utf-8');
+  if (!existsSync(npmrcPath)) {
+    write && writeFileSync(npmrcPath, pnpmRequired.content, 'utf-8');
+  } else {
+    let content = readFileSync(npmrcPath, 'utf-8');
 
-  content = `${pnpmRequired.content}\n${content}`;
+    content = `${pnpmRequired.content}\n${content}`;
 
-  write && writeFileSync(npmrcPath, content, 'utf-8');
+    write && writeFileSync(npmrcPath, content, 'utf-8');
+  }
 
   if (!logger) {
     Logger.newLine();

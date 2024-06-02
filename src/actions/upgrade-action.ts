@@ -1,7 +1,5 @@
 import type {AppendKeyValue} from '@helpers/type';
 
-import chalk from 'chalk';
-
 import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
@@ -87,7 +85,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
           title: `${component.package}${
             isUpToDate
               ? ''
-              : `${chalk.gray(`${component.version} -> `)}${getColorVersion(
+              : `@${component.version} -> ${getColorVersion(
                   component.version,
                   component.latestVersion
                 )}`

@@ -8,6 +8,7 @@ import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
+import {setupPnpm} from '@helpers/setup';
 import {upgrade} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo, transformPeerVersion} from '@helpers/utils';
 import {type NextUIComponents} from 'src/constants/component';
@@ -121,6 +122,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     upgradeOptionList
   });
   let ignoreList: string[] = [];
+  const packageManager = await detect();
 
   if (result.length) {
     const isExecute = await getSelect('Would you like to proceed with the upgrade?', [
@@ -135,7 +137,6 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       }
     ]);
 
-    const packageManager = await detect();
     const {install} = getPackageManagerInfo(packageManager);
 
     if (!isExecute) {
@@ -183,6 +184,9 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       }, '')}`
     );
   }
+
+  /** ======================== Setup Pnpm ======================== */
+  setupPnpm(packageManager);
 
   Logger.newLine();
   Logger.success('✅ Upgrade complete. All components are up to date.');

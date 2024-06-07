@@ -59,15 +59,11 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
-    // If all package is latest then pass
-    if (transformComponents.every((component) => component.isLatest)) {
-      Logger.success('✅ All NextUI packages are up to date');
-      process.exit(0);
-    }
-
     // If have the main nextui then add
     if (isNextUIAll) {
       const nextuiData = {
+        isLatest:
+          compareVersions(store.latestVersion, transformPeerVersion(allDependencies[NEXT_UI])) <= 0,
         latestVersion: store.latestVersion,
         package: NEXT_UI,
         version: transformPeerVersion(allDependencies[NEXT_UI])
@@ -76,10 +72,16 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       transformComponents.push(nextuiData);
     }
 
+    // If all package is latest then pass
+    if (transformComponents.every((component) => component.isLatest)) {
+      Logger.success('✅ All NextUI packages are up to date');
+      process.exit(0);
+    }
+
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',
       transformComponents.map((component) => {
-        const isUpToDate = component.version === component.latestVersion;
+        const isUpToDate = compareVersions(component.version, component.latestVersion) >= 0;
 
         return {
           disabled: isUpToDate,

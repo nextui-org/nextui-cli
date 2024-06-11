@@ -91,6 +91,7 @@
     "eslint-plugin-unused-imports": "3.0.0",
     "husky": "8.0.3",
     "lint-staged": "14.0.1",
+    "prettier": "3.3.2",
     "tsup": "7.2.0",
     "tsx": "4.7.1",
     "typescript": "5.2.2"

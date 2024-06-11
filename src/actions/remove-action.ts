@@ -37,12 +37,12 @@ export async function removeAction(components: string[], options: RemoveOptionsA
   const {
     all = false,
     packagePath = resolver('package.json'),
-    prettier = false,
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
 
-  var {allDependencies, currentComponents} = getPackageInfo(packagePath);
+  var {allDependencies, allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
   const packageManager = await detect();
+  const prettier = options.prettier ?? allDependenciesKeys.has('prettier');
 
   let isNextUIAll = !!allDependencies[NEXT_UI];
 

@@ -44,11 +44,11 @@ export async function addAction(components: string[], options: AddActionOptions)
     all = false,
     appPath = findFiles('**/App.(j|t)sx')[0],
     packagePath = resolver('package.json'),
-    prettier = false,
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
 
   var {allDependencies, allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
+  const prettier = options.prettier ?? allDependenciesKeys.has('prettier');
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
 

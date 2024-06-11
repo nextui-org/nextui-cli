@@ -8,6 +8,7 @@ import chalk from 'chalk';
 
 import {downloadTemplate} from '@helpers/fetch';
 import {fixPnpm} from '@helpers/fix';
+import {checkInitOptions} from '@helpers/init';
 import {getPackageManagerInfo} from '@helpers/utils';
 import {selectClack, taskClack, textClack} from 'src/prompts/clack';
 import {resolver} from 'src/scripts/path';
@@ -27,10 +28,10 @@ import {
 
 export interface InitActionOptions {
   template?: 'app' | 'pages' | 'vite';
-  package?: 'npm' | 'yarn' | 'pnpm';
+  package?: Agent;
 }
 
-const templatesMap: Record<Required<InitActionOptions>['template'], string> = {
+export const templatesMap: Record<Required<InitActionOptions>['template'], string> = {
   app: APP_NAME,
   pages: PAGES_NAME,
   vite: VITE_NAME
@@ -38,6 +39,9 @@ const templatesMap: Record<Required<InitActionOptions>['template'], string> = {
 
 export async function initAction(_projectName: string, options: InitActionOptions) {
   const {package: _package = 'npm', template: _template} = options;
+
+  /** ======================== Check invalid options ======================== */
+  checkInitOptions(_template, _package);
 
   /** ======================== Welcome title ======================== */
   p.intro(chalk.cyanBright('Create a new project'));

@@ -1,5 +1,7 @@
 import type {AppendKeyValue} from '@helpers/type';
 
+import fs from 'node:fs';
+
 import chalk from 'chalk';
 
 import {checkIllegalComponents} from '@helpers/check';
@@ -23,6 +25,7 @@ interface UpgradeActionOptions {
   major?: boolean;
   minor?: boolean;
   patch?: boolean;
+  write?: boolean;
 }
 
 type TransformComponent = Required<
@@ -30,7 +33,7 @@ type TransformComponent = Required<
 >;
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
-  const {all = false, packagePath = resolver('package.json')} = options;
+  const {all = false, packagePath = resolver('package.json'), write = false} = options;
   const {allDependencies, currentComponents} = getPackageInfo(packagePath, false);
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
@@ -175,13 +178,29 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       return !ignoreList.some((ignore) => r.package === ignore);
     });
 
-    await exec(
-      `${packageManager} ${install} ${result.reduce((acc, component, index) => {
-        return `${acc}${index === 0 ? '' : ' '}${
-          component.package
-        }@${component.latestVersion.replace(colorMatchRegex, '')}`;
-      }, '')}`
-    );
+    if (write) {
+      // Write the upgrade versions to the package file
+
+      const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+
+      result.forEach((component) => {
+        packageJson.dependencies[component.package] = component.latestVersion.replace(
+          colorMatchRegex,
+          ''
+        );
+      });
+
+      fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
+      Logger.success('✔️ Upgrade versions written to package.json');
+    } else {
+      await exec(
+        `${packageManager} ${install} ${result.reduce((acc, component, index) => {
+          return `${acc}${index === 0 ? '' : ' '}${
+            component.package
+          }@${component.latestVersion.replace(colorMatchRegex, '')}`;
+        }, '')}`
+      );
+    }
   }
 
   Logger.newLine();

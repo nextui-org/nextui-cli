@@ -72,6 +72,3 @@
 - optimize cli use ([#2](https://github.com/nextui-org/nextui-cli/issues/2)) ([617ded9](https://github.com/nextui-org/nextui-cli/commit/617ded9a674b4c3e512cafdaebc260977f900bcf))
 - optimize config ([#1](https://github.com/nextui-org/nextui-cli/issues/1)) ([4fad8a4](https://github.com/nextui-org/nextui-cli/commit/4fad8a4b9e19eccf91875e1671e91fe92e9d99d8))
 - optimize list command log and default option ([#16](https://github.com/nextui-org/nextui-cli/issues/16)) ([148bb50](https://github.com/nextui-org/nextui-cli/commit/148bb50d3ce141361a5a68b4fbb36697c56e9c4a))
-### Features
-
-- Add `-w` (write) option to `upgrade` command to write upgrade commands to a file instead of executing them.

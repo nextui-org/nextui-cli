@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "homepage": "https://github.com/nextui-org/nextui-cli#readme",
   "description": "A CLI tool that unlocks seamless NextUI integration",
   "keywords": [

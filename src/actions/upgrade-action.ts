@@ -2,8 +2,6 @@ import type {AppendKeyValue} from '@helpers/type';
 
 import fs from 'node:fs';
 
-import chalk from 'chalk';
-
 import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';

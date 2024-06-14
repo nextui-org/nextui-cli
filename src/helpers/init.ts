@@ -1,9 +1,9 @@
-import type { SAFE_ANY } from './type';
+import type {SAFE_ANY} from './type';
 
-import { type InitActionOptions, templatesMap } from 'src/actions/init-action';
+import {type InitActionOptions, templatesMap} from 'src/actions/init-action';
 
-import { AGENTS, type Agent } from './detect';
-import { printMostMatchText } from './math-diff';
+import {AGENTS, type Agent} from './detect';
+import {printMostMatchText} from './math-diff';
 
 export function checkInitOptions(template: InitActionOptions['template'], agent: Agent) {
   if (template) {

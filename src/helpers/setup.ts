@@ -1,12 +1,13 @@
 
-import { existsSync, writeFileSync } from 'node:fs';
+import type {Agent} from './detect';
 
-import { resolver } from 'src/constants/path';
-import { pnpmRequired } from 'src/constants/required';
+import {existsSync, writeFileSync } from 'node:fs';
 
-import { checkPnpm } from './check';
-import { type Agent } from './detect';
-import { fixPnpm } from './fix';
+import {resolver} from 'src/constants/path';
+import {pnpmRequired} from 'src/constants/required';
+
+import {checkPnpm} from './check';
+import {fixPnpm} from './fix';
 
 export async function setupPnpm(packageManager: Agent) {
   if (packageManager === 'pnpm') {

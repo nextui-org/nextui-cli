@@ -1,4 +1,4 @@
-import { Logger } from './logger';
+import {Logger} from './logger';
 
 function matchTextScore(text: string, pattern: string) {
   let score = 0;

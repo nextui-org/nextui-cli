@@ -180,7 +180,6 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
     if (write) {
       // Write the upgrade versions to the package file
-
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
       result.forEach((component) => {
@@ -191,7 +190,10 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       });
 
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
-      Logger.success('✔️ Upgrade versions written to package.json');
+
+      Logger.newLine();
+      Logger.success('✅ Upgrade versions written to package.json');
+      process.exit(0);
     } else {
       await exec(
         `${packageManager} ${install} ${result.reduce((acc, component, index) => {

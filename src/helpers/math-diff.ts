@@ -1,3 +1,5 @@
+import {Logger} from './logger';
+
 function matchTextScore(text: string, pattern: string) {
   let score = 0;
   const textLength = text.length;
@@ -31,4 +33,15 @@ export function findMostMatchText(list: string[], pattern: string) {
   }
 
   return result !== '' ? result : null;
+}
+
+export function printMostMatchText(list: string[], pattern: string) {
+  const mathOption = findMostMatchText(list, pattern);
+
+  if (mathOption) {
+    Logger.error(`Unknown option '${pattern}', Did you mean '${mathOption}'?`);
+  } else {
+    Logger.error(`Unknown option '${pattern}'`);
+  }
+  process.exit(1);
 }

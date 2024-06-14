@@ -150,11 +150,11 @@ export function fixPnpm(
 
   if (!logger) {
     Logger.newLine();
-    Logger.info(`Added the required content in file: ${npmrcPath}`);
+    Logger.log(`Added the required content in file: ${npmrcPath}`);
 
     if (runInstall) {
       Logger.newLine();
-      Logger.info('Pnpm restructure will be run now');
+      Logger.log('Pnpm restructure will be run now');
       runInstall && execSync('pnpm install', {stdio: 'inherit'});
     }
 

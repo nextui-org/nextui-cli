@@ -19,7 +19,7 @@ export interface CacheData {
   };
 }
 
-export function initCache(_noCache?: boolean) {
+export function initCache(_noCache = noCache) {
   noCache = !!_noCache;
 
   const isExistCache = existsSync(CACHE_DIR);

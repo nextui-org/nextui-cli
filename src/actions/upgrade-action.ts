@@ -10,6 +10,7 @@ import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
+import {setupPnpm} from '@helpers/setup';
 import {upgrade} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo, transformPeerVersion} from '@helpers/utils';
 import {type NextUIComponents} from 'src/constants/component';
@@ -62,15 +63,11 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   if (all) {
     components = currentComponents.map((component) => component.package);
   } else if (!components.length) {
-    // If all package is latest then pass
-    if (transformComponents.every((component) => component.isLatest)) {
-      Logger.success('✅ All NextUI packages are up to date');
-      process.exit(0);
-    }
-
     // If have the main nextui then add
     if (isNextUIAll) {
       const nextuiData = {
+        isLatest:
+          compareVersions(store.latestVersion, transformPeerVersion(allDependencies[NEXT_UI])) <= 0,
         latestVersion: store.latestVersion,
         package: NEXT_UI,
         version: transformPeerVersion(allDependencies[NEXT_UI])
@@ -79,10 +76,16 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       transformComponents.push(nextuiData);
     }
 
+    // If all package is latest then pass
+    if (transformComponents.every((component) => component.isLatest)) {
+      Logger.success('✅ All NextUI packages are up to date');
+      process.exit(0);
+    }
+
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',
       transformComponents.map((component) => {
-        const isUpToDate = component.version === component.latestVersion;
+        const isUpToDate = compareVersions(component.version, component.latestVersion) >= 0;
 
         return {
           disabled: isUpToDate,
@@ -90,7 +93,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
           title: `${component.package}${
             isUpToDate
               ? ''
-              : `${chalk.gray(`${component.version} -> `)}${getColorVersion(
+              : `@${component.version} -> ${getColorVersion(
                   component.version,
                   component.latestVersion
                 )}`
@@ -124,6 +127,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     upgradeOptionList
   });
   let ignoreList: string[] = [];
+  const packageManager = await detect();
 
   if (result.length) {
     const isExecute = await getSelect('Would you like to proceed with the upgrade?', [
@@ -138,7 +142,6 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       }
     ]);
 
-    const packageManager = await detect();
     const {install} = getPackageManagerInfo(packageManager);
 
     if (!isExecute) {
@@ -204,6 +207,9 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       );
     }
   }
+
+  /** ======================== Setup Pnpm ======================== */
+  setupPnpm(packageManager);
 
   Logger.newLine();
   Logger.success('✅ Upgrade complete. All components are up to date.');

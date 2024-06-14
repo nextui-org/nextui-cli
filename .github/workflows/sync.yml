@@ -1,0 +1,61 @@
+name: sync docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - README.md
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          check-latest: true
+          node-version-file: '.nvmrc'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Set up Git
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+
+      - name: Clone nextui repository
+        run: |
+          git clone https://github.com/nextui-org/nextui nextui --depth 1
+
+      - name: Run docs sync script
+        run: |
+          pnpm sync:docs
+
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "::set-output name=version::$VERSION"
+
+      - name: Commit changes to nextui repository
+        run: |
+          cd nextui
+          git add .
+          git commit -m "docs: sync api from nextui-cli v${{ steps.get_version.outputs.version }}"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT }}
+          path: nextui
+          branch: sync-docs-${{ steps.get_version.outputs.version }}
+          title: "docs: sync api from nextui-cli v${{ steps.get_version.outputs.version }}"
+          body: Sync api from nextui-cli.

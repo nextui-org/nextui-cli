@@ -70,7 +70,7 @@ export function replaceMatchArray(
   const targetArray = target.split('\n');
   const contentIndex = targetArray.findIndex((item) => item.includes('content:'));
   const moduleIndex = targetArray.findIndex((item) => item.includes('module.exports ='));
-  const insertIndex = contentIndex !== -1 ? contentIndex : moduleIndex !== -1 ? moduleIndex : 0;
+  const insertIndex = contentIndex !== -1 ? contentIndex - 1 : moduleIndex !== -1 ? moduleIndex : 0;
 
   key === 'content'
     ? targetArray.splice(insertIndex + 1, 0, `  ${key}: [${replaceValue}],`)

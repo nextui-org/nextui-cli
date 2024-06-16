@@ -207,6 +207,7 @@ nextui upgrade [components...] [options]
 
 - `-p --packagePath` [string] The path to the package.json file
 - `-a --all` [boolean] Upgrade all the NextUI components (default: `false`)
+- `-w --write` [boolean] Write the upgrade commands to a file instead of executing them (default: `false`)
 - `-h, --help` Display help for command
 
 ##### Example

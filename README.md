@@ -42,7 +42,7 @@ Usage: nextui [command]
 Options:
   -v, --version                      Output the current version
   --no-cache                         Disable cache, by default data will be cached for 30m after the first request
-  -h, --help                         Display help information for commands
+  -h --help                         Display help information for commands
 
 Commands:
   init [options] [projectName]       Initializes a new project
@@ -207,8 +207,8 @@ nextui upgrade [components...] [options]
 
 - `-p --packagePath` [string] The path to the package.json file
 - `-a --all` [boolean] Upgrade all the NextUI components (default: `false`)
-- `-w --write` [boolean] Write the upgrade commands to a file instead of executing them (default: `false`)
-- `-h, --help` Display help for command
+- `-w --write` [boolean] Write the upgrade version to package.json (default: `false`)
+- `-h --help` Display help for command
 
 ##### Example
 

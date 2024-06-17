@@ -1,7 +1,6 @@
-
 import type {Agent} from './detect';
 
-import {existsSync, writeFileSync } from 'node:fs';
+import {existsSync, writeFileSync} from 'node:fs';
 
 import {resolver} from 'src/constants/path';
 import {pnpmRequired} from 'src/constants/required';

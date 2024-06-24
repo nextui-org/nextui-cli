@@ -40,10 +40,10 @@ type DefaultCombineOptions = {
 type CombineOptions<T extends CombineType> = T extends 'missingDependencies'
   ? RequiredKey<Partial<DefaultCombineOptions>, 'missingDependencies'>
   : T extends 'incorrectTailwind'
-  ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo' | 'tailwindName'>
-  : T extends 'incorrectApp'
-  ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo'>
-  : DefaultCombineOptions;
+    ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo' | 'tailwindName'>
+    : T extends 'incorrectApp'
+      ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo'>
+      : DefaultCombineOptions;
 
 type CheckResult<T extends SAFE_ANY[] = SAFE_ANY[]> = [boolean, ...T];
 

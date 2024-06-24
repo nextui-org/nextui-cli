@@ -180,6 +180,22 @@
       }
     },
     {
+      "name": "circular-progress",
+      "package": "@nextui-org/progress",
+      "version": "2.0.30",
+      "docs": "https://nextui.org/docs/components/circular-progress",
+      "description": "Circular progress  show either determinate or indeterminate progress of an operation over time.",
+      "status": "stable",
+      "style": "",
+      "peerDependencies": {
+        "react": ">=18",
+        "react-dom": ">=18",
+        "@nextui-org/theme": ">=2.1.0",
+        "@nextui-org/system": ">=2.0.0",
+        "tailwindcss": ">=3.4.0"
+      }
+    },
+    {
       "name": "date-input",
       "package": "@nextui-org/date-input",
       "version": "2.1.0",

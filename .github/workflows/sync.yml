@@ -56,6 +56,6 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           path: nextui
-          branch: sync-docs-${{ steps.get_version.outputs.version }}
+          branch: sync-docs-${{ steps.get_version.outputs.version }}-${{ github.run_id }}
           title: "docs: sync api from nextui-cli v${{ steps.get_version.outputs.version }}"
           body: Sync api from nextui-cli.

@@ -418,7 +418,7 @@ nextui env
 
 Output:
 
-```bash
+```bash2
 NextUI CLI v0.2.1
 
 Current installed components:

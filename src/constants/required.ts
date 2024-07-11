@@ -1,11 +1,12 @@
 import {existsSync} from 'node:fs';
 
 import fg from 'fast-glob';
+import {join} from 'pathe';
 
 import {getPackageInfo} from '@helpers/package';
 
 import {type NextUIComponent, type NextUIComponents} from './component';
-import {SLASH, resolver} from './path';
+import {resolver} from './path';
 
 export const NEXTUI_CLI = 'nextui-cli';
 
@@ -97,7 +98,7 @@ export function walkDepComponents(nextUIComponent: NextUIComponent, isPnpm: bool
     }
   }
 
-  const {currentComponents} = getPackageInfo(`${componentPath}${SLASH}package.json`);
+  const {currentComponents} = getPackageInfo(join(componentPath, 'package.json'));
 
   if (currentComponents.length) {
     for (const component of currentComponents) {

@@ -13,7 +13,7 @@ import {getPackageManagerInfo} from '@helpers/utils';
 import {selectClack, taskClack, textClack} from 'src/prompts/clack';
 import {resolver} from 'src/scripts/path';
 
-import {ROOT} from '../../src/constants/path';
+import {ROOT, SLASH} from '../../src/constants/path';
 import {
   APP_DIR,
   APP_NAME,
@@ -104,7 +104,7 @@ async function generateTemplate(url: string) {
 
 function renameTemplate(originName: string, projectName: string) {
   try {
-    renameSync(`${ROOT}/${originName}`, `${ROOT}/${projectName}`);
+    renameSync(`${ROOT}${SLASH}${originName}`, `${ROOT}${SLASH}${projectName}`);
   } catch (error) {
     if (error) {
       p.cancel(`rename Error: ${error}`);

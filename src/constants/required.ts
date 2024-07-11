@@ -5,7 +5,7 @@ import fg from 'fast-glob';
 import {getPackageInfo} from '@helpers/package';
 
 import {type NextUIComponent, type NextUIComponents} from './component';
-import {resolver} from './path';
+import {SLASH, resolver} from './path';
 
 export const NEXTUI_CLI = 'nextui-cli';
 
@@ -97,7 +97,7 @@ export function walkDepComponents(nextUIComponent: NextUIComponent, isPnpm: bool
     }
   }
 
-  const {currentComponents} = getPackageInfo(`${componentPath}/package.json`);
+  const {currentComponents} = getPackageInfo(`${componentPath}${SLASH}package.json`);
 
   if (currentComponents.length) {
     for (const component of currentComponents) {

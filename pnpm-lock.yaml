@@ -32,6 +32,9 @@ dependencies:
   ora:
     specifier: 8.0.1
     version: 8.0.1
+  pathe:
+    specifier: 1.1.2
+    version: 1.1.2
   tar:
     specifier: 6.2.1
     version: 6.2.1
@@ -3898,7 +3901,6 @@ packages:
 
   /pathe@1.1.2:
     resolution: {integrity: sha512-whLdWMYL2TwI08hn8/ZqAbrVemu0LNaNNJZX73O6qaIdCTfXutsLhMkjdENX0qhsQ9uIimo4/aQOmXkoon2nDQ==}
-    dev: true
 
   /perfect-debounce@1.0.0:
     resolution: {integrity: sha512-xCy9V055GLEqoFaHoC1SoLIaLmWctgCUaBaWxDZ7/Zx4CTyX7cJQLJOok/orfjZAh9kEYpjJa4d0KcJmCbctZA==}

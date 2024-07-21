@@ -68,6 +68,7 @@
     "find-up": "7.0.0",
     "gradient-string": "2.0.2",
     "ora": "8.0.1",
+    "pathe": "1.1.2",
     "tar": "6.2.1"
   },
   "devDependencies": {

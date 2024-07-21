@@ -38,6 +38,10 @@ export class Logger {
     console.error(...args.map((item) => chalk.red(item)));
   }
 
+  static grey(...args: Parameters<typeof console.log>) {
+    console.log(...args.map((item) => chalk.gray(item)));
+  }
+
   static gradient(content: string | number | boolean, options?: {colors?: tinycolor.ColorInput[]}) {
     this.log(_gradientString(...(options?.colors ?? defaultColors))(String(content)));
   }

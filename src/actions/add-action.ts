@@ -216,17 +216,17 @@ export async function addAction(components: string[], options: AddActionOptions)
     // Check whether have added redundant dependencies
     Logger.newLine();
     Logger.log(
-      `${chalk.bold('Attention')}: Individual components from NextUI do not require the \`@nextui-org/react\` package. For optimized bundle sizes, consider using individual components.`
+      `${chalk.yellow('Attention')} Individual components from NextUI do not require the \`@nextui-org/react\` package. For optimized bundle sizes, consider using individual components.`
     );
     Logger.log('The redundant dependencies are:');
-    currentComponents.forEach((component) => {
+    [...new Set(currentComponents)].forEach((component) => {
       Logger.log(`- ${component.package}`);
     });
   }
 
   // Warn the user to check the NextUIProvider whether in the correct place
   Logger.newLine();
-  Logger.log(
+  Logger.grey(
     `Please check the ${chalk.bold(
       'NextUIProvider'
     )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`

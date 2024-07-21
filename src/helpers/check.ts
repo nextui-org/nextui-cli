@@ -273,8 +273,8 @@ export function checkTailwind(
     });
 
     if (logWarning && isHaveAllContent) {
-      Logger.warn(
-        `\nAttention: Individual components from NextUI do not require the "${chalk.bold(
+      Logger.log(
+        `\n${chalk.yellow('Attention')} Individual components from NextUI do not require the "${chalk.bold(
           tailwindRequired.content
         )}" in the tailwind config\nFor optimized bundle sizes, consider using "${chalk.bold(
           individualContent

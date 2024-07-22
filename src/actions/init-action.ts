@@ -5,6 +5,7 @@ import {existsSync, renameSync} from 'node:fs';
 
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
+import {join} from 'pathe';
 
 import {downloadTemplate} from '@helpers/fetch';
 import {fixPnpm} from '@helpers/fix';
@@ -104,7 +105,7 @@ async function generateTemplate(url: string) {
 
 function renameTemplate(originName: string, projectName: string) {
   try {
-    renameSync(`${ROOT}/${originName}`, `${ROOT}/${projectName}`);
+    renameSync(join(ROOT, originName), join(ROOT, projectName));
   } catch (error) {
     if (error) {
       p.cancel(`rename Error: ${error}`);

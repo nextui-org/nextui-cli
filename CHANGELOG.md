@@ -1,3 +1,15 @@
+## [0.3.3](https://github.com/nextui-org/nextui-cli/compare/v0.3.2...v0.3.3) (2024-07-21)
+
+### Bug Fixes
+
+- doctor command match the darkMode ([#91](https://github.com/nextui-org/nextui-cli/issues/91)) ([4840cb0](https://github.com/nextui-org/nextui-cli/commit/4840cb0cd0581d6b17e37bc1220bd1ad61b16a4d))
+- improve output readablility ([#90](https://github.com/nextui-org/nextui-cli/issues/90)) ([c7d5682](https://github.com/nextui-org/nextui-cli/commit/c7d56821c49b6bacc5b0297fc071e30c0aabe0c8))
+- path error in window ([#89](https://github.com/nextui-org/nextui-cli/issues/89)) ([124aeb0](https://github.com/nextui-org/nextui-cli/commit/124aeb035f5b054f0ee82e340389e93931f5d83a))
+
+### Features
+
+- **upgrade:** add -w write option to upgrade command ([#82](https://github.com/nextui-org/nextui-cli/issues/82)) ([39804e0](https://github.com/nextui-org/nextui-cli/commit/39804e0a393970c04fff2c50bb1ea807f651b8a3))
+
 ## [0.3.2](https://github.com/nextui-org/nextui-cli/compare/v0.3.1...v0.3.2) (2024-06-14)
 
 ### Bug Fixes

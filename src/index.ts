@@ -106,11 +106,7 @@ nextui
   .argument('[components...]', 'Names of components to upgrade')
   .option('-p --packagePath [string]', 'Specify the path to the package.json file')
   .option('-a --all [boolean]', 'Upgrade all components', false)
-  .option(
-    '-w --write [boolean]',
-    'Write the upgrade versions to the package.json file without installing',
-    false
-  )
+  .option('-w --write [boolean]', 'Write the upgrade version to package.json file', false)
   .action(upgradeAction);
 
 nextui

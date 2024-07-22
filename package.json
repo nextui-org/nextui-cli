@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "homepage": "https://github.com/nextui-org/nextui-cli#readme",
   "description": "A CLI tool that unlocks seamless NextUI integration",
   "keywords": [
@@ -68,6 +68,7 @@
     "find-up": "7.0.0",
     "gradient-string": "2.0.2",
     "ora": "8.0.1",
+    "pathe": "1.1.2",
     "tar": "6.2.1"
   },
   "devDependencies": {

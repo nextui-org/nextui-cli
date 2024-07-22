@@ -80,7 +80,7 @@ export function combineProblemRecord<T extends CombineType = CombineType>(
           Logger.log(`- need to add ${info}`);
         });
         Logger.newLine();
-        Logger.log(`See more info here: ${chalk.underline(DOCS_TAILWINDCSS_SETUP)}-1`);
+        Logger.log(`See more info here: ${chalk.underline(`${DOCS_TAILWINDCSS_SETUP}-1`)}`);
       }
     };
   } else {
@@ -243,7 +243,8 @@ export function checkTailwind(
 
   if (type === 'all') {
     // Check if the required content is added Detail: https://nextui.org/docs/guide/installation#global-installation
-    const isDarkModeCorrect = tailwindContent.match(/darkMode: ["']\w/);
+    const darkMatch = getMatchArray('darkMode', tailwindContent);
+    const isDarkModeCorrect = darkMatch.some((darkMode) => darkMode.includes('class'));
     const isContentCorrect = contentMatch.some((content) =>
       content.includes(tailwindRequired.content)
     );
@@ -273,8 +274,8 @@ export function checkTailwind(
     });
 
     if (logWarning && isHaveAllContent) {
-      Logger.warn(
-        `\nAttention: Individual components from NextUI do not require the "${chalk.bold(
+      Logger.log(
+        `\n${chalk.yellow('Attention')} Individual components from NextUI do not require the "${chalk.bold(
           tailwindRequired.content
         )}" in the tailwind config\nFor optimized bundle sizes, consider using "${chalk.bold(
           individualContent

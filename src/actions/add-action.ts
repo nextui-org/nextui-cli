@@ -174,7 +174,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     fixTailwind(type, {errorInfoList, format: prettier, tailwindPath});
 
     Logger.newLine();
-    Logger.info(`Tailwind CSS settings have been updated in: ${tailwindPath}`);
+    Logger.log(`Tailwind CSS settings have been updated in: ${tailwindPath}`);
   }
 
   /** ======================== Step 3 Provider Need Manually Open ======================== */
@@ -211,26 +211,26 @@ export async function addAction(components: string[], options: AddActionOptions)
   Logger.newLine();
   Logger.success('✅ Components added successfully');
 
-  // Warn the user to check the NextUIProvider whether in the correct place
-  Logger.newLine();
-  Logger.warn(
-    `Please check the ${chalk.bold(
-      'NextUIProvider'
-    )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
-  );
-
   // Check whether the user has installed the All NextUI components
   if ((allDependenciesKeys.has(NEXT_UI) || all) && currentComponents.length) {
     // Check whether have added redundant dependencies
     Logger.newLine();
-    Logger.warn(
-      'Attention: Individual components from NextUI do not require the `@nextui-org/react` package. For optimized bundle sizes, consider using individual components.'
+    Logger.log(
+      `${chalk.yellow('Attention')} Individual components from NextUI do not require the \`@nextui-org/react\` package. For optimized bundle sizes, consider using individual components.`
     );
-    Logger.warn('The redundant dependencies are:');
-    currentComponents.forEach((component) => {
-      Logger.info(`- ${component.package}`);
+    Logger.log('The redundant dependencies are:');
+    [...new Set(currentComponents)].forEach((component) => {
+      Logger.log(`- ${component.package}`);
     });
   }
+
+  // Warn the user to check the NextUIProvider whether in the correct place
+  Logger.newLine();
+  Logger.grey(
+    `Please check the ${chalk.bold(
+      'NextUIProvider'
+    )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
+  );
 
   process.exit(0);
 }

@@ -4,7 +4,7 @@ import {execSync} from 'node:child_process';
 import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
 import {pnpmRequired, tailwindRequired} from 'src/constants/required';
-import { getStoreSync } from 'src/constants/store';
+import {getStoreSync} from 'src/constants/store';
 
 import {Logger} from './logger';
 import {getMatchArray, replaceMatchArray} from './match';

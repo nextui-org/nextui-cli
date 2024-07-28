@@ -1,3 +1,14 @@
+## [0.3.4](https://github.com/nextui-org/nextui-cli/compare/v0.3.3...v0.3.4) (2024-07-28)
+
+### Bug Fixes
+
+- add debug mode and tailwindcss content mess repair ([#95](https://github.com/nextui-org/nextui-cli/issues/95)) ([57601eb](https://github.com/nextui-org/nextui-cli/commit/57601eb15ddb440403f9d5aa78847cd3cd89855e))
+- fixing lint:fix script ([#93](https://github.com/nextui-org/nextui-cli/issues/93)) ([54414d5](https://github.com/nextui-org/nextui-cli/commit/54414d5bdd09906fbc0fd824842c18bbd110b7b1))
+
+### Features
+
+- change to use pnpm 9 ([#92](https://github.com/nextui-org/nextui-cli/issues/92)) ([d0552ac](https://github.com/nextui-org/nextui-cli/commit/d0552ac489014cd5b1ea93ed4cf983cb65d83066))
+
 ## [0.3.3](https://github.com/nextui-org/nextui-cli/compare/v0.3.2...v0.3.3) (2024-07-23)
 
 ### Bug Fixes

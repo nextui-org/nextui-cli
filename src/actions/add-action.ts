@@ -12,8 +12,8 @@ import {
   checkRequiredContentInstalled,
   checkTailwind
 } from '@helpers/check';
+import {debugExecAddAction} from '@helpers/debug';
 import {detect} from '@helpers/detect';
-import {exec} from '@helpers/exec';
 import {fixPnpm, fixProvider, fixTailwind} from '@helpers/fix';
 import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
@@ -25,7 +25,7 @@ import {
   individualTailwindRequired,
   pnpmRequired
 } from 'src/constants/required';
-import {store} from 'src/constants/store';
+import {getStoreSync, store} from 'src/constants/store';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
 
@@ -85,7 +85,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     (c) => currentComponentsKeys.includes(c) || (isNextUIAll && c === NEXT_UI)
   );
 
-  if (filterCurrentComponents.length) {
+  if (filterCurrentComponents.length && !getStoreSync('debug')) {
     Logger.prefix(
       'error',
       `❌ You have already added the following components: ${filterCurrentComponents
@@ -123,7 +123,10 @@ export async function addAction(components: string[], options: AddActionOptions)
           .join(', ')}`
       );
 
-      await exec(`${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`);
+      await debugExecAddAction(
+        `${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`,
+        missingDependencies
+      );
     }
   } else {
     const [, ..._missingDependencies] = await checkRequiredContentInstalled(
@@ -141,7 +144,10 @@ export async function addAction(components: string[], options: AddActionOptions)
         .join(', ')}`
     );
 
-    await exec(`${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`);
+    await debugExecAddAction(
+      `${currentPkgManager} ${runCmd} ${[...missingDependencies].join(' ')}`,
+      missingDependencies
+    );
   }
 
   // After install the required dependencies, get the latest package information

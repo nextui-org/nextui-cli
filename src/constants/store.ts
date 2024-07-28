@@ -7,6 +7,7 @@ import {NEXTUI_CLI, NEXT_UI} from './required';
 export type NextUIComponentsMap = Record<string, Components[0]>;
 
 export type Store = {
+  debug: boolean;
   cliLatestVersion: string;
   latestVersion: string;
   nextUIComponents: Components;
@@ -39,4 +40,8 @@ export async function getStore<T extends StoreKeys = StoreKeys>(
   }
 
   return data as unknown as Promise<ExtractStoreData<T>>;
+}
+
+export function getStoreSync<T extends StoreKeys = StoreKeys>(key: T) {
+  return store[key] as unknown as ExtractStoreData<T>;
 }

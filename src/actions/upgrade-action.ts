@@ -9,7 +9,7 @@ import {Logger} from '@helpers/logger';
 import {colorMatchRegex} from '@helpers/output-info';
 import {getPackageInfo} from '@helpers/package';
 import {setupPnpm} from '@helpers/setup';
-import {upgrade} from '@helpers/upgrade';
+import {upgrade, writeUpgradeVersion} from '@helpers/upgrade';
 import {getColorVersion, getPackageManagerInfo, transformPeerVersion} from '@helpers/utils';
 import {type NextUIComponents} from 'src/constants/component';
 import {resolver} from 'src/constants/path';
@@ -33,7 +33,13 @@ type TransformComponent = Required<
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
   const {all = false, packagePath = resolver('package.json'), write = false} = options;
-  const {allDependencies, currentComponents} = getPackageInfo(packagePath, false);
+  const {
+    allDependencies,
+    currentComponents,
+    dependencies,
+    devDependencies,
+    package: packageJson
+  } = getPackageInfo(packagePath, false);
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
 
@@ -180,20 +186,17 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     });
 
     if (write) {
-      // Write the upgrade versions to the package file
-      const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-
-      result.forEach((component) => {
-        packageJson.dependencies[component.package] = component.latestVersion.replace(
-          colorMatchRegex,
-          ''
-        );
+      // Write the upgrade version to the package file
+      writeUpgradeVersion({
+        dependencies,
+        devDependencies,
+        upgradePackageList: result
       });
 
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
 
       Logger.newLine();
-      Logger.success('✅ Upgrade versions written to package.json');
+      Logger.success('✅ Upgrade version written to package.json');
       process.exit(0);
     } else {
       await exec(

@@ -46,6 +46,7 @@ export const taskClack = async <T>(opts: TaskClackOptions<T>) => {
     spinner.stop(successText);
   } catch (error) {
     cancel(failText ?? result ?? 'Task failed');
+    process.exit(0);
   }
 
   return result;

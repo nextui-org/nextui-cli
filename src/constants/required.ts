@@ -1,6 +1,7 @@
 import {existsSync} from 'node:fs';
 
 import fg from 'fast-glob';
+import {join} from 'pathe';
 
 import {getPackageInfo} from '@helpers/package';
 
@@ -97,7 +98,7 @@ export function walkDepComponents(nextUIComponent: NextUIComponent, isPnpm: bool
     }
   }
 
-  const {currentComponents} = getPackageInfo(`${componentPath}/package.json`);
+  const {currentComponents} = getPackageInfo(join(componentPath, 'package.json'));
 
   if (currentComponents.length) {
     for (const component of currentComponents) {

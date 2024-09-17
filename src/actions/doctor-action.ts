@@ -1,6 +1,5 @@
-import {basename} from 'node:path';
-
 import chalk from 'chalk';
+import {basename} from 'pathe';
 
 import {
   checkApp,

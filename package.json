@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.3.2",
+  "version": "0.3.4",
   "homepage": "https://github.com/nextui-org/nextui-cli#readme",
   "description": "A CLI tool that unlocks seamless NextUI integration",
   "keywords": [
@@ -49,7 +49,7 @@
     "sync:docs": "tsx src/scripts/sync/sync.ts",
     "clean:cache": "tsx src/scripts/cache/clean.ts",
     "lint": "eslint . --max-warnings=0",
-    "lint:fix": "eslint . -max-warnings=0 --fix",
+    "lint:fix": "eslint . --max-warnings=0 --fix",
     "check:prettier": "prettier --check .",
     "check:types": "tsc --noEmit",
     "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s --commit-path .",
@@ -68,6 +68,7 @@
     "find-up": "7.0.0",
     "gradient-string": "2.0.2",
     "ora": "8.0.1",
+    "pathe": "1.1.2",
     "tar": "6.2.1"
   },
   "devDependencies": {
@@ -98,8 +99,8 @@
     "typescript": "5.2.2"
   },
   "engines": {
-    "pnpm": ">=8.x",
+    "pnpm": ">=9.x",
     "node": ">=18.17.x"
   },
-  "packageManager": "pnpm@8.7.6"
+  "packageManager": "pnpm@9.6.0"
 }

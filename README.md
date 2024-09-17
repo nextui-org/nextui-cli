@@ -42,7 +42,7 @@ Usage: nextui [command]
 Options:
   -v, --version                      Output the current version
   --no-cache                         Disable cache, by default data will be cached for 30m after the first request
-  -h, --help                         Display help information for commands
+  -h --help                          Display help information for commands
 
 Commands:
   init [options] [projectName]       Initializes a new project
@@ -52,7 +52,7 @@ Commands:
   list [options]                     Lists all components, showing status, descriptions, and versions
   env [options]                      Displays debugging information for the local environment
   doctor [options]                   Checks for issues in the project
-  help [command]                     display help for command
+  help [command]                     Display help for command
 ```
 
 ## Commands
@@ -130,7 +130,7 @@ nextui add [components...] [options]
 - `-p --packagePath` [string] The path to the package.json file
 - `-tw --tailwindPath` [string] The path to the tailwind.config file file
 - `-app --appPath` [string] The path to the App.tsx file
-- `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: false)
+- `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: `false`)
 - `--addApp` [boolean] Add App.tsx file content which required provider (default: `false`)
 
 ##### Example
@@ -207,8 +207,8 @@ nextui upgrade [components...] [options]
 
 - `-p --packagePath` [string] The path to the package.json file
 - `-a --all` [boolean] Upgrade all the NextUI components (default: `false`)
-- `-w --write` [boolean] Write the upgrade commands to a file instead of executing them (default: `false`)
-- `-h, --help` Display help for command
+- `-w --write` [boolean] Write the upgrade version to package.json file (default: `false`)
+- `-h --help` Display help for command
 
 ##### Example
 
@@ -268,7 +268,7 @@ nextui remove [components...] [options]
 - `-p --packagePath` [string] The path to the package.json file
 - `-a --all` [boolean] Remove all the NextUI components (default: `false`)
 - `-tw --tailwindPath` [string] The path to the tailwind.config file file
-- `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: false)
+- `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: `false`)
 
 ##### Example
 
@@ -336,7 +336,7 @@ Current installed components:
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │   Package                    │   Version              │   Status    │   Docs                                              │
 │───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│
-│   @nextui-org/autocomplete   │   2.0.10 🚀latest      │   newPost   │   https://nextui.org/docs/components/autocomplete   │
+│   @nextui-org/autocomplete   │   2.0.10 🚀latest      │   stable    │   https://nextui.org/docs/components/autocomplete   │
 │   @nextui-org/badge          │   2.0.24 🚀latest      │   stable    │   https://nextui.org/docs/components/badge          │
 │   @nextui-org/button         │   2.0.27 🚀latest      │   stable    │   https://nextui.org/docs/components/button         │
 │   @nextui-org/chip           │   2.0.25 🚀latest      │   stable    │   https://nextui.org/docs/components/chip           │
@@ -426,7 +426,7 @@ Current installed components:
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │   Package                    │   Version              │   Status    │   Docs                                              │
 │───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│
-│   @nextui-org/autocomplete   │   2.0.10 🚀latest      │   newPost   │   https://nextui.org/docs/components/autocomplete   │
+│   @nextui-org/autocomplete   │   2.0.10 🚀latest      │   stable    │   https://nextui.org/docs/components/autocomplete   │
 │   @nextui-org/badge          │   2.0.24 🚀latest      │   stable    │   https://nextui.org/docs/components/badge          │
 │   @nextui-org/button         │   2.0.27 🚀latest      │   stable    │   https://nextui.org/docs/components/button         │
 │   @nextui-org/chip           │   2.0.25 🚀latest      │   stable    │   https://nextui.org/docs/components/chip           │

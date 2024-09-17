@@ -37,6 +37,7 @@ nextui
     '--no-cache',
     'Disable cache, by default data will be cached for 30m after the first request'
   )
+  .option('-d, --debug', 'Debug mode will not install dependencies')
   .action(async (_, command) => {
     let isArgs = false;
 
@@ -106,11 +107,7 @@ nextui
   .argument('[components...]', 'Names of components to upgrade')
   .option('-p --packagePath [string]', 'Specify the path to the package.json file')
   .option('-a --all [boolean]', 'Upgrade all components', false)
-  .option(
-    '-w --write [boolean]',
-    'Write the upgrade versions to the package.json file without installing',
-    false
-  )
+  .option('-w --write [boolean]', 'Write the upgrade version to package.json file', false)
   .action(upgradeAction);
 
 nextui
@@ -150,9 +147,12 @@ nextui.hook('preAction', async (command) => {
   const args = command.args?.[0];
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const noCache = options.includes('--no-cache');
+  const debug = options.includes('--debug') || options.includes('-d');
 
   // Init cache
   initCache(noCache);
+  // Init debug
+  store.debug = debug;
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json

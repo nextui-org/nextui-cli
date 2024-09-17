@@ -1,8 +1,7 @@
 import type {SAFE_ANY} from './type';
 
-import path from 'node:path';
-
 import {findUp} from 'find-up';
+import path from 'pathe';
 
 import {ROOT} from 'src/constants/path';
 

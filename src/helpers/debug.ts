@@ -1,10 +1,10 @@
-import { writeFileSync } from 'node:fs';
+import {writeFileSync} from 'node:fs';
 
-import { getStoreSync, store } from 'src/constants/store';
+import {getStoreSync, store} from 'src/constants/store';
 
-import { exec } from './exec';
-import { Logger } from './logger';
-import { getPackageInfo } from './package';
+import {exec} from './exec';
+import {Logger} from './logger';
+import {getPackageInfo} from './package';
 
 export async function debugExecAddAction(cmd: string, components: string[] = []) {
   if (getStoreSync('debug')) {
@@ -17,36 +17,50 @@ export async function debugExecAddAction(cmd: string, components: string[] = [])
 }
 
 export function debugAddedPkg(components: string[], packagePath: string) {
-  if (!components.length || !getStoreSync('debug')) return
+  if (!components.length || !getStoreSync('debug')) return;
 
-  const {dependencies, packageJson} = getPackageInfo(packagePath)
+  const {dependencies, packageJson} = getPackageInfo(packagePath);
 
-    for (const component of components) {
-      const compData = store.nextUIComponentsMap[component];
+  for (const component of components) {
+    const compData = store.nextUIComponentsMap[component];
 
-      if (!compData) continue
+    if (!compData) continue;
 
-      dependencies[compData.package] = `${compData.package}@${compData.version}`
-    }
-    writeFileSync(packagePath, JSON.stringify({
-      ...packageJson,
-      dependencies
-  }, null, 2))
+    dependencies[compData.package] = `${compData.package}@${compData.version}`;
+  }
+  writeFileSync(
+    packagePath,
+    JSON.stringify(
+      {
+        ...packageJson,
+        dependencies
+      },
+      null,
+      2
+    )
+  );
 }
 
 export function debugRemovedPkg(components: string[], packagePath: string) {
-  if (!components.length || !getStoreSync('debug')) return
+  if (!components.length || !getStoreSync('debug')) return;
 
-  const {dependencies, packageJson} = getPackageInfo(packagePath)
+  const {dependencies, packageJson} = getPackageInfo(packagePath);
 
-    for (const component of components) {
-      const compData = store.nextUIComponentsMap[component];
+  for (const component of components) {
+    const compData = store.nextUIComponentsMap[component];
 
-      if (!compData) continue
-      delete dependencies[compData.package]
-    }
-    writeFileSync(packagePath, JSON.stringify({
-      ...packageJson,
-      dependencies
-  }, null, 2))
+    if (!compData) continue;
+    delete dependencies[compData.package];
+  }
+  writeFileSync(
+    packagePath,
+    JSON.stringify(
+      {
+        ...packageJson,
+        dependencies
+      },
+      null,
+      2
+    )
+  );
 }

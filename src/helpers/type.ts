@@ -76,16 +76,16 @@ export type ChalkColor =
 export type ExtractStoreData<T extends StoreKeys> = T extends 'latestVersion' | 'cliLatestVersion'
   ? string
   : T extends 'nextUIComponents'
-  ? Components
-  : T extends 'nextUIComponentsKeys' | 'nextUIcomponentsPackages'
-  ? string[]
-  : T extends 'nextUIComponentsKeysSet'
-  ? Set<string>
-  : T extends 'nextUIComponentsMap'
-  ? NextUIComponentsMap
-  : T extends 'nextUIComponentsPackageMap'
-  ? NextUIComponentsMap
-  : never;
+    ? Components
+    : T extends 'nextUIComponentsKeys' | 'nextUIcomponentsPackages'
+      ? string[]
+      : T extends 'nextUIComponentsKeysSet'
+        ? Set<string>
+        : T extends 'nextUIComponentsMap'
+          ? NextUIComponentsMap
+          : T extends 'nextUIComponentsPackageMap'
+            ? NextUIComponentsMap
+            : never;
 
 /**
  *  @example UnionToIntersection<{ foo: string } | { bar: string }> --> { foo: string } & { bar: string }
@@ -99,8 +99,5 @@ export type UnionToIntersection<U> = (U extends any ? (arg: U) => any : never) e
 /**
  * @example GetUnionLastValue<0 | 1 | 2> --> 2
  */
-export type GetUnionLastValue<T> = UnionToIntersection<
-  T extends any ? () => T : never
-> extends () => infer R
-  ? R
-  : never;
+export type GetUnionLastValue<T> =
+  UnionToIntersection<T extends any ? () => T : never> extends () => infer R ? R : never;

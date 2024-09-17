@@ -40,10 +40,10 @@ type DefaultCombineOptions = {
 type CombineOptions<T extends CombineType> = T extends 'missingDependencies'
   ? RequiredKey<Partial<DefaultCombineOptions>, 'missingDependencies'>
   : T extends 'incorrectTailwind'
-  ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo' | 'tailwindName'>
-  : T extends 'incorrectApp'
-  ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo'>
-  : DefaultCombineOptions;
+    ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo' | 'tailwindName'>
+    : T extends 'incorrectApp'
+      ? RequiredKey<Partial<DefaultCombineOptions>, 'errorInfo'>
+      : DefaultCombineOptions;
 
 type CheckResult<T extends SAFE_ANY[] = SAFE_ANY[]> = [boolean, ...T];
 
@@ -243,7 +243,7 @@ export function checkTailwind(
 
   if (type === 'all') {
     // Check if the required content is added Detail: https://nextui.org/docs/guide/installation#global-installation
-    const darkMatch = getMatchArray('darkMode', tailwindContent)
+    const darkMatch = getMatchArray('darkMode', tailwindContent);
     const isDarkModeCorrect = darkMatch.some((darkMode) => darkMode.includes('class'));
     const isContentCorrect = contentMatch.some((content) =>
       content.includes(tailwindRequired.content)

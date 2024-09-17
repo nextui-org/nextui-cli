@@ -227,19 +227,20 @@ function outputDependencies(outputList: UpgradeOption[], peerDepList: UpgradeOpt
 
   const outputInfo = getUpgradeVersion(outputList);
   const outputPeerDepInfo = getUpgradeVersion(peerDepList, true);
+  const filterPeerDepList = peerDepList.filter((c) => !c.isLatest);
 
   outputInfo.length && outputBox({...outputDefault.components, text: outputInfo});
   Logger.newLine();
-  Logger.log(
-    chalk.gray(
-      `Required min version: ${peerDepList
-        .filter((c) => !c.isLatest)
-        .map((c) => {
-          return `${c.package}>=${c.latestVersion.replace(colorMatchRegex, '')}`;
-        })
-        .join(', ')}`
-    )
-  );
+  filterPeerDepList.length &&
+    Logger.log(
+      chalk.gray(
+        `Required min version: ${filterPeerDepList
+          .map((c) => {
+            return `${c.package}>=${c.latestVersion.replace(colorMatchRegex, '')}`;
+          })
+          .join(', ')}`
+      )
+    );
   outputPeerDepInfo.length &&
     outputBox({...outputDefault.peerDependencies, text: outputPeerDepInfo});
 }
@@ -348,4 +349,24 @@ function outputUpgradeCount(outputList: UpgradeOption[]) {
   }
 
   return count;
+}
+
+export function writeUpgradeVersion({
+  dependencies,
+  devDependencies,
+  upgradePackageList
+}: {
+  dependencies: Dependencies;
+  devDependencies: Dependencies;
+  upgradePackageList: UpgradeOption[];
+}) {
+  for (const upgradePackage of upgradePackageList) {
+    const latestVersion = strip(upgradePackage.latestVersion);
+
+    if (devDependencies[upgradePackage.package]) {
+      devDependencies[upgradePackage.package] = latestVersion;
+      continue;
+    }
+    dependencies[upgradePackage.package] = latestVersion;
+  }
 }

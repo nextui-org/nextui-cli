@@ -17,9 +17,9 @@ export async function debugExecAddAction(cmd: string, components: string[] = [])
 }
 
 export function debugAddedPkg(components: string[], packagePath: string) {
-  if (!components.length) return
-  if (getStoreSync('debug')) {
-    const {dependencies, packageJson} = getPackageInfo(packagePath)
+  if (!components.length || !getStoreSync('debug')) return
+
+  const {dependencies, packageJson} = getPackageInfo(packagePath)
 
     for (const component of components) {
       const compData = store.nextUIComponentsMap[component];
@@ -31,14 +31,13 @@ export function debugAddedPkg(components: string[], packagePath: string) {
     writeFileSync(packagePath, JSON.stringify({
       ...packageJson,
       dependencies
-    }, null, 2))
-  }
+  }, null, 2))
 }
 
 export function debugRemovedPkg(components: string[], packagePath: string) {
-  if (!components.length) return
-  if (getStoreSync('debug')) {
-    const {dependencies, packageJson} = getPackageInfo(packagePath)
+  if (!components.length || !getStoreSync('debug')) return
+
+  const {dependencies, packageJson} = getPackageInfo(packagePath)
 
     for (const component of components) {
       const compData = store.nextUIComponentsMap[component];
@@ -49,6 +48,5 @@ export function debugRemovedPkg(components: string[], packagePath: string) {
     writeFileSync(packagePath, JSON.stringify({
       ...packageJson,
       dependencies
-    }, null, 2))
-  }
+  }, null, 2))
 }

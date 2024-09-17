@@ -151,7 +151,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   if (getStoreSync('debug')) {
-    // Temporary add the components to the package.json file
+    // Temporarily add the components to the package.json file
     debugAddedPkg(components, packagePath);
   }
 
@@ -244,7 +244,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   );
 
   if (getStoreSync('debug')) {
-    // Remove the temporary added components from the package.json file
+    // Temporarily remove the added components from the package.json file
     debugRemovedPkg(components, packagePath);
   }
   process.exit(0);

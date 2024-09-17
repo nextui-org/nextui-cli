@@ -8,12 +8,12 @@ import {printMostMatchText} from './math-diff';
 export function checkInitOptions(template: InitActionOptions['template'], agent: Agent) {
   if (template) {
     if (!Object.keys(templatesMap).includes(template)) {
-      printMostMatchText(Object.keys(templatesMap), template)
+      printMostMatchText(Object.keys(templatesMap), template);
     }
   }
   if (agent) {
     if (!AGENTS.includes(agent)) {
-      printMostMatchText(AGENTS as SAFE_ANY, agent)
+      printMostMatchText(AGENTS as SAFE_ANY, agent);
     }
   }
 }

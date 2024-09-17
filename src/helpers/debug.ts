@@ -1,8 +1,7 @@
-import { getStoreSync } from 'src/constants/store';
+import {getStoreSync} from 'src/constants/store';
 
-
-import { exec } from './exec';
-import { Logger } from './logger';
+import {exec} from './exec';
+import {Logger} from './logger';
 
 export async function debugExecAddAction(cmd: string, components: string[] = []) {
   if (getStoreSync('debug')) {

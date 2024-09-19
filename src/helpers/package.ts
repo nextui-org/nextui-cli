@@ -59,7 +59,7 @@ export function getPackageInfo(packagePath: string, transformVersion = true) {
     dependencies,
     devDependencies,
     isAllComponents,
-    package: pkg
+    packageJson: pkg
   };
 }
 

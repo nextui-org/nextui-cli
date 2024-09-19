@@ -33,13 +33,8 @@ type TransformComponent = Required<
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
   const {all = false, packagePath = resolver('package.json'), write = false} = options;
-  const {
-    allDependencies,
-    currentComponents,
-    dependencies,
-    devDependencies,
-    package: packageJson
-  } = getPackageInfo(packagePath, false);
+  const {allDependencies, currentComponents, dependencies, devDependencies, packageJson} =
+    getPackageInfo(packagePath, false);
 
   const isNextUIAll = !!allDependencies[NEXT_UI];
 

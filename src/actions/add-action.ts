@@ -12,7 +12,7 @@ import {
   checkRequiredContentInstalled,
   checkTailwind
 } from '@helpers/check';
-import {debugExecAddAction} from '@helpers/debug';
+import {debugAddedPkg, debugExecAddAction, debugRemovedPkg} from '@helpers/debug';
 import {detect} from '@helpers/detect';
 import {fixPnpm, fixProvider, fixTailwind} from '@helpers/fix';
 import {Logger} from '@helpers/logger';
@@ -150,6 +150,11 @@ export async function addAction(components: string[], options: AddActionOptions)
     );
   }
 
+  if (getStoreSync('debug')) {
+    // Temporarily add the components to the package.json file
+    debugAddedPkg(components, packagePath);
+  }
+
   // After install the required dependencies, get the latest package information
   var {allDependenciesKeys, currentComponents} = getPackageInfo(packagePath);
 
@@ -238,5 +243,9 @@ export async function addAction(components: string[], options: AddActionOptions)
     )} whether in the correct place (ignore if added)\nSee more info here: ${DOCS_PROVIDER_SETUP}`
   );
 
+  if (getStoreSync('debug')) {
+    // Temporarily remove the added components from the package.json file
+    debugRemovedPkg(components, packagePath);
+  }
   process.exit(0);
 }

@@ -56,7 +56,9 @@ export const individualTailwindRequired = {
     ];
 
     if (outputComponents.length === 1) {
-      return `./node_modules/@nextui-org/theme/dist/components/${outputComponents[0]}.js`;
+      return `./node_modules/@nextui-org/theme/dist/components/${
+        typeof outputComponents[0] === 'string' ? outputComponents[0] : '*'
+      }.js`;
     }
     const requiredContent = outputComponents
       .reduce((acc, component) => {

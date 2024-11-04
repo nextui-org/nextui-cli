@@ -1,3 +1,14 @@
+## [0.3.5](https://github.com/nextui-org/nextui-cli/compare/v0.3.4...v0.3.5) (2024-11-04)
+
+### Bug Fixes
+
+- modal tailwindcss config ([#97](https://github.com/nextui-org/nextui-cli/issues/97)) ([14ac5ac](https://github.com/nextui-org/nextui-cli/commit/14ac5ac98a8d3d0895786f207f49ec54574db8c8))
+- rename issue ([#98](https://github.com/nextui-org/nextui-cli/issues/98)) ([6ab7e42](https://github.com/nextui-org/nextui-cli/commit/6ab7e4205d7a674296e53254d61824b2378020f2))
+
+### Features
+
+- upgrade command -w option support devDep detect n output optimization ([#101](https://github.com/nextui-org/nextui-cli/issues/101)) ([5573805](https://github.com/nextui-org/nextui-cli/commit/5573805627689ac6485efb82eea467ca0d9ede53))
+
 ## [0.3.4](https://github.com/nextui-org/nextui-cli/compare/v0.3.3...v0.3.4) (2024-07-28)
 
 ### Bug Fixes

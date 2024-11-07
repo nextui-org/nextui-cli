@@ -352,7 +352,7 @@ export async function checkIllegalComponents<T extends boolean = false>(
   const cloneComponents = [...components];
 
   for (const componentIndex in cloneComponents) {
-    const component = components[componentIndex]!;
+    const component = cloneComponents[componentIndex]!;
 
     if (!store.nextUIComponentsKeysSet.has(component)) {
       if (checkBeta) {

@@ -22,6 +22,7 @@ import {
 import {store} from 'src/constants/store';
 import {compareVersions} from 'src/scripts/helpers';
 
+import {getBetaVersionData} from './beta';
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
 import {findMostMatchText} from './math-diff';
@@ -341,11 +342,32 @@ export function checkPnpm(npmrcPath: string): CheckResult {
   return [false, ...result];
 }
 
-export function checkIllegalComponents(components: string[], loggerError = true) {
+export async function checkIllegalComponents<T extends boolean = false>(
+  components: string[],
+  loggerError = true,
+  checkBeta: T = false as T
+): Promise<T extends false ? boolean : string[]> {
   const illegalList: [string, null | string][] = [];
+  const betaList: string[] = [];
+  const cloneComponents = [...components];
 
-  for (const component of components) {
+  for (const componentIndex in cloneComponents) {
+    const component = components[componentIndex]!;
+
     if (!store.nextUIComponentsKeysSet.has(component)) {
+      if (checkBeta) {
+        const componentName = `@nextui-org/${component}`;
+        const hasBetaVersion = await getBetaVersionData(componentName);
+
+        if (hasBetaVersion) {
+          // Add the beta component to the betaList
+          betaList.push(componentName);
+          // Remove the beta component from the components array
+          components.splice(+componentIndex, 1);
+          continue;
+        }
+      }
+
       const matchComponent = findMostMatchText(store.nextUIComponentsKeys, component);
 
       illegalList.push([component, matchComponent]);
@@ -376,8 +398,8 @@ export function checkIllegalComponents(components: string[], loggerError = true)
         }`
       );
 
-    return false;
+    return false as T extends false ? boolean : string[];
   }
 
-  return true;
+  return betaList as T extends false ? boolean : string[];
 }

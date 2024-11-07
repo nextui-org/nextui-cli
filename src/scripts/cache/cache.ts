@@ -89,7 +89,7 @@ export function isExpired(packageName: string, cacheData?: CacheData) {
   return ttl(pkgData.expiredDate) > 0;
 }
 
-export async function getPackageData(packageName: string) {
+export async function getPackageVersion(packageName: string) {
   const data = getCacheData();
   const isExpiredPkg = isExpired(packageName, data);
 
@@ -100,21 +100,32 @@ export async function getPackageData(packageName: string) {
       `Fetching ${packageName} latest version`
     );
 
-    cacheData(packageName, {version}, data);
+    const pkgVersion = {version};
+
+    cacheData(packageName, pkgVersion, data);
+
+    return pkgVersion;
   }
 
   return data[packageName]!;
 }
 
-export async function getCacheExecData(key: string) {
+export async function getCacheExecData<T extends SAFE_ANY>(
+  key: string,
+  execMessage?: string
+): Promise<T> {
   const data = getCacheData();
   const isExpiredPkg = isExpired(key, data);
 
   // If expired or don't exist then init data
   if (isExpiredPkg) {
-    const execResult = await oraExecCmd(key);
+    const execResult = await oraExecCmd(key, execMessage);
 
-    cacheData(key, {execResult}, data);
+    const result = {execResult};
+
+    cacheData(key, result, data);
+
+    return result.execResult;
   }
 
   return data[key]!.execResult;

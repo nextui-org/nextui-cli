@@ -1,3 +1,5 @@
+import type {SAFE_ANY} from '@helpers/type';
+
 import {exec} from 'node:child_process';
 import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
@@ -10,7 +12,7 @@ import {transformPeerVersion} from '@helpers/utils';
 import {COMPONENTS_PATH} from 'src/constants/path';
 import {getStore} from 'src/constants/store';
 
-import {getPackageData} from './cache/cache';
+import {getPackageVersion} from './cache/cache';
 
 export type Dependencies = Record<string, string>;
 
@@ -92,7 +94,7 @@ export async function getComponents() {
   return components;
 }
 
-export async function oraExecCmd(cmd: string, text?: string) {
+export async function oraExecCmd(cmd: string, text?: string): Promise<SAFE_ANY> {
   text = text ?? `Executing ${cmd}`;
 
   const spinner = ora({
@@ -129,11 +131,11 @@ export async function oraExecCmd(cmd: string, text?: string) {
 
   spinner.stop();
 
-  return result as string;
+  return result;
 }
 
 export async function getLatestVersion(packageName: string): Promise<string> {
-  const result = await getPackageData(packageName);
+  const result = await getPackageVersion(packageName);
 
   return result.version;
 }

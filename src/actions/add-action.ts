@@ -28,6 +28,7 @@ import {
 import {getStoreSync, store} from 'src/constants/store';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
+import {getBetaVersionSelect} from 'src/prompts/get-beta-version-select';
 
 interface AddActionOptions {
   all?: boolean;
@@ -73,7 +74,9 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   /** ======================== Add judge whether illegal component exist ======================== */
-  if (!all && !checkIllegalComponents(components)) {
+  const betaList = await checkIllegalComponents(components, true, true);
+
+  if (!all && !betaList) {
     return;
   }
 
@@ -133,9 +136,11 @@ export async function addAction(components: string[], options: AddActionOptions)
       'partial',
       allDependenciesKeys
     );
+    const betaPackageList = await getBetaVersionSelect(betaList);
     const missingDependencies = [
       ..._missingDependencies,
-      ...components.map((c) => store.nextUIComponentsMap[c]!.package)
+      ...components.map((c) => store.nextUIComponentsMap[c]!.package),
+      ...betaPackageList
     ];
 
     Logger.info(

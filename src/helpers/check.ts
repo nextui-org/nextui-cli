@@ -20,7 +20,7 @@ import {
   tailwindRequired
 } from 'src/constants/required';
 import {store} from 'src/constants/store';
-import {type ComponentsJson, compareVersions} from 'src/scripts/helpers';
+import {compareVersions} from 'src/scripts/helpers';
 
 import {getBetaVersionData} from './beta';
 import {Logger} from './logger';
@@ -106,6 +106,7 @@ interface CheckPeerDependenciesConfig {
   peerDependencies?: boolean;
   allDependencies?: Record<string, SAFE_ANY>;
   packageNames?: string[];
+  beta?: boolean;
 }
 
 /**
@@ -123,12 +124,12 @@ export async function checkRequiredContentInstalled<
   dependenciesKeys: Set<string>,
   checkPeerDependenciesConfig?: T extends {peerDependencies: infer P}
     ? P extends true
-      ? Required<CheckPeerDependenciesConfig>
+      ? Required<Omit<CheckPeerDependenciesConfig, 'beta'>>
       : T
     : T
 ): Promise<CheckResult> {
   const result = [] as unknown as CheckResult;
-  const {allDependencies, packageNames, peerDependencies} = (checkPeerDependenciesConfig ??
+  const {allDependencies, beta, packageNames, peerDependencies} = (checkPeerDependenciesConfig ??
     {}) as Required<CheckPeerDependenciesConfig>;
   const peerDependenciesList: string[] = [];
 
@@ -146,7 +147,7 @@ export async function checkRequiredContentInstalled<
     if (hasAllComponents && hasFramerMotion && !peerDependenciesList.length) {
       return [true];
     }
-    !hasAllComponents && result.push(NEXT_UI);
+    !hasAllComponents && result.push(beta ? `${NEXT_UI}@${store.betaVersion}` : NEXT_UI);
     !hasFramerMotion && result.push(FRAMER_MOTION);
     !hasTailwind && result.push(TAILWINDCSS);
   } else if (type === 'partial') {
@@ -159,8 +160,11 @@ export async function checkRequiredContentInstalled<
       return [true];
     }
     !hasFramerMotion && result.push(FRAMER_MOTION);
-    !hasSystemUI && result.push(SYSTEM_UI);
-    !hasThemeUI && result.push(THEME_UI);
+    const betaSystemUI = await getBetaVersionData(SYSTEM_UI);
+    const betaThemeUI = await getBetaVersionData(THEME_UI);
+
+    !hasSystemUI && result.push(beta ? `${SYSTEM_UI}@${betaSystemUI}` : SYSTEM_UI);
+    !hasThemeUI && result.push(beta ? `${THEME_UI}@${betaThemeUI}` : THEME_UI);
     !hasTailwind && result.push(TAILWINDCSS);
   }
 
@@ -168,7 +172,7 @@ export async function checkRequiredContentInstalled<
 }
 
 export async function checkPeerDependencies(
-  config: Required<Omit<CheckPeerDependenciesConfig, 'peerDependencies'>>
+  config: Required<Pick<CheckPeerDependenciesConfig, 'allDependencies' | 'packageNames'>>
 ) {
   const {allDependencies, packageNames} = config;
   const peerDepList: string[] = [];
@@ -344,32 +348,12 @@ export function checkPnpm(npmrcPath: string): CheckResult {
 
 export async function checkIllegalComponents<T extends boolean = false>(
   components: string[] = [],
-  loggerError = true,
-  checkBeta: T = false as T,
-  updatedComponents?: ComponentsJson['components']
+  loggerError = true
 ): Promise<T extends false ? boolean : string[]> {
   const illegalList: [string, null | string][] = [];
-  const betaList: string[] = [];
-  const componentsSet =
-    store.nextUIComponentsKeysSet ?? new Set(updatedComponents?.map(({name}) => name));
-
-  if (!componentsSet.size) {
-    return false as T extends false ? boolean : string[];
-  }
 
   for (const component of components) {
-    if (!componentsSet.has(component)) {
-      if (checkBeta) {
-        const componentName = `@nextui-org/${component}`;
-        const hasBetaVersion = await getBetaVersionData(componentName);
-
-        if (hasBetaVersion) {
-          // Add the beta component to the betaList
-          betaList.push(componentName);
-          continue;
-        }
-      }
-
+    if (!store.nextUIComponentsKeysSet.has(component)) {
       const matchComponent = findMostMatchText(store.nextUIComponentsKeys, component);
 
       illegalList.push([component, matchComponent]);
@@ -403,5 +387,5 @@ export async function checkIllegalComponents<T extends boolean = false>(
     return false as T extends false ? boolean : string[];
   }
 
-  return betaList as T extends false ? boolean : string[];
+  return true as T extends false ? boolean : string[];
 }

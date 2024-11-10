@@ -5,6 +5,7 @@ import {existsSync, writeFileSync} from 'node:fs';
 
 import chalk from 'chalk';
 
+import {getBetaComponents} from '@helpers/beta';
 import {
   checkApp,
   checkIllegalComponents,
@@ -28,7 +29,6 @@ import {
 import {getStoreSync, store} from 'src/constants/store';
 import {tailwindTemplate} from 'src/constants/templates';
 import {getAutocompleteMultiselect} from 'src/prompts';
-import {getBetaVersionSelect} from 'src/prompts/get-beta-version-select';
 
 interface AddActionOptions {
   all?: boolean;
@@ -37,6 +37,7 @@ interface AddActionOptions {
   tailwindPath?: string;
   appPath?: string;
   addApp?: boolean;
+  beta?: boolean;
 }
 
 export async function addAction(components: string[], options: AddActionOptions) {
@@ -44,6 +45,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     addApp = false,
     all = false,
     appPath = findFiles('**/App.(j|t)sx')[0],
+    beta = false,
     packagePath = resolver('package.json'),
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
@@ -74,9 +76,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   }
 
   /** ======================== Add judge whether illegal component exist ======================== */
-  const betaList = await checkIllegalComponents(components, true, true);
-
-  if (!all && !betaList) {
+  if (!all && !checkIllegalComponents(components, true)) {
     return;
   }
 
@@ -116,7 +116,8 @@ export async function addAction(components: string[], options: AddActionOptions)
   if (all) {
     const [, ...missingDependencies] = await checkRequiredContentInstalled(
       'all',
-      allDependenciesKeys
+      allDependenciesKeys,
+      {beta}
     );
 
     if (missingDependencies.length) {
@@ -134,14 +135,13 @@ export async function addAction(components: string[], options: AddActionOptions)
   } else {
     const [, ..._missingDependencies] = await checkRequiredContentInstalled(
       'partial',
-      allDependenciesKeys
+      allDependenciesKeys,
+      {beta}
     );
-    const betaPackageList = await getBetaVersionSelect(betaList);
-    const missingDependencies = [
-      ..._missingDependencies,
-      ...components.map((c) => store.nextUIComponentsMap[c]!.package),
-      ...betaPackageList
-    ];
+    const mergedComponents = beta
+      ? await getBetaComponents(components)
+      : components.map((c) => store.nextUIComponentsMap[c]!.package);
+    const missingDependencies = [..._missingDependencies, ...mergedComponents];
 
     Logger.info(
       `Adding required dependencies: ${[...missingDependencies]

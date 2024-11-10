@@ -99,6 +99,7 @@ nextui
   .option('-app --appPath [string]', 'Specify the path to the App.tsx file')
   .option('--prettier [boolean]', 'Apply Prettier formatting to the added content')
   .option('--addApp [boolean]', 'Include App.tsx file content that requires a provider', false)
+  .option('-b --beta [boolean]', 'Add beta components', false)
   .action(addAction);
 
 nextui
@@ -162,8 +163,10 @@ nextui.hook('preAction', async (command) => {
     initStoreComponentsData(nextUIComponents);
   }
 
-  const cliLatestVersion = await getStore('cliLatestVersion');
-  const latestVersion = await getStore('latestVersion');
+  const [cliLatestVersion, latestVersion] = await Promise.all([
+    getStore('cliLatestVersion'),
+    getStore('latestVersion')
+  ]);
 
   // Init latest version
   store.latestVersion = latestVersion;

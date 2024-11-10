@@ -155,8 +155,11 @@ const getUnpkgUrl = (version: string) =>
   `https://unpkg.com/@nextui-org/react@${version}/dist/components.json`;
 
 export async function autoUpdateComponents(latestVersion?: string, betaVersion?: string) {
-  latestVersion = latestVersion || ((await getStore('latestVersion')) as string);
-  betaVersion = betaVersion || ((await getStore('betaVersion')) as string);
+  [latestVersion, betaVersion] = await Promise.all([
+    latestVersion || getStore('latestVersion'),
+    betaVersion || getStore('betaVersion')
+  ]);
+
   const url = getUnpkgUrl(latestVersion);
 
   const [components, betaComponents] = await Promise.all([

@@ -67,7 +67,7 @@ export async function removeAction(components: string[], options: RemoveOptionsA
     );
   } else {
     // Check if the custom input components are valid
-    if (!(await checkIllegalComponents(components))) {
+    if (!checkIllegalComponents(components)) {
       return;
     }
 

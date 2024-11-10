@@ -103,7 +103,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     );
   } else {
     // Check if the components are valid
-    if (!(await checkIllegalComponents(components))) {
+    if (!checkIllegalComponents(components)) {
       return;
     }
   }

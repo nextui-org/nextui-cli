@@ -105,7 +105,7 @@ export function isMinorUpdate(currentVersion: string, latestVersion: string) {
 
   if (currentVersionArr[1] !== latestVersionArr[1]) {
     return `${chalk.white(latestVersionArr[0])}${chalk.white('.')}${chalk.cyanBright(
-      latestVersionArr.slice(1, 3).join('.')
+      latestVersionArr.slice(1).join('.')
     )}`;
   }
 

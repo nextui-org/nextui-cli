@@ -46,8 +46,14 @@ export function compareVersions(version1 = '', version2 = '') {
   version1 = transformPeerVersion(version1);
   version2 = transformPeerVersion(version2);
 
-  const parts1 = version1.split('.').map(Number);
-  const parts2 = version2.split('.').map(Number);
+  const parts1 = version1
+    .replace(/[\w-]+/g, '')
+    .split('.')
+    .map(Number);
+  const parts2 = version2
+    .replace(/[\w-]+/g, '')
+    .split('.')
+    .map(Number);
 
   for (let i = 0; i < parts1.length; i++) {
     if (parts1[i] !== undefined && parts2[i] !== undefined) {

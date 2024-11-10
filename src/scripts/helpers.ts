@@ -5,10 +5,10 @@ import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 
 import retry from 'async-retry';
 import chalk from 'chalk';
+import {compareVersions as InternalCompareVersions} from 'compare-versions';
 import ora, {oraPromise} from 'ora';
 
 import {Logger} from '@helpers/logger';
-import {transformPeerVersion} from '@helpers/utils';
 import {COMPONENTS_PATH} from 'src/constants/path';
 import {getStore} from 'src/constants/store';
 
@@ -43,29 +43,7 @@ export type ComponentsJson = {
  * @param version2
  */
 export function compareVersions(version1 = '', version2 = '') {
-  version1 = transformPeerVersion(version1);
-  version2 = transformPeerVersion(version2);
-
-  const parts1 = version1
-    .replace(/[\w-]+/g, '')
-    .split('.')
-    .map(Number);
-  const parts2 = version2
-    .replace(/[\w-]+/g, '')
-    .split('.')
-    .map(Number);
-
-  for (let i = 0; i < parts1.length; i++) {
-    if (parts1[i] !== undefined && parts2[i] !== undefined) {
-      if (parts1[i]! > parts2[i]!) {
-        return 1;
-      } else if (parts1[i]! < parts2[i]!) {
-        return -1;
-      }
-    }
-  }
-
-  return 0;
+  return InternalCompareVersions(version1, version2);
 }
 
 export async function updateComponents() {

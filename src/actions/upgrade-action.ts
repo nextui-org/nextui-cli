@@ -2,6 +2,7 @@ import type {AppendKeyValue} from '@helpers/type';
 
 import fs from 'node:fs';
 
+import {getBetaVersion} from '@helpers/beta';
 import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
@@ -25,6 +26,7 @@ interface UpgradeActionOptions {
   minor?: boolean;
   patch?: boolean;
   write?: boolean;
+  beta?: boolean;
 }
 
 type TransformComponent = Required<
@@ -32,7 +34,12 @@ type TransformComponent = Required<
 >;
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
-  const {all = false, packagePath = resolver('package.json'), write = false} = options;
+  const {
+    all = false,
+    beta = false,
+    packagePath = resolver('package.json'),
+    write = false
+  } = options;
   const {allDependencies, currentComponents, dependencies, devDependencies, packageJson} =
     getPackageInfo(packagePath, false);
 
@@ -40,17 +47,20 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   const transformComponents: TransformComponent[] = [];
 
-  for (const component of currentComponents) {
-    const latestVersion =
-      store.nextUIComponentsMap[component.name]?.version ||
-      (await getLatestVersion(component.package));
+  await Promise.all(
+    currentComponents.map(async (component) => {
+      const latestVersion =
+        store.nextUIComponentsMap[component.name]?.version ||
+        (await getLatestVersion(component.package));
+      const mergedVersion = beta ? await getBetaVersion(component.package) : latestVersion;
 
-    transformComponents.push({
-      ...component,
-      isLatest: compareVersions(component.version, latestVersion) >= 0,
-      latestVersion
-    });
-  }
+      transformComponents.push({
+        ...component,
+        isLatest: compareVersions(component.version, mergedVersion) >= 0,
+        latestVersion: mergedVersion
+      });
+    })
+  );
 
   // If no Installed NextUI components then exit
   if (!transformComponents.length && !isNextUIAll) {

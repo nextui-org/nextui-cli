@@ -148,6 +148,7 @@ nextui.hook('preAction', async (command) => {
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const noCache = options.includes('--no-cache');
   const debug = options.includes('--debug') || options.includes('-d');
+  // const componentsArgs = command.args?.slice(1);
 
   // Init cache
   initCache(noCache);

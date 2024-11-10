@@ -20,7 +20,7 @@ import {
   tailwindRequired
 } from 'src/constants/required';
 import {store} from 'src/constants/store';
-import {compareVersions} from 'src/scripts/helpers';
+import {type ComponentsJson, compareVersions} from 'src/scripts/helpers';
 
 import {getBetaVersionData} from './beta';
 import {Logger} from './logger';
@@ -343,18 +343,22 @@ export function checkPnpm(npmrcPath: string): CheckResult {
 }
 
 export async function checkIllegalComponents<T extends boolean = false>(
-  components: string[],
+  components: string[] = [],
   loggerError = true,
-  checkBeta: T = false as T
+  checkBeta: T = false as T,
+  updatedComponents?: ComponentsJson['components']
 ): Promise<T extends false ? boolean : string[]> {
   const illegalList: [string, null | string][] = [];
   const betaList: string[] = [];
-  const cloneComponents = [...components];
+  const componentsSet =
+    store.nextUIComponentsKeysSet ?? new Set(updatedComponents?.map(({name}) => name));
 
-  for (const componentIndex in cloneComponents) {
-    const component = cloneComponents[componentIndex]!;
+  if (!componentsSet.size) {
+    return false as T extends false ? boolean : string[];
+  }
 
-    if (!store.nextUIComponentsKeysSet.has(component)) {
+  for (const component of components) {
+    if (!componentsSet.has(component)) {
       if (checkBeta) {
         const componentName = `@nextui-org/${component}`;
         const hasBetaVersion = await getBetaVersionData(componentName);
@@ -362,8 +366,6 @@ export async function checkIllegalComponents<T extends boolean = false>(
         if (hasBetaVersion) {
           // Add the beta component to the betaList
           betaList.push(componentName);
-          // Remove the beta component from the components array
-          components.splice(+componentIndex, 1);
           continue;
         }
       }

@@ -30,6 +30,8 @@ export type Components = {
 export type ComponentsJson = {
   version: string;
   components: Components;
+  betaComponents: Components;
+  betaVersion: string;
 };
 
 /**
@@ -40,7 +42,7 @@ export type ComponentsJson = {
  * @param version1
  * @param version2
  */
-export function compareVersions(version1: string, version2: string) {
+export function compareVersions(version1 = '', version2 = '') {
   version1 = transformPeerVersion(version1);
   version2 = transformPeerVersion(version2);
 
@@ -70,13 +72,16 @@ export async function updateComponents() {
 
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
+  const betaVersion = components.betaVersion;
   const latestVersion = await getStore('latestVersion');
+  const latestBetaVersion = await getStore('betaVersion');
 
-  if (compareVersions(currentVersion, latestVersion) === -1) {
+  if (
+    compareVersions(currentVersion, latestVersion) === -1 ||
+    compareVersions(betaVersion, latestBetaVersion) === -1
+  ) {
     // After the first time, check the version and update
-    await autoUpdateComponents(latestVersion);
-
-    return;
+    await autoUpdateComponents(latestVersion, latestBetaVersion);
   }
 }
 
@@ -143,21 +148,36 @@ export async function getLatestVersion(packageName: string): Promise<string> {
 const getUnpkgUrl = (version: string) =>
   `https://unpkg.com/@nextui-org/react@${version}/dist/components.json`;
 
-export async function autoUpdateComponents(latestVersion?: string) {
+export async function autoUpdateComponents(latestVersion?: string, betaVersion?: string) {
   latestVersion = latestVersion || ((await getStore('latestVersion')) as string);
+  betaVersion = betaVersion || ((await getStore('betaVersion')) as string);
   const url = getUnpkgUrl(latestVersion);
 
-  const components = await downloadFile(url);
+  const [components, betaComponents] = await Promise.all([
+    downloadFile(url),
+    downloadFile(getUnpkgUrl(betaVersion), false)
+  ]);
 
-  const componentsJson = {
+  const filterMissingComponents = betaComponents.filter(
+    (component) => !components.find((c) => c.name === component.name)
+  );
+
+  // Add missing beta components to components
+  components.push(...filterMissingComponents);
+
+  const componentsJson: ComponentsJson = {
+    betaComponents,
+    betaVersion,
     components,
     version: latestVersion
   };
 
   writeFileSync(COMPONENTS_PATH, JSON.stringify(componentsJson, null, 2), 'utf-8');
+
+  return componentsJson;
 }
 
-export async function downloadFile(url: string): Promise<Components> {
+export async function downloadFile(url: string, log = true): Promise<Components> {
   let data;
 
   await oraPromise(
@@ -186,7 +206,7 @@ export async function downloadFile(url: string): Promise<Components> {
     ),
     {
       failText(error) {
-        Logger.prefix('error', `Update components data error: ${error}`);
+        log && Logger.prefix('error', `Update components data error: ${error}`);
         process.exit(1);
       },
       successText: (() => {

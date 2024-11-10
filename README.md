@@ -42,6 +42,7 @@ Usage: nextui [command]
 Options:
   -v, --version                      Output the current version
   --no-cache                         Disable cache, by default data will be cached for 30m after the first request
+  -d, --debug                        Debug mode will not install dependencies
   -h --help                          Display help information for commands
 
 Commands:
@@ -132,6 +133,7 @@ nextui add [components...] [options]
 - `-app --appPath` [string] The path to the App.tsx file
 - `--prettier` [boolean] Add prettier format in the add content which required installed prettier - (default: `false`)
 - `--addApp` [boolean] Add App.tsx file content which required provider (default: `false`)
+- `-b --beta` [boolean] Add beta components (default: `false`)
 
 ##### Example
 
@@ -208,6 +210,7 @@ nextui upgrade [components...] [options]
 - `-p --packagePath` [string] The path to the package.json file
 - `-a --all` [boolean] Upgrade all the NextUI components (default: `false`)
 - `-w --write` [boolean] Write the upgrade version to package.json file (default: `false`)
+- `-b --beta` [boolean] Upgrade beta components (default: `false`)
 - `-h --help` Display help for command
 
 ##### Example

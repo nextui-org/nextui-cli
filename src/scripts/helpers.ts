@@ -43,7 +43,12 @@ export type ComponentsJson = {
  * @param version2
  */
 export function compareVersions(version1 = '', version2 = '') {
-  return InternalCompareVersions(version1, version2);
+  try {
+    return InternalCompareVersions(version1, version2);
+  } catch {
+    // Can't not support ('18 || 19.0.0-rc.0' received) temporary solution
+    return 0;
+  }
 }
 
 export async function updateComponents() {

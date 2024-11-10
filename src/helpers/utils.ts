@@ -119,7 +119,7 @@ export function isPatchUpdate(currentVersion: string, latestVersion: string) {
   if (currentVersionArr[2] !== latestVersionArr[2]) {
     return `${chalk.white(latestVersionArr.slice(0, 2).join('.'))}${chalk.white(
       '.'
-    )}${chalk.greenBright(latestVersionArr[2])}`;
+    )}${chalk.greenBright(latestVersionArr.slice(2).join('.'))}`;
   }
 
   return '';

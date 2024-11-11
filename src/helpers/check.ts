@@ -244,7 +244,10 @@ export function checkTailwind(
   if (type === 'all') {
     // Check if the required content is added Detail: https://nextui.org/docs/guide/installation#global-installation
     const darkMatch = getMatchArray('darkMode', tailwindContent);
-    const isDarkModeCorrect = darkMatch.some((darkMode) => darkMode.includes('class'));
+    // Some tailwind.config.js use darkMode: 'class' not darkMode: ['class']
+    const isDarkModeCorrect =
+      darkMatch.some((darkMode) => darkMode.includes('class')) ||
+      /darkMode:\s*["'`]class/.test(tailwindContent);
     const isContentCorrect = contentMatch.some((content) =>
       content.includes(tailwindRequired.content)
     );

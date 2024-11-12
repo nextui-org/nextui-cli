@@ -7,6 +7,7 @@ import * as p from '@clack/prompts';
 import chalk from 'chalk';
 import {join} from 'pathe';
 
+import {changeNpmrc} from '@helpers/actions/init/change-npmrc';
 import {downloadTemplate} from '@helpers/fetch';
 import {fixPnpm} from '@helpers/fix';
 import {checkInitOptions} from '@helpers/init';
@@ -73,10 +74,13 @@ export async function initAction(_projectName: string, options: InitActionOption
     renameTemplate(VITE_DIR, projectName);
   }
 
+  const npmrcFile = resolver(`${ROOT}/${projectName}/.npmrc`);
+
+  /** ======================== Change default npmrc content ======================== */
+  changeNpmrc(npmrcFile);
+
   /** ======================== Pnpm setup (optional) ======================== */
   if (packageName === 'pnpm') {
-    const npmrcFile = resolver(`${ROOT}/${projectName}/.npmrc`);
-
     fixPnpm(npmrcFile, true, false, ({message}) => {
       p.log.message(message);
     });

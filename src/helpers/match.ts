@@ -23,6 +23,10 @@ export function getMatchImport(str: string) {
   }
 }
 
+function removeQuote(str: string) {
+  return str.replace(/^["'`](.*)["'`]$/, '$1');
+}
+
 /**
  * Get the array content of the key in the target string.
  * @example getMatchArray('key', 'key: [a, b, c]') => ['a', 'b', 'c']
@@ -37,7 +41,7 @@ export function getMatchArray(key: string, target: string) {
       target
         .match(mixinReg)?.[1]
         ?.split(/,\s/g)
-        .map((i) => i.trim().replace(/["'`]/g, ''))
+        .map((i) => removeQuote(i.trim()))
         .filter(Boolean) ?? []
     );
 
@@ -74,11 +78,7 @@ export function replaceMatchArray(
 
   key === 'content'
     ? targetArray.splice(insertIndex + 1, 0, `  ${key}: [${replaceValue}],`)
-    : targetArray.splice(
-        insertIndex + 1,
-        0,
-        `  ${key}: [${value.map((v) => v.replace(/["'`]/g, ''))}],`
-      );
+    : targetArray.splice(insertIndex + 1, 0, `  ${key}: [${value.map((v) => removeQuote(v))}],`);
 
   return targetArray.join('\n');
 }

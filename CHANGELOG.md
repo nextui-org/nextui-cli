@@ -1,3 +1,20 @@
+# [0.4.0](https://github.com/nextui-org/nextui-cli/compare/v0.3.4...v0.4.0) (2024-11-29)
+
+### Bug Fixes
+
+- darkMode tailwindcss config check ([#112](https://github.com/nextui-org/nextui-cli/issues/112)) ([294a886](https://github.com/nextui-org/nextui-cli/commit/294a8863d2f90fa43719bf6cd00b297eafeb7804))
+- modal tailwindcss config ([#97](https://github.com/nextui-org/nextui-cli/issues/97)) ([14ac5ac](https://github.com/nextui-org/nextui-cli/commit/14ac5ac98a8d3d0895786f207f49ec54574db8c8))
+- release node version ([#107](https://github.com/nextui-org/nextui-cli/issues/107)) ([a772ea3](https://github.com/nextui-org/nextui-cli/commit/a772ea3d4a0397416f080919a81b8bb5fff9d102))
+- release v0.3.5 ([#108](https://github.com/nextui-org/nextui-cli/issues/108)) ([e0e2c09](https://github.com/nextui-org/nextui-cli/commit/e0e2c091c3d980089ef7d8ffd4b9cbecb27ab4a2))
+- remove quote ([#111](https://github.com/nextui-org/nextui-cli/issues/111)) ([87fda63](https://github.com/nextui-org/nextui-cli/commit/87fda637b9bc1e654675b353c954d17c3eba0dbc))
+- rename issue ([#98](https://github.com/nextui-org/nextui-cli/issues/98)) ([6ab7e42](https://github.com/nextui-org/nextui-cli/commit/6ab7e4205d7a674296e53254d61824b2378020f2))
+- turn on the template npmrc lock file ([#113](https://github.com/nextui-org/nextui-cli/issues/113)) ([654349e](https://github.com/nextui-org/nextui-cli/commit/654349e4efa923aee852824f669323310d94e1e6))
+
+### Features
+
+- cli support beta components ([#109](https://github.com/nextui-org/nextui-cli/issues/109)) ([b9ce3ac](https://github.com/nextui-org/nextui-cli/commit/b9ce3ac5f5ef8be67e7425cad949d4b564548894))
+- upgrade command -w option support devDep detect n output optimization ([#101](https://github.com/nextui-org/nextui-cli/issues/101)) ([5573805](https://github.com/nextui-org/nextui-cli/commit/5573805627689ac6485efb82eea467ca0d9ede53))
+
 ## [0.3.5](https://github.com/nextui-org/nextui-cli/compare/v0.3.4...v0.3.5) (2024-11-05)
 
 ### Bug Fixes

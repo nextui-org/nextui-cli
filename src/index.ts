@@ -99,6 +99,7 @@ nextui
   .option('-app --appPath [string]', 'Specify the path to the App.tsx file')
   .option('--prettier [boolean]', 'Apply Prettier formatting to the added content')
   .option('--addApp [boolean]', 'Include App.tsx file content that requires a provider', false)
+  .option('-b --beta [boolean]', 'Add beta components', false)
   .action(addAction);
 
 nextui
@@ -108,6 +109,7 @@ nextui
   .option('-p --packagePath [string]', 'Specify the path to the package.json file')
   .option('-a --all [boolean]', 'Upgrade all components', false)
   .option('-w --write [boolean]', 'Write the upgrade version to package.json file', false)
+  .option('-b --beta [boolean]', 'Upgrade beta components', false)
   .action(upgradeAction);
 
 nextui
@@ -148,6 +150,7 @@ nextui.hook('preAction', async (command) => {
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const noCache = options.includes('--no-cache');
   const debug = options.includes('--debug') || options.includes('-d');
+  // const componentsArgs = command.args?.slice(1);
 
   // Init cache
   initCache(noCache);
@@ -161,8 +164,10 @@ nextui.hook('preAction', async (command) => {
     initStoreComponentsData(nextUIComponents);
   }
 
-  const cliLatestVersion = await getStore('cliLatestVersion');
-  const latestVersion = await getStore('latestVersion');
+  const [cliLatestVersion, latestVersion] = await Promise.all([
+    getStore('cliLatestVersion'),
+    getStore('latestVersion')
+  ]);
 
   // Init latest version
   store.latestVersion = latestVersion;

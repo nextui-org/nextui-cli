@@ -2,6 +2,7 @@ import type {AppendKeyValue} from '@helpers/type';
 
 import fs from 'node:fs';
 
+import {getBetaVersion} from '@helpers/beta';
 import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
@@ -25,14 +26,28 @@ interface UpgradeActionOptions {
   minor?: boolean;
   patch?: boolean;
   write?: boolean;
+  beta?: boolean;
 }
 
 type TransformComponent = Required<
   AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
 >;
 
+function betaCompareVersions(version: string, latestVersion: string, beta: boolean) {
+  const compareResult = compareVersions(version, latestVersion);
+
+  // Beta version is greater than latest version if beta is true
+  // Example: 2.1.0 < 2.1.0-beta.0
+  return beta && compareResult === 1 && !version.includes('beta') ? false : compareResult >= 0;
+}
+
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
-  const {all = false, packagePath = resolver('package.json'), write = false} = options;
+  const {
+    all = false,
+    beta = false,
+    packagePath = resolver('package.json'),
+    write = false
+  } = options;
   const {allDependencies, currentComponents, dependencies, devDependencies, packageJson} =
     getPackageInfo(packagePath, false);
 
@@ -40,17 +55,21 @@ export async function upgradeAction(components: string[], options: UpgradeAction
 
   const transformComponents: TransformComponent[] = [];
 
-  for (const component of currentComponents) {
-    const latestVersion =
-      store.nextUIComponentsMap[component.name]?.version ||
-      (await getLatestVersion(component.package));
+  await Promise.all(
+    currentComponents.map(async (component) => {
+      const latestVersion =
+        store.nextUIComponentsMap[component.name]?.version ||
+        (await getLatestVersion(component.package));
+      const mergedVersion = beta ? await getBetaVersion(component.package) : latestVersion;
+      const compareResult = betaCompareVersions(component.version, mergedVersion, beta);
 
-    transformComponents.push({
-      ...component,
-      isLatest: compareVersions(component.version, latestVersion) >= 0,
-      latestVersion
-    });
-  }
+      transformComponents.push({
+        ...component,
+        isLatest: compareResult,
+        latestVersion: mergedVersion
+      });
+    })
+  );
 
   // If no Installed NextUI components then exit
   if (!transformComponents.length && !isNextUIAll) {
@@ -84,7 +103,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',
       transformComponents.map((component) => {
-        const isUpToDate = compareVersions(component.version, component.latestVersion) >= 0;
+        const isUpToDate = betaCompareVersions(component.version, component.latestVersion, beta);
 
         return {
           disabled: isUpToDate,

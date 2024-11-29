@@ -20,6 +20,8 @@ const rounded = boxRound.round;
 const space = '   ';
 const padStart = `${rounded.vertical}${space}`;
 const padEnd = `${space}${rounded.vertical}${space}`;
+const versionRegex = /([\W\w]+)\snew:/;
+const newVersionRegex = /new:\s([\W\w]+)/;
 
 /**
  * Output the components information e.g. status, description, version, etc.
@@ -63,8 +65,8 @@ export function outputComponents({
       const str = String(component[key]);
 
       if (key === 'version') {
-        const newVersion = str.match(/new:\s([\d.]+)/)?.[1];
-        const currentVersion = str.match(/([\d.]+)\snew:/)?.[1];
+        const newVersion = str.match(newVersionRegex)?.[1];
+        const currentVersion = str.match(versionRegex)?.[1];
 
         const value = strip(generateComponentOutputVersion(currentVersion!, newVersion!));
 
@@ -95,11 +97,11 @@ export function outputComponents({
       /** ======================== Replace version to new version ======================== */
       if (commandName !== 'list' && key === 'version') {
         // Filter list command cause it will list all the latest components
-        const currentVersion = value.match(/([\d.]+)\snew:/)?.[1];
-        const newVersion = value.match(/new:\s([\d.]+)/)?.[1];
+        const currentVersion = value.match(versionRegex)?.[1]?.trim();
+        const newVersion = value.match(newVersionRegex)?.[1]?.trim();
 
         if (currentVersion === newVersion) {
-          value = value.replace(/\snew:\s[\d.]+(\s+)?/, '');
+          value = value.replace(/\snew:\s[\W\w]+(\s+)?/, '');
           value = fillAnsiLength(
             `${fillAnsiLength(value, componentKeyLengthMap.originVersion)} 🚀latest`,
             componentKeyLengthMap[key]

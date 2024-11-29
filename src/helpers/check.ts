@@ -22,6 +22,7 @@ import {
 import {store} from 'src/constants/store';
 import {compareVersions} from 'src/scripts/helpers';
 
+import {getBetaVersionData} from './beta';
 import {Logger} from './logger';
 import {getMatchArray, getMatchImport} from './match';
 import {findMostMatchText} from './math-diff';
@@ -105,6 +106,7 @@ interface CheckPeerDependenciesConfig {
   peerDependencies?: boolean;
   allDependencies?: Record<string, SAFE_ANY>;
   packageNames?: string[];
+  beta?: boolean;
 }
 
 /**
@@ -122,12 +124,12 @@ export async function checkRequiredContentInstalled<
   dependenciesKeys: Set<string>,
   checkPeerDependenciesConfig?: T extends {peerDependencies: infer P}
     ? P extends true
-      ? Required<CheckPeerDependenciesConfig>
+      ? Required<Omit<CheckPeerDependenciesConfig, 'beta'>>
       : T
     : T
 ): Promise<CheckResult> {
   const result = [] as unknown as CheckResult;
-  const {allDependencies, packageNames, peerDependencies} = (checkPeerDependenciesConfig ??
+  const {allDependencies, beta, packageNames, peerDependencies} = (checkPeerDependenciesConfig ??
     {}) as Required<CheckPeerDependenciesConfig>;
   const peerDependenciesList: string[] = [];
 
@@ -145,7 +147,7 @@ export async function checkRequiredContentInstalled<
     if (hasAllComponents && hasFramerMotion && !peerDependenciesList.length) {
       return [true];
     }
-    !hasAllComponents && result.push(NEXT_UI);
+    !hasAllComponents && result.push(beta ? `${NEXT_UI}@${store.betaVersion}` : NEXT_UI);
     !hasFramerMotion && result.push(FRAMER_MOTION);
     !hasTailwind && result.push(TAILWINDCSS);
   } else if (type === 'partial') {
@@ -158,8 +160,11 @@ export async function checkRequiredContentInstalled<
       return [true];
     }
     !hasFramerMotion && result.push(FRAMER_MOTION);
-    !hasSystemUI && result.push(SYSTEM_UI);
-    !hasThemeUI && result.push(THEME_UI);
+    const betaSystemUI = await getBetaVersionData(SYSTEM_UI);
+    const betaThemeUI = await getBetaVersionData(THEME_UI);
+
+    !hasSystemUI && result.push(beta ? `${SYSTEM_UI}@${betaSystemUI}` : SYSTEM_UI);
+    !hasThemeUI && result.push(beta ? `${THEME_UI}@${betaThemeUI}` : THEME_UI);
     !hasTailwind && result.push(TAILWINDCSS);
   }
 
@@ -167,7 +172,7 @@ export async function checkRequiredContentInstalled<
 }
 
 export async function checkPeerDependencies(
-  config: Required<Omit<CheckPeerDependenciesConfig, 'peerDependencies'>>
+  config: Required<Pick<CheckPeerDependenciesConfig, 'allDependencies' | 'packageNames'>>
 ) {
   const {allDependencies, packageNames} = config;
   const peerDepList: string[] = [];
@@ -344,7 +349,10 @@ export function checkPnpm(npmrcPath: string): CheckResult {
   return [false, ...result];
 }
 
-export function checkIllegalComponents(components: string[], loggerError = true) {
+export async function checkIllegalComponents<T extends boolean = false>(
+  components: string[] = [],
+  loggerError = true
+): Promise<T extends false ? boolean : string[]> {
   const illegalList: [string, null | string][] = [];
 
   for (const component of components) {
@@ -379,8 +387,8 @@ export function checkIllegalComponents(components: string[], loggerError = true)
         }`
       );
 
-    return false;
+    return false as T extends false ? boolean : string[];
   }
 
-  return true;
+  return true as T extends false ? boolean : string[];
 }

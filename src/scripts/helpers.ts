@@ -32,7 +32,14 @@ export type ComponentsJson = {
   components: Components;
   betaComponents: Components;
   betaVersion: string;
+  canaryComponents: Components;
+  canaryVersion: string;
 };
+
+interface UpdateComponentsOptions {
+  beta?: boolean;
+  canary?: boolean;
+}
 
 /**
  * Compare two versions
@@ -51,7 +58,9 @@ export function compareVersions(version1 = '', version2 = '') {
   }
 }
 
-export async function updateComponents() {
+export async function updateComponents(options?: UpdateComponentsOptions) {
+  const {beta = false, canary = false} = options ?? {};
+
   if (!existsSync(COMPONENTS_PATH)) {
     // First time download the latest date from net
     await autoUpdateComponents();
@@ -62,22 +71,31 @@ export async function updateComponents() {
   const components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
   const currentVersion = components.version;
   const betaVersion = components.betaVersion;
+  const canaryVersion = components.canaryVersion;
   const latestVersion = await getStore('latestVersion');
   const latestBetaVersion = await getStore('betaVersion');
+  const latestCanaryVersion = await getStore('canaryVersion');
 
   if (
     compareVersions(currentVersion, latestVersion) === -1 ||
-    compareVersions(betaVersion, latestBetaVersion) === -1
+    (beta && (compareVersions(betaVersion, latestBetaVersion) === -1 || !betaVersion)) ||
+    (canary && (compareVersions(canaryVersion, latestCanaryVersion) === -1 || !canaryVersion))
   ) {
     // After the first time, check the version and update
-    await autoUpdateComponents(latestVersion, latestBetaVersion);
+    await autoUpdateComponents({
+      beta,
+      betaVersion: latestBetaVersion,
+      canary,
+      canaryVersion: latestCanaryVersion,
+      latestVersion
+    });
   }
 }
 
-export async function getComponents() {
+export async function getComponents(options?: UpdateComponentsOptions) {
   let components: ComponentsJson = {} as ComponentsJson;
 
-  await updateComponents();
+  await updateComponents(options);
 
   try {
     components = JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) as ComponentsJson;
@@ -137,31 +155,51 @@ export async function getLatestVersion(packageName: string): Promise<string> {
 const getUnpkgUrl = (version: string) =>
   `https://unpkg.com/@nextui-org/react@${version}/dist/components.json`;
 
-export async function autoUpdateComponents(latestVersion?: string, betaVersion?: string) {
-  [latestVersion, betaVersion] = await Promise.all([
-    latestVersion || getStore('latestVersion'),
-    betaVersion || getStore('betaVersion')
-  ]);
+export async function autoUpdateComponents(
+  options: {
+    latestVersion?: string;
+    betaVersion?: string;
+    canaryVersion?: string;
+  } & UpdateComponentsOptions = {beta: true, canary: true}
+) {
+  let {betaVersion, canaryVersion, latestVersion} = options;
+  const {beta, canary} = options;
 
-  const url = getUnpkgUrl(latestVersion);
+  [latestVersion, betaVersion, canaryVersion] = await Promise.all([
+    !beta && !canary && (latestVersion || getStore('latestVersion')),
+    beta && (betaVersion || getStore('betaVersion')),
+    canary && (canaryVersion || getStore('canaryVersion'))
+  ] as string[]);
 
-  const [components, betaComponents] = await Promise.all([
-    downloadFile(url),
-    downloadFile(getUnpkgUrl(betaVersion), false)
-  ]);
+  const [components, betaComponents, canaryComponents] = await Promise.all([
+    latestVersion ? downloadFile(getUnpkgUrl(latestVersion)) : [],
+    betaVersion ? downloadFile(getUnpkgUrl(betaVersion)) : [],
+    canaryVersion ? downloadFile(getUnpkgUrl(canaryVersion)) : []
+  ] as Components[]);
 
-  const filterMissingComponents = betaComponents.filter(
-    (component) => !components.find((c) => c.name === component.name)
-  );
+  const originalComponentsJson = JSON.parse(
+    readFileSync(COMPONENTS_PATH, 'utf-8')
+  ) as ComponentsJson;
+
+  const filterMissingComponents = beta
+    ? betaComponents?.filter(
+        (component) => !originalComponentsJson.components?.find((c) => c.name === component.name)
+      )
+    : canary
+      ? canaryComponents?.filter(
+          (component) => !originalComponentsJson.components?.find((c) => c.name === component.name)
+        )
+      : [];
 
   // Add missing beta components to components
-  components.push(...filterMissingComponents);
+  components?.push(...(filterMissingComponents ?? []));
 
   const componentsJson: ComponentsJson = {
-    betaComponents,
-    betaVersion,
-    components,
-    version: latestVersion
+    ...originalComponentsJson,
+    ...(beta ? {betaComponents, betaVersion} : {}),
+    ...(canary ? {canaryComponents, canaryVersion} : {}),
+    ...(latestVersion ? {version: latestVersion} : {}),
+    components: originalComponentsJson.components.concat(filterMissingComponents ?? [])
   };
 
   writeFileSync(COMPONENTS_PATH, JSON.stringify(componentsJson, null, 2), 'utf-8');

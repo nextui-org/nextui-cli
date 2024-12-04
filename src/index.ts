@@ -100,6 +100,7 @@ nextui
   .option('--prettier [boolean]', 'Apply Prettier formatting to the added content')
   .option('--addApp [boolean]', 'Include App.tsx file content that requires a provider', false)
   .option('-b --beta [boolean]', 'Add beta components', false)
+  .option('-c --canary [boolean]', 'Add canary components', false)
   .action(addAction);
 
 nextui
@@ -150,7 +151,8 @@ nextui.hook('preAction', async (command) => {
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const noCache = options.includes('--no-cache');
   const debug = options.includes('--debug') || options.includes('-d');
-  // const componentsArgs = command.args?.slice(1);
+  const beta = options.includes('--beta') || options.includes('-b');
+  const canary = options.includes('--canary') || options.includes('-c');
 
   // Init cache
   initCache(noCache);
@@ -159,7 +161,7 @@ nextui.hook('preAction', async (command) => {
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json
-    const nextUIComponents = (await getComponents()).components;
+    const nextUIComponents = (await getComponents({beta, canary})).components;
 
     initStoreComponentsData(nextUIComponents);
   }

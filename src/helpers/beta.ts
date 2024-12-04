@@ -2,7 +2,7 @@ import {getCacheExecData} from 'src/scripts/cache/cache';
 
 import {Logger} from './logger';
 
-export async function getBetaVersionData(component: string) {
+export async function getPackageVersionData(component: string) {
   const data = await getCacheExecData<string>(
     `npm view ${component} dist-tags --json`,
     `Fetching ${component} tags`
@@ -16,7 +16,7 @@ export function getPrefixComponent(component: string) {
 }
 
 export async function getBetaVersion(component: string) {
-  const data = await getBetaVersionData(component);
+  const data = await getPackageVersionData(component);
 
   try {
     return JSON.parse(data).beta;

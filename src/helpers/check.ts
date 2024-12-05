@@ -112,9 +112,9 @@ interface CheckPeerDependenciesConfig {
 
 function getConditionData(beta: boolean, canary: boolean) {
   return beta
-    ? {betaVersion: store.betaVersion, tag: 'beta'}
+    ? {tag: 'beta', version: store.betaVersion}
     : canary
-      ? {canaryVersion: store.canaryVersion, tag: 'canary'}
+      ? {tag: 'canary', version: store.canaryVersion}
       : null;
 }
 
@@ -158,7 +158,7 @@ export async function checkRequiredContentInstalled<
       return [true];
     }
     !hasAllComponents &&
-      result.push(conditionData ? `${NEXT_UI}@${conditionData.betaVersion}` : NEXT_UI);
+      result.push(conditionData ? `${NEXT_UI}@${conditionData.version}` : NEXT_UI);
     !hasFramerMotion && result.push(FRAMER_MOTION);
     !hasTailwind && result.push(TAILWINDCSS);
   } else if (type === 'partial') {

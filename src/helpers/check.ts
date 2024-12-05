@@ -110,7 +110,7 @@ interface CheckPeerDependenciesConfig {
   canary?: boolean;
 }
 
-function getConditionData(beta: boolean, canary: boolean) {
+export function getConditionData(beta: boolean, canary: boolean) {
   return beta
     ? {tag: 'beta', version: store.betaVersion}
     : canary

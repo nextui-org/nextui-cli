@@ -4,7 +4,7 @@ import fs from 'node:fs';
 
 import {getBetaVersion} from '@helpers/beta';
 import {getCanaryVersion} from '@helpers/canary';
-import {checkIllegalComponents} from '@helpers/check';
+import {checkIllegalComponents, getConditionData} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
@@ -99,12 +99,14 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   } else if (!components.length) {
     // If have the main nextui then add
     if (isNextUIAll) {
+      const version = transformPeerVersion(allDependencies[NEXT_UI]);
+      const conditionData = getConditionData(store.beta, store.canary);
+      const latestVersion = conditionData?.version ?? store.latestVersion;
       const nextuiData = {
-        isLatest:
-          compareVersions(store.latestVersion, transformPeerVersion(allDependencies[NEXT_UI])) <= 0,
-        latestVersion: store.latestVersion,
+        isLatest: extraCompareVersions(latestVersion, version, store.beta, store.canary),
+        latestVersion,
         package: NEXT_UI,
-        version: transformPeerVersion(allDependencies[NEXT_UI])
+        version
       } as TransformComponent;
 
       transformComponents.push(nextuiData);

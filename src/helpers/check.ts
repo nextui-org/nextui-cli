@@ -118,6 +118,10 @@ export function getConditionData(beta: boolean, canary: boolean) {
       : null;
 }
 
+export function getConditionLatestVersion(beta: boolean, canary: boolean) {
+  return beta ? store.betaVersion : canary ? store.canaryVersion : store.latestVersion;
+}
+
 /**
  * Check if the required content is installed
  * @example return result and missing required [false, '@nextui-org/react', 'framer-motion']

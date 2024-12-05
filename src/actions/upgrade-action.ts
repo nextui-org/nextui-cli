@@ -4,7 +4,7 @@ import fs from 'node:fs';
 
 import {getBetaVersion} from '@helpers/beta';
 import {getCanaryVersion} from '@helpers/canary';
-import {checkIllegalComponents, getConditionData} from '@helpers/check';
+import {checkIllegalComponents, getConditionLatestVersion} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
@@ -44,6 +44,7 @@ function extraCompareVersions(
   const compareResult = compareVersions(version, latestVersion);
 
   // Beta version is greater than latest version if beta is true
+  // compareResult(2.1.0, 2.1.0-beta.0) = 1
   // Example: 2.1.0 < 2.1.0-beta.0
   return beta && compareResult === 1 && !version.includes('beta')
     ? false
@@ -100,10 +101,9 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     // If have the main nextui then add
     if (isNextUIAll) {
       const version = transformPeerVersion(allDependencies[NEXT_UI]);
-      const conditionData = getConditionData(store.beta, store.canary);
-      const latestVersion = conditionData?.version ?? store.latestVersion;
+      const latestVersion = getConditionLatestVersion(store.beta, store.canary);
       const nextuiData = {
-        isLatest: extraCompareVersions(latestVersion, version, store.beta, store.canary),
+        isLatest: extraCompareVersions(version, latestVersion, store.beta, store.canary),
         latestVersion,
         package: NEXT_UI,
         version

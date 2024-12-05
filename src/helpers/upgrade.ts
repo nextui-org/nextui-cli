@@ -9,6 +9,7 @@ import {type Dependencies, compareVersions, getLatestVersion} from 'src/scripts/
 
 import {getBetaVersion} from './beta';
 import {getCanaryVersion} from './canary';
+import {getConditionLatestVersion} from './check';
 import {Logger} from './logger';
 import {colorMatchRegex, outputBox} from './output-info';
 import {
@@ -269,7 +270,7 @@ export async function getAllOutputData(
     };
   }
 
-  const latestVersion = store.latestVersion;
+  const latestVersion = getConditionLatestVersion(store.beta, store.canary);
 
   const {currentVersion, versionMode} = getVersionAndMode(allDependencies, NEXT_UI);
   const colorVersion = getColorVersion(currentVersion, latestVersion);

@@ -72,9 +72,11 @@ export async function updateComponents(options?: UpdateComponentsOptions) {
   const currentVersion = components.version;
   const betaVersion = components.betaVersion;
   const canaryVersion = components.canaryVersion;
-  const latestVersion = await getStore('latestVersion');
-  const latestBetaVersion = await getStore('betaVersion');
-  const latestCanaryVersion = await getStore('canaryVersion');
+  const [latestVersion, latestBetaVersion, latestCanaryVersion] = await Promise.all([
+    getStore('latestVersion'),
+    getStore('betaVersion'),
+    getStore('canaryVersion')
+  ]);
 
   if (
     compareVersions(currentVersion, latestVersion) === -1 ||

@@ -20,6 +20,8 @@ export type Store = {
   nextUIComponentsKeysSet: Set<string>;
   nextUIComponentsMap: NextUIComponentsMap;
   nextUIComponentsPackageMap: NextUIComponentsMap;
+  beta: boolean;
+  canary: boolean;
 };
 
 export const store = {} as Store;

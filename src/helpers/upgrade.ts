@@ -3,10 +3,12 @@ import type {RequiredKey, SAFE_ANY} from './type';
 import chalk from 'chalk';
 
 import {NEXT_UI, THEME_UI} from 'src/constants/required';
-import {store} from 'src/constants/store';
+import {getStoreSync, store} from 'src/constants/store';
 import {getCacheExecData} from 'src/scripts/cache/cache';
 import {type Dependencies, compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
+import {getBetaVersion} from './beta';
+import {getCanaryVersion} from './canary';
 import {Logger} from './logger';
 import {colorMatchRegex, outputBox} from './output-info';
 import {
@@ -197,7 +199,11 @@ export async function getPackagePeerDep(
     }
 
     const {versionMode} = getVersionAndMode(allDependencies, peerPackage);
-    let formatPeerVersion = transformPeerVersion(peerVersion);
+    let formatPeerVersion = getStoreSync('beta')
+      ? await getBetaVersion(peerPackage)
+      : getStoreSync('canary')
+        ? await getCanaryVersion(peerPackage)
+        : transformPeerVersion(peerVersion);
     const isLatest = compareVersions(currentVersion, formatPeerVersion) >= 0;
 
     if (isLatest) {

@@ -111,6 +111,7 @@ nextui
   .option('-a --all [boolean]', 'Upgrade all components', false)
   .option('-w --write [boolean]', 'Write the upgrade version to package.json file', false)
   .option('-b --beta [boolean]', 'Upgrade beta components', false)
+  .option('-c --canary [boolean]', 'Upgrade canary components', false)
   .action(upgradeAction);
 
 nextui
@@ -158,6 +159,8 @@ nextui.hook('preAction', async (command) => {
   initCache(noCache);
   // Init debug
   store.debug = debug;
+  store.beta = beta;
+  store.canary = canary;
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json

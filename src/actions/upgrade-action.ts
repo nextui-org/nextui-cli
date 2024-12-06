@@ -34,9 +34,19 @@ type TransformComponent = Required<
 >;
 
 function betaCompareVersions(version: string, latestVersion: string, beta: boolean) {
+  // compareResult(beta, 2.1.0) = 0
+  // So we need to check if it is autoChangeTag like `beta` or `canary` and latestVersion is not match `beta` or `canary` then return false
+  // Example: `beta` Compare `2.1.0` (not latest), `beta` Compare `2.1.0-beta.0` (latest)
+  const autoChangeTag = version.match(/(\w+)/)?.[1];
+
+  if (autoChangeTag) {
+    return latestVersion.includes(autoChangeTag);
+  }
+
   const compareResult = compareVersions(version, latestVersion);
 
   // Beta version is greater than latest version if beta is true
+  // compareResult(2.1.0, 2.1.0-beta.0) = 1
   // Example: 2.1.0 < 2.1.0-beta.0
   return beta && compareResult === 1 && !version.includes('beta') ? false : compareResult >= 0;
 }

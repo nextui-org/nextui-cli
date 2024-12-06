@@ -37,7 +37,7 @@ function betaCompareVersions(version: string, latestVersion: string, beta: boole
   // compareResult(beta, 2.1.0) = 0
   // So we need to check if it is autoChangeTag like `beta` or `canary` and latestVersion is not match `beta` or `canary` then return false
   // Example: `beta` Compare `2.1.0` (not latest), `beta` Compare `2.1.0-beta.0` (latest)
-  const autoChangeTag = version.match(/(\w+)/)?.[1];
+  const autoChangeTag = version.match(/(^\w+$)/)?.[1];
 
   if (autoChangeTag) {
     return latestVersion.includes(autoChangeTag);

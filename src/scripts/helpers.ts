@@ -10,7 +10,7 @@ import ora, {oraPromise} from 'ora';
 
 import {Logger} from '@helpers/logger';
 import {COMPONENTS_PATH} from 'src/constants/path';
-import {getStore} from 'src/constants/store';
+import {getStore, getStoreSync} from 'src/constants/store';
 
 import {getPackageVersion} from './cache/cache';
 
@@ -147,7 +147,7 @@ export async function autoUpdateComponents(latestVersion?: string, betaVersion?:
 
   const [components, betaComponents] = await Promise.all([
     downloadFile(url),
-    downloadFile(getUnpkgUrl(betaVersion), false)
+    getStoreSync('beta') ? downloadFile(getUnpkgUrl(betaVersion), false) : Promise.resolve([])
   ]);
 
   const filterMissingComponents = betaComponents.filter(
@@ -201,9 +201,9 @@ export async function downloadFile(url: string, log = true): Promise<Components>
         log && Logger.prefix('error', `Update components data error: ${error}`);
         process.exit(1);
       },
-      successText: (() => {
-        return chalk.greenBright('Components data updated successfully!\n');
-      })(),
+      successText() {
+        return log ? chalk.greenBright('Components data updated successfully!\n') : '';
+      },
       text: 'Fetching components data...'
     }
   );

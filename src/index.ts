@@ -156,6 +156,7 @@ nextui.hook('preAction', async (command) => {
   initCache(noCache);
   // Init debug
   store.debug = debug;
+  store.beta = options.includes('-b') || options.includes('--beta');
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json

@@ -9,6 +9,7 @@ export type NextUIComponentsMap = Record<string, Components[0]>;
 
 export type Store = {
   debug: boolean;
+  beta: boolean;
   cliLatestVersion: string;
   latestVersion: string;
   betaVersion: string;

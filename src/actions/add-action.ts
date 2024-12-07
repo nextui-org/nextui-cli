@@ -56,20 +56,25 @@ export async function addAction(components: string[], options: AddActionOptions)
   const isNextUIAll = !!allDependencies[NEXT_UI];
 
   if (!components.length && !all) {
+    const filteredComponents = store.nextUIComponents.filter(
+      (component) =>
+        !currentComponents.some((currentComponent) => currentComponent.name === component.name)
+    );
+
+    if (!filteredComponents.length) {
+      Logger.success('✅ All components have been added');
+      process.exit(0);
+    }
+
     components = await getAutocompleteMultiselect(
       'Which components would you like to add?',
-      store.nextUIComponents
-        .filter(
-          (component) =>
-            !currentComponents.some((currentComponent) => currentComponent.name === component.name)
-        )
-        .map((component) => {
-          return {
-            description: component.description,
-            title: component.name,
-            value: component.name
-          };
-        })
+      filteredComponents.map((component) => {
+        return {
+          description: component.description,
+          title: component.name,
+          value: component.name
+        };
+      })
     );
   } else if (all) {
     components = [NEXT_UI];

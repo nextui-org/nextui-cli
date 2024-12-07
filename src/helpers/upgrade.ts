@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import {NEXT_UI, THEME_UI} from 'src/constants/required';
 import {store} from 'src/constants/store';
 import {getCacheExecData} from 'src/scripts/cache/cache';
-import {type Dependencies, compareVersions, getLatestVersion} from 'src/scripts/helpers';
+import {type Dependencies, compareVersions} from 'src/scripts/helpers';
 
 import {Logger} from './logger';
 import {colorMatchRegex, outputBox} from './output-info';
@@ -46,10 +46,15 @@ type ExtractUpgrade<T extends Upgrade> = T extends {isNextUIAll: infer U}
     : RequiredKey<Upgrade, 'upgradeOptionList'>
   : T;
 
+type MissingDepSetType = {
+  name: string;
+  version: string;
+};
+
 export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgrade<T>) {
   const {all, allDependencies, isNextUIAll, upgradeOptionList} = options as Required<Upgrade>;
   let result: UpgradeOption[] = [];
-  const missingDepSet = new Set<string>();
+  const missingDepSet = new Set<MissingDepSetType>();
 
   const allOutputData = await getAllOutputData(all, isNextUIAll, allDependencies, missingDepSet);
 
@@ -167,7 +172,7 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
 export async function getPackagePeerDep(
   packageName: string,
   allDependencies: Dependencies,
-  missingDepList: Set<string>,
+  missingDepList: Set<MissingDepSetType>,
   peerDependencies?: Dependencies
 ): Promise<UpgradeOption[]> {
   peerDependencies =
@@ -190,14 +195,13 @@ export async function getPackagePeerDep(
     }
 
     const currentVersion = allDependencies[peerPackage];
+    let formatPeerVersion = transformPeerVersion(peerVersion);
 
     if (!currentVersion) {
-      missingDepList.add(peerPackage);
+      missingDepList.add({name: peerPackage, version: formatPeerVersion});
       continue;
     }
-
     const {versionMode} = getVersionAndMode(allDependencies, peerPackage);
-    let formatPeerVersion = transformPeerVersion(peerVersion);
     const isLatest = compareVersions(currentVersion, formatPeerVersion) >= 0;
 
     if (isLatest) {
@@ -254,7 +258,7 @@ export async function getAllOutputData(
   all: boolean,
   isNextUIAll: boolean,
   allDependencies: Record<string, SAFE_ANY>,
-  missingDepSet: Set<string>
+  missingDepSet: Set<MissingDepSetType>
 ) {
   if (!all || !isNextUIAll) {
     return {
@@ -290,16 +294,14 @@ export async function getAllOutputData(
   return allOutputData;
 }
 
-export async function getPackageUpgradeData(packageNameList: string[]) {
+export async function getPackageUpgradeData(missingDepList: MissingDepSetType[]) {
   const result: UpgradeOption[] = [];
 
-  for (const packageName of packageNameList) {
-    const latestVersion = await getLatestVersion(packageName);
-
+  for (const missingDep of missingDepList) {
     const allOutputList = {
       isLatest: false,
-      latestVersion,
-      package: packageName,
+      latestVersion: missingDep.version,
+      package: missingDep.name,
       version: chalk.red(MISSING),
       versionMode: ''
     };

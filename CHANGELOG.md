@@ -1,3 +1,9 @@
+## [0.4.1](https://github.com/nextui-org/nextui-cli/compare/v0.4.0...v0.4.1) (2024-12-06)
+
+### Bug Fixes
+
+- compare version about beta ([#116](https://github.com/nextui-org/nextui-cli/issues/116)) ([ebfd29a](https://github.com/nextui-org/nextui-cli/commit/ebfd29a6bc0c8013166b2df7c58e3dd5fd64545d))
+
 # [0.4.0](https://github.com/nextui-org/nextui-cli/compare/v0.3.4...v0.4.0) (2024-11-29)
 
 ### Bug Fixes

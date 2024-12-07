@@ -1,6 +1,7 @@
 import type {ExtractStoreData, SAFE_ANY} from '@helpers/type';
 
 import {getBetaVersion} from '@helpers/beta';
+import {getCanaryVersion} from '@helpers/canary';
 import {type Components, getLatestVersion} from 'src/scripts/helpers';
 
 import {NEXTUI_CLI, NEXT_UI} from './required';
@@ -12,12 +13,15 @@ export type Store = {
   cliLatestVersion: string;
   latestVersion: string;
   betaVersion: string;
+  canaryVersion: string;
   nextUIComponents: Components;
   nextUIComponentsKeys: string[];
   nextUIcomponentsPackages: string[];
   nextUIComponentsKeysSet: Set<string>;
   nextUIComponentsMap: NextUIComponentsMap;
   nextUIComponentsPackageMap: NextUIComponentsMap;
+  beta: boolean;
+  canary: boolean;
 };
 
 export const store = {} as Store;
@@ -40,6 +44,10 @@ export async function getStore<T extends StoreKeys = StoreKeys>(
       store[key] = data;
     } else if (key === 'betaVersion') {
       data = (await getBetaVersion(NEXT_UI)) as SAFE_ANY;
+
+      store[key] = data;
+    } else if (key === 'canaryVersion') {
+      data = (await getCanaryVersion(NEXT_UI)) as SAFE_ANY;
 
       store[key] = data;
     }

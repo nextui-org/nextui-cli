@@ -28,7 +28,13 @@ export function getNextuiComponentsData(nextUIComponents: Components) {
   };
 }
 
-export function initStoreComponentsData(nextUIComponents: Components) {
+export function initStoreComponentsData({
+  beta,
+  nextUIComponents
+}: {
+  beta: boolean;
+  nextUIComponents: Components;
+}) {
   const {
     nextUIComponentsKeys,
     nextUIComponentsKeysSet,
@@ -37,12 +43,21 @@ export function initStoreComponentsData(nextUIComponents: Components) {
     nextUIcomponentsPackages
   } = getNextuiComponentsData(nextUIComponents);
 
-  store.nextUIComponents = nextUIComponents;
-  store.nextUIComponentsKeys = nextUIComponentsKeys;
-  store.nextUIComponentsKeysSet = nextUIComponentsKeysSet;
-  store.nextUIComponentsMap = nextUIComponentsMap;
-  store.nextUIComponentsPackageMap = nextUIComponentsPackageMap;
-  store.nextUIcomponentsPackages = nextUIcomponentsPackages;
+  if (beta) {
+    store.betaNextUIComponents = nextUIComponents;
+    store.betaNextUIComponentsKeys = nextUIComponentsKeys;
+    store.betaNextUIComponentsKeysSet = nextUIComponentsKeysSet;
+    store.betaNextUIComponentsMap = nextUIComponentsMap;
+    store.betaNextUIComponentsPackageMap = nextUIComponentsPackageMap;
+    store.betaNextUIcomponentsPackages = nextUIcomponentsPackages;
+  } else {
+    store.nextUIComponents = nextUIComponents;
+    store.nextUIComponentsKeys = nextUIComponentsKeys;
+    store.nextUIComponentsKeysSet = nextUIComponentsKeysSet;
+    store.nextUIComponentsMap = nextUIComponentsMap;
+    store.nextUIComponentsPackageMap = nextUIComponentsPackageMap;
+    store.nextUIcomponentsPackages = nextUIcomponentsPackages;
+  }
 }
 
 export type NextUIComponentsMap = Record<string, (typeof store.nextUIComponents)[number]>;

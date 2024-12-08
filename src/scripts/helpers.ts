@@ -10,7 +10,7 @@ import ora, {oraPromise} from 'ora';
 
 import {Logger} from '@helpers/logger';
 import {COMPONENTS_PATH} from 'src/constants/path';
-import {getStore, getStoreSync} from 'src/constants/store';
+import {getStore, getStoreSync, store} from 'src/constants/store';
 
 import {getPackageVersion} from './cache/cache';
 
@@ -129,6 +129,10 @@ export async function oraExecCmd(cmd: string, text?: string): Promise<SAFE_ANY> 
 }
 
 export async function getLatestVersion(packageName: string): Promise<string> {
+  if (store.nextUIComponentsPackageMap[packageName]) {
+    return store.nextUIComponentsPackageMap[packageName]!.version;
+  }
+
   const result = await getPackageVersion(packageName);
 
   return result.version;

@@ -1,3 +1,13 @@
+# [0.5.0](https://github.com/nextui-org/nextui-cli/compare/v0.4.2...v0.5.0) (2024-12-08)
+
+### Bug Fixes
+
+- **upgrade:** missing packages use min required and peerDep shoud use latest version ([#121](https://github.com/nextui-org/nextui-cli/issues/121)) ([a81e24b](https://github.com/nextui-org/nextui-cli/commit/a81e24ba2fec18e5efd129895ac5f980670c2507))
+
+### Features
+
+- prompt to choose agent when it cant be detected and some optimizations ([#122](https://github.com/nextui-org/nextui-cli/issues/122)) ([c7efffe](https://github.com/nextui-org/nextui-cli/commit/c7efffeb07a455dd6de7e8d8f4c3ab89ab7af33c))
+
 ## [0.4.2](https://github.com/nextui-org/nextui-cli/compare/v0.4.1...v0.4.2) (2024-12-07)
 
 ### Bug Fixes

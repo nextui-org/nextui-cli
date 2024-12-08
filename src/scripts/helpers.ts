@@ -205,9 +205,7 @@ export async function downloadFile(url: string, log = true): Promise<Components>
         log && Logger.prefix('error', `Update components data error: ${error}`);
         process.exit(1);
       },
-      successText() {
-        return log ? chalk.greenBright('Components data updated successfully!\n') : '';
-      },
+      ...(log ? {successText: chalk.greenBright('Components data updated successfully!\n')} : {}),
       text: 'Fetching components data...'
     }
   );

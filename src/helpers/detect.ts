@@ -4,6 +4,7 @@ import {findUp} from 'find-up';
 import path from 'pathe';
 
 import {ROOT} from 'src/constants/path';
+import {getSelect} from 'src/prompts';
 
 type TupleToUnion<T extends readonly SAFE_ANY[]> = T[number];
 
@@ -23,12 +24,20 @@ export const LOCKS: Record<string, Agent> = {
 };
 
 export async function detect(cwd = ROOT) {
-  let agent: Agent | null = 'npm';
+  let agent: Agent | null = null;
   const lockPath = await findUp(Object.keys(LOCKS), {cwd});
 
   // detect based on lock
   if (lockPath) {
     agent = LOCKS[path.basename(lockPath)]!;
+  } else {
+    agent = await getSelect(
+      'No agent found, please choose one',
+      AGENTS.map((agent) => ({
+        title: agent,
+        value: agent
+      }))
+    );
   }
 
   return agent;

@@ -24,7 +24,7 @@ export const LOCKS: Record<string, Agent> = {
 };
 
 export async function detect(cwd = ROOT) {
-  let agent: Agent = 'bun';
+  let agent: Agent;
   const lockPath = await findUp(Object.keys(LOCKS), {cwd});
 
   // detect based on lock

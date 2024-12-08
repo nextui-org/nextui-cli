@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import {NEXT_UI, THEME_UI} from 'src/constants/required';
 import {store} from 'src/constants/store';
 import {getCacheExecData} from 'src/scripts/cache/cache';
-import {type Dependencies, compareVersions} from 'src/scripts/helpers';
+import {type Dependencies, compareVersions, getLatestVersion} from 'src/scripts/helpers';
 
 import {Logger} from './logger';
 import {colorMatchRegex, outputBox} from './output-info';
@@ -206,6 +206,9 @@ export async function getPackagePeerDep(
 
     if (isLatest) {
       formatPeerVersion = transformPeerVersion(currentVersion);
+    } else {
+      // If the current version is not the latest version, then get the latest version in upgrade command
+      formatPeerVersion = await getLatestVersion(peerPackage);
     }
 
     upgradeOptionList.push({

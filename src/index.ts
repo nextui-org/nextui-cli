@@ -161,8 +161,10 @@ nextui.hook('preAction', async (command) => {
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json
     const nextUIComponents = (await getComponents()).components;
+    const nextUIComponentsBeta = (await getComponents()).betaComponents;
 
-    initStoreComponentsData(nextUIComponents);
+    initStoreComponentsData({beta: false, nextUIComponents});
+    store.beta && initStoreComponentsData({beta: true, nextUIComponents: nextUIComponentsBeta});
   }
 
   const [cliLatestVersion, latestVersion] = await Promise.all([

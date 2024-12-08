@@ -13,15 +13,47 @@ export type Store = {
   cliLatestVersion: string;
   latestVersion: string;
   betaVersion: string;
+
+  // NextUI
   nextUIComponents: Components;
   nextUIComponentsKeys: string[];
   nextUIcomponentsPackages: string[];
   nextUIComponentsKeysSet: Set<string>;
   nextUIComponentsMap: NextUIComponentsMap;
   nextUIComponentsPackageMap: NextUIComponentsMap;
+
+  // Beta NextUI
+  betaNextUIComponents: Components;
+  betaNextUIComponentsKeys: string[];
+  betaNextUIcomponentsPackages: string[];
+  betaNextUIComponentsKeysSet: Set<string>;
+  betaNextUIComponentsMap: NextUIComponentsMap;
+  betaNextUIComponentsPackageMap: NextUIComponentsMap;
 };
 
-export const store = {} as Store;
+/* eslint-disable sort-keys-fix/sort-keys-fix, sort-keys */
+export const store = {
+  debug: false,
+  beta: false,
+  cliLatestVersion: '',
+  latestVersion: '',
+  betaVersion: '',
+
+  betaNextUIComponents: [],
+  betaNextUIComponentsKeys: [],
+  betaNextUIComponentsKeysSet: new Set(),
+  betaNextUIComponentsMap: {},
+  betaNextUIComponentsPackageMap: {},
+  betaNextUIcomponentsPackages: [],
+
+  nextUIComponents: [],
+  nextUIComponentsKeys: [],
+  nextUIComponentsKeysSet: new Set(),
+  nextUIComponentsMap: {},
+  nextUIComponentsPackageMap: {},
+  nextUIcomponentsPackages: []
+} as Store;
+/* eslint-enable sort-keys-fix/sort-keys-fix, sort-keys */
 
 export type StoreKeys = keyof Store;
 

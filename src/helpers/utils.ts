@@ -2,6 +2,7 @@ import type {Agent} from './detect';
 import type {PascalCase, SAFE_ANY} from './type';
 
 import chalk from 'chalk';
+import {compareVersions} from 'compare-versions';
 import fg, {type Options} from 'fast-glob';
 
 import {ROOT} from 'src/constants/path';
@@ -164,10 +165,24 @@ export function getPackageManagerInfo<T extends Agent = Agent>(packageManager: T
 
 /**
  * @example transformPeerVersion('>=1.0.0') // '1.0.0'
+ * @example transformPeerVersion(">=11.5.6 || >=12.0.0-alpha.1") // 11.5.6
  * @param version
  */
-export function transformPeerVersion(version: string) {
-  return version.replace(/\^|~|>=|<=|>|</g, '');
+export function transformPeerVersion(version: string, isLatest = false) {
+  const ranges = version.split('||').map((r) => r.trim());
+  const result = ranges
+    .map((range) => {
+      return range.replace(/^[<=>^~]+\s*/, '').trim();
+    })
+    .sort((a, b) => {
+      if (isLatest) {
+        return compareVersions(b, a);
+      }
+
+      return compareVersions(a, b);
+    });
+
+  return result[0]!;
 }
 
 export function fillAnsiLength(str: string, length: number) {

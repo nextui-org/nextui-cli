@@ -10,7 +10,7 @@ import ora, {oraPromise} from 'ora';
 
 import {Logger} from '@helpers/logger';
 import {COMPONENTS_PATH} from 'src/constants/path';
-import {getStore} from 'src/constants/store';
+import {getStore, store} from 'src/constants/store';
 
 import {getPackageVersion} from './cache/cache';
 
@@ -149,6 +149,10 @@ export async function oraExecCmd(cmd: string, text?: string): Promise<SAFE_ANY> 
 }
 
 export async function getLatestVersion(packageName: string): Promise<string> {
+  if (store.nextUIComponentsPackageMap[packageName]) {
+    return store.nextUIComponentsPackageMap[packageName]!.version;
+  }
+
   const result = await getPackageVersion(packageName);
 
   return result.version;
@@ -174,27 +178,27 @@ export async function autoUpdateComponents(
   ] as string[]);
 
   const [components, betaComponents, canaryComponents] = await Promise.all([
-    latestVersion ? downloadFile(getUnpkgUrl(latestVersion)) : [],
-    betaVersion ? downloadFile(getUnpkgUrl(betaVersion)) : [],
-    canaryVersion ? downloadFile(getUnpkgUrl(canaryVersion)) : []
-  ] as Components[]);
+    latestVersion ? downloadFile(getUnpkgUrl(latestVersion)) : Promise.resolve([]),
+    betaVersion ? downloadFile(getUnpkgUrl(betaVersion)) : Promise.resolve([]),
+    canaryVersion ? downloadFile(getUnpkgUrl(canaryVersion)) : Promise.resolve([])
+  ]);
 
   const originalComponentsJson = JSON.parse(
     readFileSync(COMPONENTS_PATH, 'utf-8')
   ) as ComponentsJson;
 
   const filterMissingComponents = beta
-    ? betaComponents?.filter(
+    ? betaComponents.filter(
         (component) => !originalComponentsJson.components?.find((c) => c.name === component.name)
       )
     : canary
-      ? canaryComponents?.filter(
+      ? canaryComponents.filter(
           (component) => !originalComponentsJson.components?.find((c) => c.name === component.name)
         )
       : [];
 
   // Add missing beta components to components
-  components?.push(...(filterMissingComponents ?? []));
+  components.push(...(filterMissingComponents ?? []));
 
   const componentsJson: ComponentsJson = {
     ...originalComponentsJson,
@@ -241,9 +245,7 @@ export async function downloadFile(url: string, log = true): Promise<Components>
         log && Logger.prefix('error', `Update components data error: ${error}`);
         process.exit(1);
       },
-      successText: (() => {
-        return chalk.greenBright('Components data updated successfully!\n');
-      })(),
+      ...(log ? {successText: chalk.greenBright('Components data updated successfully!\n')} : {}),
       text: 'Fetching components data...'
     }
   );

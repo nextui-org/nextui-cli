@@ -1,3 +1,4 @@
+import {store} from 'src/constants/store';
 import {getCacheExecData} from 'src/scripts/cache/cache';
 
 import {Logger} from './logger';
@@ -15,8 +16,12 @@ export function getPrefixComponent(component: string) {
   return `@nextui-org/${component.replace('@nextui-org/', '')}`;
 }
 
-export async function getBetaVersion(component: string) {
-  const data = await getPackageVersionData(component);
+export async function getBetaVersion(componentName: string) {
+  if (store.betaNextUIComponentsPackageMap[componentName]) {
+    return store.betaNextUIComponentsPackageMap[componentName]!.version;
+  }
+
+  const data = await getPackageVersionData(componentName);
 
   try {
     return JSON.parse(data).beta;

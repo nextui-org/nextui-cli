@@ -49,10 +49,15 @@ type ExtractUpgrade<T extends Upgrade> = T extends {isNextUIAll: infer U}
     : RequiredKey<Upgrade, 'upgradeOptionList'>
   : T;
 
+type MissingDepSetType = {
+  name: string;
+  version: string;
+};
+
 export async function upgrade<T extends Upgrade = Upgrade>(options: ExtractUpgrade<T>) {
   const {all, allDependencies, isNextUIAll, upgradeOptionList} = options as Required<Upgrade>;
   let result: UpgradeOption[] = [];
-  const missingDepSet = new Set<string>();
+  const missingDepSet = new Set<MissingDepSetType>();
 
   const allOutputData = await getAllOutputData(all, isNextUIAll, allDependencies, missingDepSet);
 
@@ -170,7 +175,7 @@ export function getUpgradeVersion(upgradeOptionList: UpgradeOption[], peer = fal
 export async function getPackagePeerDep(
   packageName: string,
   allDependencies: Dependencies,
-  missingDepList: Set<string>,
+  missingDepList: Set<MissingDepSetType>,
   peerDependencies?: Dependencies
 ): Promise<UpgradeOption[]> {
   peerDependencies =
@@ -193,22 +198,25 @@ export async function getPackagePeerDep(
     }
 
     const currentVersion = allDependencies[peerPackage];
-
-    if (!currentVersion) {
-      missingDepList.add(peerPackage);
-      continue;
-    }
-
-    const {versionMode} = getVersionAndMode(allDependencies, peerPackage);
     let formatPeerVersion = getStoreSync('beta')
       ? await getBetaVersion(peerPackage)
       : getStoreSync('canary')
         ? await getCanaryVersion(peerPackage)
         : transformPeerVersion(peerVersion);
+
+    if (!currentVersion) {
+      missingDepList.add({name: peerPackage, version: formatPeerVersion});
+      continue;
+    }
+    const {versionMode} = getVersionAndMode(allDependencies, peerPackage);
+
     const isLatest = compareVersions(currentVersion, formatPeerVersion) >= 0;
 
     if (isLatest) {
       formatPeerVersion = transformPeerVersion(currentVersion);
+    } else {
+      // If the current version is not the latest version, then get the latest version in upgrade command
+      formatPeerVersion = await getLatestVersion(peerPackage);
     }
 
     upgradeOptionList.push({
@@ -261,7 +269,7 @@ export async function getAllOutputData(
   all: boolean,
   isNextUIAll: boolean,
   allDependencies: Record<string, SAFE_ANY>,
-  missingDepSet: Set<string>
+  missingDepSet: Set<MissingDepSetType>
 ) {
   if (!all || !isNextUIAll) {
     return {
@@ -297,16 +305,14 @@ export async function getAllOutputData(
   return allOutputData;
 }
 
-export async function getPackageUpgradeData(packageNameList: string[]) {
+export async function getPackageUpgradeData(missingDepList: MissingDepSetType[]) {
   const result: UpgradeOption[] = [];
 
-  for (const packageName of packageNameList) {
-    const latestVersion = await getLatestVersion(packageName);
-
+  for (const missingDep of missingDepList) {
     const allOutputList = {
       isLatest: false,
-      latestVersion,
-      package: packageName,
+      latestVersion: missingDep.version,
+      package: missingDep.name,
       version: chalk.red(MISSING),
       versionMode: ''
     };

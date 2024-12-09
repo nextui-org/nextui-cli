@@ -205,6 +205,7 @@ export async function getPackagePeerDep(
         : transformPeerVersion(peerVersion);
 
     if (!currentVersion) {
+      // If the peer package is not installed, then add minimum version to the missingDepList
       missingDepList.add({name: peerPackage, version: formatPeerVersion});
       continue;
     }

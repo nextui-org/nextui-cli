@@ -1,8 +1,14 @@
+import {store} from 'src/constants/store';
+
 import {getPackageVersionData, getPrefixComponent} from './beta';
 import {Logger} from './logger';
 
-export async function getCanaryVersion(component: string) {
-  const data = await getPackageVersionData(component);
+export async function getCanaryVersion(componentName: string) {
+  if (store.canaryNextUIComponentsPackageMap[componentName]) {
+    return store.canaryNextUIComponentsPackageMap[componentName]!.version;
+  }
+
+  const data = await getPackageVersionData(componentName);
 
   try {
     return JSON.parse(data).canary;

@@ -33,6 +33,14 @@ export type Store = {
   betaNextUIComponentsKeysSet: Set<string>;
   betaNextUIComponentsMap: NextUIComponentsMap;
   betaNextUIComponentsPackageMap: NextUIComponentsMap;
+
+  // Canary NextUI
+  canaryNextUIComponents: Components;
+  canaryNextUIComponentsKeys: string[];
+  canaryNextUIcomponentsPackages: string[];
+  canaryNextUIComponentsKeysSet: Set<string>;
+  canaryNextUIComponentsMap: NextUIComponentsMap;
+  canaryNextUIComponentsPackageMap: NextUIComponentsMap;
 };
 
 /* eslint-disable sort-keys-fix/sort-keys-fix, sort-keys */
@@ -58,7 +66,14 @@ export const store = {
   nextUIComponentsKeysSet: new Set(),
   nextUIComponentsMap: {},
   nextUIComponentsPackageMap: {},
-  nextUIcomponentsPackages: []
+  nextUIcomponentsPackages: [],
+
+  canaryNextUIComponents: [],
+  canaryNextUIComponentsKeys: [],
+  canaryNextUIcomponentsPackages: [],
+  canaryNextUIComponentsKeysSet: new Set(),
+  canaryNextUIComponentsMap: {},
+  canaryNextUIComponentsPackageMap: {}
 } as Store;
 /* eslint-enable sort-keys-fix/sort-keys-fix, sort-keys */
 

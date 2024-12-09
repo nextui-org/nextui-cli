@@ -8,5 +8,7 @@ if (!isGithubAction) {
   initCache(true);
   // Update beta components
   store.beta = true;
+  // Update canary components
+  store.canary = true;
   updateComponents();
 }

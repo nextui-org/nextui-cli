@@ -164,11 +164,15 @@ nextui.hook('preAction', async (command) => {
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json
-    const nextUIComponents = (await getComponents()).components;
-    const nextUIComponentsBeta = (await getComponents()).betaComponents;
+    const components = await getComponents();
+    const nextUIComponents = components.components;
+    const nextUIComponentsBeta = components.betaComponents;
+    const nextUIComponentsCanary = components.canaryComponents;
 
-    initStoreComponentsData({beta: false, nextUIComponents});
+    initStoreComponentsData({nextUIComponents});
     store.beta && initStoreComponentsData({beta: true, nextUIComponents: nextUIComponentsBeta});
+    store.canary &&
+      initStoreComponentsData({canary: true, nextUIComponents: nextUIComponentsCanary});
   }
 
   const [cliLatestVersion, latestVersion] = await Promise.all([

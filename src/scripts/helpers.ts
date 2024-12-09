@@ -170,9 +170,11 @@ export async function autoUpdateComponents(
 ) {
   let {betaVersion, canaryVersion, latestVersion} = options;
   const {beta, canary} = options;
+  const existComponentsPath = existsSync(COMPONENTS_PATH);
 
   [latestVersion, betaVersion, canaryVersion] = await Promise.all([
-    !beta && !canary && (latestVersion || getStore('latestVersion')),
+    // If the components.json is not exist, then we need to download the latest version
+    ((!beta && !canary) || !existComponentsPath) && (latestVersion || getStore('latestVersion')),
     beta && (betaVersion || getStore('betaVersion')),
     canary && (canaryVersion || getStore('canaryVersion'))
   ] as string[]);
@@ -183,8 +185,8 @@ export async function autoUpdateComponents(
     canaryVersion ? downloadFile(getUnpkgUrl(canaryVersion)) : Promise.resolve([])
   ]);
 
-  const originalComponentsJson = JSON.parse(
-    readFileSync(COMPONENTS_PATH, 'utf-8')
+  const originalComponentsJson = (
+    existComponentsPath ? JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) : {components}
   ) as ComponentsJson;
 
   const filterMissingComponents = beta

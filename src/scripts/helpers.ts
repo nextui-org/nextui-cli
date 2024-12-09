@@ -39,6 +39,7 @@ export type ComponentsJson = {
 interface UpdateComponentsOptions {
   beta?: boolean;
   canary?: boolean;
+  fetchBasic?: boolean;
 }
 
 /**
@@ -59,11 +60,11 @@ export function compareVersions(version1 = '', version2 = '') {
 }
 
 export async function updateComponents(options?: UpdateComponentsOptions) {
-  const {beta = store.beta, canary = store.canary} = options ?? {};
+  const {beta = store.beta, canary = store.canary, fetchBasic = false} = options ?? {};
 
   if (!existsSync(COMPONENTS_PATH)) {
     // First time download the latest date from net
-    await autoUpdateComponents({beta, canary});
+    await autoUpdateComponents({beta, canary, fetchBasic});
 
     return;
   }
@@ -89,6 +90,7 @@ export async function updateComponents(options?: UpdateComponentsOptions) {
       betaVersion: latestBetaVersion,
       canary,
       canaryVersion: latestCanaryVersion,
+      fetchBasic,
       latestVersion
     });
   }
@@ -169,12 +171,13 @@ export async function autoUpdateComponents(
   } & UpdateComponentsOptions
 ) {
   let {betaVersion, canaryVersion, latestVersion} = options;
-  const {beta, canary} = options;
+  const {beta, canary, fetchBasic} = options;
   const existComponentsPath = existsSync(COMPONENTS_PATH);
 
   [latestVersion, betaVersion, canaryVersion] = await Promise.all([
     // If the components.json is not exist, then we need to download the latest version
-    ((!beta && !canary) || !existComponentsPath) && (latestVersion || getStore('latestVersion')),
+    ((!beta && !canary) || !existComponentsPath || fetchBasic) &&
+      (latestVersion || getStore('latestVersion')),
     beta && (betaVersion || getStore('betaVersion')),
     canary && (canaryVersion || getStore('canaryVersion'))
   ] as string[]);

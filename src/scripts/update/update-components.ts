@@ -10,5 +10,5 @@ if (!isGithubAction) {
   store.beta = true;
   // Update canary components
   store.canary = true;
-  updateComponents();
+  updateComponents({fetchBasic: true});
 }

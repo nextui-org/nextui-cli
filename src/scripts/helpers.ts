@@ -182,8 +182,14 @@ export async function autoUpdateComponents(
     canary && (canaryVersion || getStore('canaryVersion'))
   ] as string[]);
 
+  const originalComponentsJson = (
+    existComponentsPath ? JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) : {components: []}
+  ) as ComponentsJson;
+
   const [components, betaComponents, canaryComponents] = await Promise.all([
-    latestVersion ? downloadFile({url: getUnpkgUrl(latestVersion)}) : Promise.resolve([]),
+    latestVersion
+      ? downloadFile({url: getUnpkgUrl(latestVersion)})
+      : Promise.resolve(originalComponentsJson.components),
     betaVersion
       ? downloadFile({
           successText: 'Beta components updated successfully!',
@@ -198,29 +204,20 @@ export async function autoUpdateComponents(
       : Promise.resolve([])
   ]);
 
-  const originalComponentsJson = (
-    existComponentsPath ? JSON.parse(readFileSync(COMPONENTS_PATH, 'utf-8')) : {components}
-  ) as ComponentsJson;
-
-  const filterMissingComponents = beta
-    ? betaComponents.filter(
-        (component) => !originalComponentsJson.components?.find((c) => c.name === component.name)
-      )
-    : canary
-      ? canaryComponents.filter(
-          (component) => !originalComponentsJson.components?.find((c) => c.name === component.name)
-        )
-      : [];
+  const conditionalComponents = beta ? betaComponents : canary ? canaryComponents : [];
+  const filterMissingComponents = conditionalComponents.filter(
+    (component) => !components?.find((c) => c.name === component.name)
+  );
 
   // Add missing beta/canary components to components
-  components.push(...(filterMissingComponents ?? []));
+  components.concat(filterMissingComponents ?? []);
 
   const componentsJson: ComponentsJson = {
     ...originalComponentsJson,
     ...(beta ? {betaComponents, betaVersion} : {}),
     ...(canary ? {canaryComponents, canaryVersion} : {}),
     ...(latestVersion ? {version: latestVersion} : {}),
-    components: originalComponentsJson.components.concat(filterMissingComponents ?? [])
+    components
   };
 
   writeFileSync(COMPONENTS_PATH, JSON.stringify(componentsJson, null, 2), 'utf-8');

@@ -1,6 +1,7 @@
 import type {ExtractStoreData, SAFE_ANY} from '@helpers/type';
 
 import {getBetaVersion} from '@helpers/beta';
+import {getCanaryVersion} from '@helpers/canary';
 import {type Components, getLatestVersion} from 'src/scripts/helpers';
 
 import {NEXTUI_CLI, NEXT_UI} from './required';
@@ -10,9 +11,12 @@ export type NextUIComponentsMap = Record<string, Components[0]>;
 export type Store = {
   debug: boolean;
   beta: boolean;
+  canary: boolean;
+
   cliLatestVersion: string;
   latestVersion: string;
   betaVersion: string;
+  canaryVersion: string;
 
   // NextUI
   nextUIComponents: Components;
@@ -29,15 +33,26 @@ export type Store = {
   betaNextUIComponentsKeysSet: Set<string>;
   betaNextUIComponentsMap: NextUIComponentsMap;
   betaNextUIComponentsPackageMap: NextUIComponentsMap;
+
+  // Canary NextUI
+  canaryNextUIComponents: Components;
+  canaryNextUIComponentsKeys: string[];
+  canaryNextUIcomponentsPackages: string[];
+  canaryNextUIComponentsKeysSet: Set<string>;
+  canaryNextUIComponentsMap: NextUIComponentsMap;
+  canaryNextUIComponentsPackageMap: NextUIComponentsMap;
 };
 
 /* eslint-disable sort-keys-fix/sort-keys-fix, sort-keys */
 export const store = {
   debug: false,
   beta: false,
+  canary: false,
+
   cliLatestVersion: '',
   latestVersion: '',
   betaVersion: '',
+  canaryVersion: '',
 
   betaNextUIComponents: [],
   betaNextUIComponentsKeys: [],
@@ -51,7 +66,14 @@ export const store = {
   nextUIComponentsKeysSet: new Set(),
   nextUIComponentsMap: {},
   nextUIComponentsPackageMap: {},
-  nextUIcomponentsPackages: []
+  nextUIcomponentsPackages: [],
+
+  canaryNextUIComponents: [],
+  canaryNextUIComponentsKeys: [],
+  canaryNextUIcomponentsPackages: [],
+  canaryNextUIComponentsKeysSet: new Set(),
+  canaryNextUIComponentsMap: {},
+  canaryNextUIComponentsPackageMap: {}
 } as Store;
 /* eslint-enable sort-keys-fix/sort-keys-fix, sort-keys */
 
@@ -73,6 +95,10 @@ export async function getStore<T extends StoreKeys = StoreKeys>(
       store[key] = data;
     } else if (key === 'betaVersion') {
       data = (await getBetaVersion(NEXT_UI)) as SAFE_ANY;
+
+      store[key] = data;
+    } else if (key === 'canaryVersion') {
+      data = (await getCanaryVersion(NEXT_UI)) as SAFE_ANY;
 
       store[key] = data;
     }

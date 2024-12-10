@@ -100,6 +100,7 @@ nextui
   .option('--prettier [boolean]', 'Apply Prettier formatting to the added content')
   .option('--addApp [boolean]', 'Include App.tsx file content that requires a provider', false)
   .option('-b --beta [boolean]', 'Add beta components', false)
+  .option('-c --canary [boolean]', 'Add canary components', false)
   .action(addAction);
 
 nextui
@@ -110,6 +111,7 @@ nextui
   .option('-a --all [boolean]', 'Upgrade all components', false)
   .option('-w --write [boolean]', 'Write the upgrade version to package.json file', false)
   .option('-b --beta [boolean]', 'Upgrade beta components', false)
+  .option('-c --canary [boolean]', 'Upgrade canary components', false)
   .action(upgradeAction);
 
 nextui
@@ -150,21 +152,27 @@ nextui.hook('preAction', async (command) => {
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const noCache = options.includes('--no-cache');
   const debug = options.includes('--debug') || options.includes('-d');
-  // const componentsArgs = command.args?.slice(1);
+  const beta = options.includes('--beta') || options.includes('-b');
+  const canary = options.includes('--canary') || options.includes('-c');
 
   // Init cache
   initCache(noCache);
   // Init debug
   store.debug = debug;
-  store.beta = options.includes('-b') || options.includes('--beta');
+  store.beta = beta;
+  store.canary = canary;
 
   if (args && commandList.includes(args as CommandName)) {
     // Before run the command init the components.json
-    const nextUIComponents = (await getComponents()).components;
-    const nextUIComponentsBeta = (await getComponents()).betaComponents;
+    const components = await getComponents();
+    const nextUIComponents = components.components;
+    const nextUIComponentsBeta = components.betaComponents;
+    const nextUIComponentsCanary = components.canaryComponents;
 
-    initStoreComponentsData({beta: false, nextUIComponents});
+    initStoreComponentsData({nextUIComponents});
     store.beta && initStoreComponentsData({beta: true, nextUIComponents: nextUIComponentsBeta});
+    store.canary &&
+      initStoreComponentsData({canary: true, nextUIComponents: nextUIComponentsCanary});
   }
 
   const [cliLatestVersion, latestVersion] = await Promise.all([

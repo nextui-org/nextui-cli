@@ -29,10 +29,12 @@ export function getNextuiComponentsData(nextUIComponents: Components) {
 }
 
 export function initStoreComponentsData({
-  beta,
+  beta = false,
+  canary = false,
   nextUIComponents
 }: {
-  beta: boolean;
+  beta?: boolean;
+  canary?: boolean;
   nextUIComponents: Components;
 }) {
   const {
@@ -50,6 +52,13 @@ export function initStoreComponentsData({
     store.betaNextUIComponentsMap = nextUIComponentsMap;
     store.betaNextUIComponentsPackageMap = nextUIComponentsPackageMap;
     store.betaNextUIcomponentsPackages = nextUIcomponentsPackages;
+  } else if (canary) {
+    store.canaryNextUIComponents = nextUIComponents;
+    store.canaryNextUIComponentsKeys = nextUIComponentsKeys;
+    store.canaryNextUIComponentsKeysSet = nextUIComponentsKeysSet;
+    store.canaryNextUIComponentsMap = nextUIComponentsMap;
+    store.canaryNextUIComponentsPackageMap = nextUIComponentsPackageMap;
+    store.canaryNextUIcomponentsPackages = nextUIcomponentsPackages;
   } else {
     store.nextUIComponents = nextUIComponents;
     store.nextUIComponentsKeys = nextUIComponentsKeys;

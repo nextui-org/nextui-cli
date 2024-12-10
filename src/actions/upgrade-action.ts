@@ -3,7 +3,8 @@ import type {AppendKeyValue} from '@helpers/type';
 import fs from 'node:fs';
 
 import {getBetaVersion} from '@helpers/beta';
-import {checkIllegalComponents} from '@helpers/check';
+import {getCanaryVersion} from '@helpers/canary';
+import {checkIllegalComponents, getConditionLatestVersion} from '@helpers/check';
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
@@ -27,13 +28,19 @@ interface UpgradeActionOptions {
   patch?: boolean;
   write?: boolean;
   beta?: boolean;
+  canary?: boolean;
 }
 
 type TransformComponent = Required<
   AppendKeyValue<NextUIComponents[0], 'latestVersion', string> & {isLatest: boolean}
 >;
 
-function betaCompareVersions(version: string, latestVersion: string, beta: boolean) {
+function extraCompareVersions(
+  version: string,
+  latestVersion: string,
+  beta: boolean,
+  canary: boolean
+) {
   // compareResult(beta, 2.1.0) = 0
   // So we need to check if it is autoChangeTag like `beta` or `canary` and latestVersion is not match `beta` or `canary` then return false
   // Example: `beta` Compare `2.1.0` (not latest), `beta` Compare `2.1.0-beta.0` (latest)
@@ -48,13 +55,18 @@ function betaCompareVersions(version: string, latestVersion: string, beta: boole
   // Beta version is greater than latest version if beta is true
   // compareResult(2.1.0, 2.1.0-beta.0) = 1
   // Example: 2.1.0 < 2.1.0-beta.0
-  return beta && compareResult === 1 && !version.includes('beta') ? false : compareResult >= 0;
+  return beta && compareResult === 1 && !version.includes('beta')
+    ? false
+    : canary && compareResult === 1 && !version.includes('canary')
+      ? false
+      : compareResult >= 0;
 }
 
 export async function upgradeAction(components: string[], options: UpgradeActionOptions) {
   const {
     all = false,
     beta = false,
+    canary = false,
     packagePath = resolver('package.json'),
     write = false
   } = options;
@@ -70,8 +82,12 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       const latestVersion =
         store.nextUIComponentsMap[component.name]?.version ||
         (await getLatestVersion(component.package));
-      const mergedVersion = beta ? await getBetaVersion(component.package) : latestVersion;
-      const compareResult = betaCompareVersions(component.version, mergedVersion, beta);
+      const mergedVersion = beta
+        ? await getBetaVersion(component.package)
+        : canary
+          ? await getCanaryVersion(component.package)
+          : latestVersion;
+      const compareResult = extraCompareVersions(component.version, mergedVersion, beta, canary);
 
       transformComponents.push({
         ...component,
@@ -93,12 +109,13 @@ export async function upgradeAction(components: string[], options: UpgradeAction
   } else if (!components.length) {
     // If have the main nextui then add
     if (isNextUIAll) {
+      const version = transformPeerVersion(allDependencies[NEXT_UI]);
+      const latestVersion = getConditionLatestVersion(store.beta, store.canary);
       const nextuiData = {
-        isLatest:
-          compareVersions(store.latestVersion, transformPeerVersion(allDependencies[NEXT_UI])) <= 0,
-        latestVersion: store.latestVersion,
+        isLatest: extraCompareVersions(version, latestVersion, store.beta, store.canary),
+        latestVersion,
         package: NEXT_UI,
-        version: transformPeerVersion(allDependencies[NEXT_UI])
+        version
       } as TransformComponent;
 
       transformComponents.push(nextuiData);
@@ -113,7 +130,12 @@ export async function upgradeAction(components: string[], options: UpgradeAction
     components = await getAutocompleteMultiselect(
       'Select the components to upgrade',
       transformComponents.map((component) => {
-        const isUpToDate = betaCompareVersions(component.version, component.latestVersion, beta);
+        const isUpToDate = extraCompareVersions(
+          component.version,
+          component.latestVersion,
+          beta,
+          canary
+        );
 
         return {
           disabled: isUpToDate,

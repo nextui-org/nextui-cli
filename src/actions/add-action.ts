@@ -6,6 +6,7 @@ import {existsSync, writeFileSync} from 'node:fs';
 import chalk from 'chalk';
 
 import {getBetaComponents} from '@helpers/beta';
+import {getCanaryComponents} from '@helpers/canary';
 import {
   checkApp,
   checkIllegalComponents,
@@ -38,6 +39,7 @@ interface AddActionOptions {
   appPath?: string;
   addApp?: boolean;
   beta?: boolean;
+  canary?: boolean;
 }
 
 export async function addAction(components: string[], options: AddActionOptions) {
@@ -46,6 +48,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     all = false,
     appPath = findFiles('**/App.(j|t)sx')[0],
     beta = false,
+    canary = false,
     packagePath = resolver('package.json'),
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]
   } = options;
@@ -122,7 +125,7 @@ export async function addAction(components: string[], options: AddActionOptions)
     const [, ...missingDependencies] = await checkRequiredContentInstalled(
       'all',
       allDependenciesKeys,
-      {beta}
+      {beta, canary}
     );
 
     if (missingDependencies.length) {
@@ -141,11 +144,13 @@ export async function addAction(components: string[], options: AddActionOptions)
     const [, ..._missingDependencies] = await checkRequiredContentInstalled(
       'partial',
       allDependenciesKeys,
-      {beta}
+      {beta, canary}
     );
     const mergedComponents = beta
       ? await getBetaComponents(components)
-      : components.map((c) => store.nextUIComponentsMap[c]!.package);
+      : canary
+        ? await getCanaryComponents(components)
+        : components.map((c) => store.nextUIComponentsMap[c]!.package);
     const missingDependencies = [..._missingDependencies, ...mergedComponents];
 
     Logger.info(

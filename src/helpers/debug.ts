@@ -2,6 +2,7 @@ import {writeFileSync} from 'node:fs';
 
 import {getStoreSync, store} from 'src/constants/store';
 
+import {catchPnpmExec} from './actions/upgrade/catch-pnpm-exec';
 import {exec} from './exec';
 import {Logger} from './logger';
 import {getPackageInfo} from './package';
@@ -12,7 +13,7 @@ export async function debugExecAddAction(cmd: string, components: string[] = [])
       Logger.warn(`Debug: ${component}`);
     }
   } else {
-    await exec(cmd);
+    await catchPnpmExec(() => exec(cmd));
   }
 }
 

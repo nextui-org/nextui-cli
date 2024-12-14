@@ -2,6 +2,7 @@ import type {AppendKeyValue} from '@helpers/type';
 
 import fs from 'node:fs';
 
+import {catchPnpmExec} from '@helpers/actions/upgrade/catch-pnpm-exec';
 import {getBetaVersion} from '@helpers/beta';
 import {checkIllegalComponents} from '@helpers/check';
 import {detect} from '@helpers/detect';
@@ -223,12 +224,14 @@ export async function upgradeAction(components: string[], options: UpgradeAction
       Logger.success('✅ Upgrade version written to package.json');
       process.exit(0);
     } else {
-      await exec(
-        `${packageManager} ${install} ${result.reduce((acc, component, index) => {
-          return `${acc}${index === 0 ? '' : ' '}${
-            component.package
-          }@${component.latestVersion.replace(colorMatchRegex, '')}`;
-        }, '')}`
+      await catchPnpmExec(() =>
+        exec(
+          `${packageManager} ${install} ${result.reduce((acc, component, index) => {
+            return `${acc}${index === 0 ? '' : ' '}${
+              component.package
+            }@${component.latestVersion.replace(colorMatchRegex, '')}`;
+          }, '')}`
+        )
       );
     }
   }

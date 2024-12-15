@@ -35,7 +35,7 @@
     "dist"
   ],
   "bin": {
-    "@heroui/codemod": "./dist/index.js"
+    "@heroui-codemod": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -64,6 +64,7 @@
     "fast-glob": "3.3.2",
     "find-up": "7.0.0",
     "gradient-string": "2.0.2",
+    "jscodeshift": "17.1.1",
     "ora": "8.0.1",
     "pathe": "1.1.2",
     "tar": "6.2.1"
@@ -71,5 +72,8 @@
   "engines": {
     "pnpm": ">=9.x"
   },
-  "packageManager": "pnpm@9.6.0"
+  "packageManager": "pnpm@9.6.0",
+  "devDependencies": {
+    "@types/jscodeshift": "0.12.0"
+  }
 }

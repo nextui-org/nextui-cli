@@ -1,8 +1,11 @@
 import type {SAFE_ANY} from '@helpers/type';
 
-import {readFileSync, writeFileSync} from 'node:fs';
+import {writeFileSync} from 'node:fs';
 
 import {Logger} from '@helpers/logger';
+
+import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
+import {getStore} from '../../store';
 
 const DEFAULT_INDENT = 2;
 
@@ -16,7 +19,7 @@ export async function migrateJson(files: string[]) {
   try {
     await Promise.all(
       files.map((file) => {
-        const content = readFileSync(file, 'utf-8');
+        const content = getStore(file, 'rawContent');
         const indent = detectIndent(content);
 
         const json = JSON.parse(content);
@@ -39,8 +42,8 @@ function migrateNextuiToHeroui(json: Record<string, SAFE_ANY>) {
 
   if (dependencies) {
     Object.keys(dependencies).forEach((key) => {
-      if (key.startsWith('@nextui-org')) {
-        dependencies[key.replace('@nextui-org', '@heroui')] = dependencies[key];
+      if (key.startsWith(NEXTUI_PREFIX)) {
+        dependencies[key.replace(NEXTUI_PREFIX, HEROUI_PREFIX)] = dependencies[key];
         delete dependencies[key];
       }
     });
@@ -48,8 +51,8 @@ function migrateNextuiToHeroui(json: Record<string, SAFE_ANY>) {
 
   if (devDependencies) {
     Object.keys(devDependencies).forEach((key) => {
-      if (key.startsWith('@nextui-org')) {
-        devDependencies[key.replace('@nextui-org', '@heroui')] = devDependencies[key];
+      if (key.startsWith(NEXTUI_PREFIX)) {
+        devDependencies[key.replace(NEXTUI_PREFIX, HEROUI_PREFIX)] = devDependencies[key];
         delete devDependencies[key];
       }
     });

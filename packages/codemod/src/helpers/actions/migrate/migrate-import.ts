@@ -5,7 +5,7 @@ import jscodeshift from 'jscodeshift';
 import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
 import {getStore} from '../../store';
 
-export function migrateImport(paths: string[]) {
+export function migrateImportPackage(paths: string[]) {
   for (const path of paths) {
     const parsedContent = getStore(path, 'parsedContent');
 
@@ -25,9 +25,8 @@ export function migrateImport(paths: string[]) {
           dirtyFlag = true;
         }
       });
-      // Find the require declaration for '@nextui-org/' start
+      // Find the require declaration for '@nextui-org/' start, when the import declaration is not found
       if (!dirtyFlag) {
-        // Find the require declaration for '@nextui-org/' start
         parsedContent
           .find(jscodeshift.CallExpression, {
             callee: {
@@ -50,11 +49,9 @@ export function migrateImport(paths: string[]) {
       }
 
       if (dirtyFlag) {
+        // Write the modified content back to the file
         writeFileSync(path, parsedContent.toSource());
       }
-
-      // Write the modified content back to the file
-      writeFileSync(path, parsedContent.toSource());
       // eslint-disable-next-line no-empty
     } catch {}
   }

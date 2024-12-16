@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
 import {NEXTUI_PREFIX} from '../constants/prefix';
-import {migrateImport} from '../helpers/actions/migrate/migrate-import';
+import {migrateImportPackage} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
 import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-provider';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
@@ -59,7 +59,7 @@ export async function migrateAction(projectPaths: string[]) {
     storeParsedContent(nextuiFiles);
 
     spinner.start('Migrating import nextui to heroui...');
-    migrateImport(nextuiFiles);
+    migrateImportPackage(nextuiFiles);
     spinner.stop('Migrated import nextui to heroui');
   }
 

@@ -37,7 +37,8 @@ export function debugAddedPkg(components: string[], packagePath: string) {
       },
       null,
       2
-    )
+    ),
+    'utf-8'
   );
 }
 
@@ -61,6 +62,7 @@ export function debugRemovedPkg(components: string[], packagePath: string) {
       },
       null,
       2
-    )
+    ),
+    'utf-8'
   );
 }

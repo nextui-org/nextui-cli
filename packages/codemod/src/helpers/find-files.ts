@@ -1,11 +1,11 @@
 import fg from 'fast-glob';
 
-interface FindFilesOptions {
+interface FindFilesOptions extends fg.Options {
   ext?: string;
 }
 
 export const findFiles = async (paths: string[], options: FindFilesOptions = {}) => {
-  const {ext} = options;
+  const {ext, ...fgOptions} = options;
 
   if (ext) {
     paths = paths.map((path) => `${path}.${ext}`);
@@ -15,7 +15,8 @@ export const findFiles = async (paths: string[], options: FindFilesOptions = {})
     absolute: true,
     cwd: process.cwd(),
     ignore: ['**/node_modules', '**/dist'],
-    onlyFiles: true
+    onlyFiles: true,
+    ...fgOptions
   });
 
   return files;

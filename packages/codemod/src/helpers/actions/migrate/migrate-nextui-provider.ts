@@ -5,6 +5,12 @@ import {getStore} from '../../store';
 
 import {migrateImportName, migrateJSXElementName} from './migrate-common';
 
+/**
+ * Migrate the NextUIProvider to HeroUIProvider will directly write the file
+ * @example
+ * migrateNextuiProvider(['xxx']);
+ * <NextUIProvider> -> <HeroUIProvider>
+ */
 export function migrateNextuiProvider(paths: string[]) {
   for (const path of paths) {
     try {

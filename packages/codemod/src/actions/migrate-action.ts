@@ -6,13 +6,15 @@ import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
 import {NEXTUI_PREFIX} from '../constants/prefix';
-import {migrateImportPackage} from '../helpers/actions/migrate/migrate-import';
+import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
 import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-provider';
+import {migrateNpmrc} from '../helpers/actions/migrate/migrate-npmrc';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
 import {findFiles} from '../helpers/find-files';
 import {getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
 import {transformPaths} from '../helpers/transform';
+import {getCanRunCodemod} from '../helpers/utils';
 
 process.on('SIGINT', () => {
   Logger.newLine();
@@ -44,10 +46,10 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const spinner = p.spinner();
 
   /** ======================== 1. Migrate package.json ======================== */
-  const runMigratePackageJson = codemod === 'package-json-package-name';
+  const runMigratePackageJson = getCanRunCodemod(codemod, 'package-json-package-name');
 
   if (runMigratePackageJson) {
-    p.log.step(`${step}. Migrating package.json`);
+    p.log.step(`${step}. Migrating "package.json"`);
     const selectMigrate = await confirmClack({
       message: 'Do you want to migrate package.json?'
     });
@@ -61,10 +63,10 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   }
 
   /** ======================== 2. Migrate import nextui to heroUI ======================== */
-  const runMigrateImportNextui = codemod === 'import-heroui';
+  const runMigrateImportNextui = getCanRunCodemod(codemod, 'import-heroui');
 
   if (runMigrateImportNextui) {
-    p.log.step(`${step}. Migrating import nextui to heroUI`);
+    p.log.step(`${step}. Migrating import "nextui" to "heroUI"`);
     const selectMigrateNextui = await confirmClack({
       message: 'Do you want to migrate import nextui to heroui?'
     });
@@ -74,17 +76,17 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       storeParsedContent(nextuiFiles);
 
       spinner.start('Migrating import nextui to heroui...');
-      migrateImportPackage(nextuiFiles);
+      migrateImportPackageWithPaths(nextuiFiles);
       spinner.stop('Migrated import nextui to heroui');
       step++;
     }
   }
 
   /** ======================== 3. Migrate NextUIProvider to HeroUIProvider ======================== */
-  const runMigrateNextuiProvider = codemod === 'heroui-provider';
+  const runMigrateNextuiProvider = getCanRunCodemod(codemod, 'heroui-provider');
 
   if (runMigrateNextuiProvider) {
-    p.log.step(`${step}. Migrating NextUIProvider to HeroUIProvider`);
+    p.log.step(`${step}. Migrating "NextUIProvider" to "HeroUIProvider"`);
     const selectMigrateNextuiProvider = await confirmClack({
       message: 'Do you want to migrate NextUIProvider to HeroUIProvider?'
     });
@@ -98,20 +100,41 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   }
 
   /** ======================== 4. Migrate tailwindcss ======================== */
-  const runMigrateTailwindcss = codemod === 'tailwindcss-heroui';
+  const runMigrateTailwindcss = getCanRunCodemod(codemod, 'tailwindcss-heroui');
 
   if (runMigrateTailwindcss) {
-    p.log.step(`${step}. Migrating tailwindcss`);
+    p.log.step(`${step}. Migrating "tailwindcss"`);
     const selectMigrateTailwindcss = await confirmClack({
       message: 'Do you want to migrate tailwindcss?'
     });
 
     if (selectMigrateTailwindcss) {
-      const tailwindcssFiles = files.filter((file) => file.includes('tailwind.config.js'));
+      const tailwindcssFiles = files.filter((file) => /tailwind\.config\.[jt]s/.test(file));
 
       spinner.start('Migrating tailwindcss...');
       migrateTailwindcss(tailwindcssFiles);
       spinner.stop('Migrated tailwindcss');
+      step++;
+    }
+  }
+
+  /** ======================== 5. Migrate npmrc optional (Pnpm only) ======================== */
+  const runMigrateNpmrc = getCanRunCodemod(codemod, 'npmrc');
+
+  if (runMigrateNpmrc) {
+    const npmrcFiles = (await findFiles(transformedPaths, {dot: true})).filter((path) =>
+      path.includes('.npmrc')
+    );
+
+    p.log.step(`${step}. Migrating "npmrc" (Pnpm only)`);
+    const selectMigrateNpmrc = await confirmClack({
+      message: 'Do you want to migrate npmrc (Pnpm only) ?'
+    });
+
+    if (selectMigrateNpmrc) {
+      spinner.start('Migrating npmrc...');
+      migrateNpmrc(npmrcFiles);
+      spinner.stop('Migrated npmrc');
       step++;
     }
   }

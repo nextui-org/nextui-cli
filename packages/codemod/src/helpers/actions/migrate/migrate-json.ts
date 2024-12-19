@@ -42,7 +42,7 @@ function migrateNextuiToHeroui(json: Record<string, SAFE_ANY>) {
 
   if (dependencies) {
     Object.keys(dependencies).forEach((key) => {
-      if (key.startsWith(NEXTUI_PREFIX)) {
+      if (key.includes(NEXTUI_PREFIX)) {
         dependencies[key.replace(NEXTUI_PREFIX, HEROUI_PREFIX)] = dependencies[key];
         delete dependencies[key];
       }
@@ -51,7 +51,7 @@ function migrateNextuiToHeroui(json: Record<string, SAFE_ANY>) {
 
   if (devDependencies) {
     Object.keys(devDependencies).forEach((key) => {
-      if (key.startsWith(NEXTUI_PREFIX)) {
+      if (key.includes(NEXTUI_PREFIX)) {
         devDependencies[key.replace(NEXTUI_PREFIX, HEROUI_PREFIX)] = devDependencies[key];
         delete devDependencies[key];
       }

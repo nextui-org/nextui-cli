@@ -1,7 +1,6 @@
 import {writeFileSync} from 'node:fs';
 
-import {HEROUI_PREFIX, NEXTUI_PREFIX} from 'packages/codemod/src/constants/prefix';
-
+import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
 import {getStore} from '../../store';
 
 export function migrateNpmrc(files: string[]) {

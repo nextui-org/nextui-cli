@@ -9,7 +9,7 @@ import {getStore} from '../../store';
 
 const DEFAULT_INDENT = 2;
 
-function detectIndent(content: string): number {
+export function detectIndent(content: string): number {
   const match = content.match(/^(\s+)/m);
 
   return match ? match[1]?.length || DEFAULT_INDENT : DEFAULT_INDENT;
@@ -20,15 +20,9 @@ export async function migrateJson(files: string[]) {
     await Promise.all(
       files.map((file) => {
         const content = getStore(file, 'rawContent');
-        const indent = detectIndent(content);
+        const replacedContent = content.replace(new RegExp(NEXTUI_PREFIX, 'g'), HEROUI_PREFIX);
 
-        const json = JSON.parse(content);
-
-        migrateNextuiToHeroui(json);
-
-        const newContent = JSON.stringify(json, null, indent);
-
-        writeFileSync(file, newContent, 'utf-8');
+        writeFileSync(file, replacedContent, 'utf-8');
       })
     );
   } catch (error) {
@@ -37,7 +31,7 @@ export async function migrateJson(files: string[]) {
   }
 }
 
-function migrateNextuiToHeroui(json: Record<string, SAFE_ANY>) {
+export function migrateNextuiToHeroui(json: Record<string, SAFE_ANY>) {
   const {dependencies, devDependencies} = json;
 
   if (dependencies) {

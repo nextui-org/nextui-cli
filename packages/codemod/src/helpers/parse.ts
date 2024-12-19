@@ -39,7 +39,7 @@ export function parseContent(path: string): Collection<SAFE_ANY> | undefined {
 
     return jscodeShift;
   } catch (error) {
-    Logger.error(`Parse content failed: ${error}`);
+    Logger.warn(`Parse ${path} content failed, skip it: ${error}`);
 
     return;
   }

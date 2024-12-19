@@ -8,6 +8,7 @@ export default defineConfig((options) => {
     entry: ['src/index.ts'],
     format: ['esm'],
     minify: !options.watch,
+    noExternal: ['jscodeshift/parser/babylon', 'jscodeshift/parser/tsOptions', '@babel/parser'],
     outDir: 'dist',
     skipNodeModulesBundle: true,
     sourcemap: true,

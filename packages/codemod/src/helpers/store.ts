@@ -57,11 +57,11 @@ export function storeParsedContent(paths: string[]) {
  */
 export function getStore<T extends StoreKey>(path: string, key: T): StoreObject[T] {
   if (key === 'rawContent') {
-    return (store[path]!.rawContent ?? readFileSync(path, 'utf-8')) as StoreObject[T];
+    return (store[path]?.rawContent ?? readFileSync(path, 'utf-8')) as StoreObject[T];
   }
   if (key === 'parsedContent') {
-    return (store[path]!.parsedContent ?? parseContent(path)) as StoreObject[T];
+    return (store[path]?.parsedContent ?? parseContent(path)) as StoreObject[T];
   }
 
-  return store[path]![key];
+  return store[path]?.[key] as StoreObject[T];
 }

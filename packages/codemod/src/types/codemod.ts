@@ -3,6 +3,7 @@ export const codemods = [
   'package-json-package-name',
   'heroui-provider',
   'tailwindcss-heroui',
+  'css-variables',
   'npmrc'
 ] as const;
 

@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
 import {NEXTUI_PREFIX} from '../constants/prefix';
+import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
 import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-provider';
@@ -118,7 +119,24 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     }
   }
 
-  /** ======================== 5. Migrate npmrc optional (Pnpm only) ======================== */
+  /** ======================== 5. Migrate css variables ======================== */
+  const runMigrateCssVariables = getCanRunCodemod(codemod, 'css-variables');
+
+  if (runMigrateCssVariables) {
+    p.log.step(`${step}. Migrating "css variables"`);
+    const selectMigrateCssVariables = await confirmClack({
+      message: 'Do you want to migrate css variables?'
+    });
+
+    if (selectMigrateCssVariables) {
+      spinner.start('Migrating css variables...');
+      migrateCssVariables(files);
+      spinner.stop('Migrated css variables');
+      step++;
+    }
+  }
+
+  /** ======================== 6. Migrate npmrc optional (Pnpm only) ======================== */
   const runMigrateNpmrc = getCanRunCodemod(codemod, 'npmrc');
 
   if (runMigrateNpmrc) {

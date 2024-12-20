@@ -20,9 +20,13 @@ export async function migrateJson(files: string[]) {
     await Promise.all(
       files.map((file) => {
         const content = getStore(file, 'rawContent');
-        const replacedContent = content.replace(new RegExp(NEXTUI_PREFIX, 'g'), HEROUI_PREFIX);
+        const dirtyFlag = content.includes(NEXTUI_PREFIX);
 
-        writeFileSync(file, replacedContent, 'utf-8');
+        if (dirtyFlag) {
+          const replacedContent = content.replaceAll(NEXTUI_PREFIX, HEROUI_PREFIX);
+
+          writeFileSync(file, replacedContent, 'utf-8');
+        }
       })
     );
   } catch (error) {

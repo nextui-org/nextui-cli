@@ -30,7 +30,7 @@ interface MigrateActionOptions {
 export async function migrateAction(projectPaths?: string[], options = {} as MigrateActionOptions) {
   const {codemod} = options;
   const transformedPaths = transformPaths(projectPaths);
-  const files = await findFiles(transformedPaths);
+  const files = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json}'});
 
   // Store the raw content of the files
   storePathsRawContent(files);

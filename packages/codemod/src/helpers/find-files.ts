@@ -14,7 +14,7 @@ export const findFiles = async (paths: string[], options: FindFilesOptions = {})
   const files = await fg.glob(paths, {
     absolute: true,
     cwd: process.cwd(),
-    ignore: ['**/node_modules', '**/dist'],
+    ignore: ['**/node_modules', '**/dist', '**/*.md', '**/*.mdx'],
     onlyFiles: true,
     ...fgOptions
   });

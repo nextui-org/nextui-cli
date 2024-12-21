@@ -124,7 +124,7 @@ Example:
 
 1. `className="text-[var(--nextui-primary-500)]"` to `className="text-[var(--heroui-primary-500)]"`
 
-### npmrc
+### npmrc (Pnpm only)
 
 Migrate the `.npmrc` file to use the `@heroui` package.
 

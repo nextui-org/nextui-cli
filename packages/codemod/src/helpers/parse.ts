@@ -5,6 +5,7 @@ import jscodeshift, {type Collection} from 'jscodeshift';
 import babylonParse from 'jscodeshift/parser/babylon';
 import tsOptions from 'jscodeshift/parser/tsOptions';
 
+import {DEBUG} from './debug';
 import {getStore} from './store';
 
 const dtsOptions = {
@@ -39,7 +40,7 @@ export function parseContent(path: string): Collection<SAFE_ANY> | undefined {
 
     return jscodeShift;
   } catch (error) {
-    Logger.warn(`Parse ${path} content failed, skip it: ${error}`);
+    DEBUG.enabled && Logger.warn(`Parse ${path} content failed, skip it: ${error}`);
 
     return;
   }

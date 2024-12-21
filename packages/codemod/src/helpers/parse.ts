@@ -32,6 +32,10 @@ function createParserFromPath(filePath: string): jscodeshift.JSCodeshift {
 }
 
 export function parseContent(path: string): Collection<SAFE_ANY> | undefined {
+  // skip json files
+  if (path.endsWith('.json')) {
+    return;
+  }
   const content = getStore(path, 'rawContent');
 
   try {

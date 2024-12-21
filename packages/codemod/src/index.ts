@@ -16,7 +16,7 @@ nextui
   .description(getCommandDescAndLog(`\nHeroUI Codemod v${pkg.version}\n`, pkg.description))
   .version(pkg.version, '-v, --version', 'Output the current version')
   .helpOption('-h, --help', 'Display help for command')
-  .argument('[codemod]', `Codemod slug to run\nCodemods: ${codemods.join(', ')}`)
+  .argument('[codemod]', `Specify which codemod to run\nCodemods: ${codemods.join(', ')}`)
   .allowUnknownOption()
   .action(codemodAction);
 

@@ -14,11 +14,11 @@
   </a>
 </p>
 
-The CLI provides a comprehensive suite of tools to migrate your codebase from NextUI to HeroUI.
+The CLI provides a comprehensive suite of tools to migrate your codebase from NextUI to heroui.
 
 ## Quick Start
 
-> **Note**: The HeroUI CLI requires [Node.js](https://nodejs.org/en) _18.17.x_ or later
+> **Note**: The heroui CLI requires [Node.js](https://nodejs.org/en) _18.17.x_ or later
 
 You can start using @heroui/codemod in one of the following ways:
 
@@ -39,7 +39,7 @@ npm install -g @heroui/codemod
 ```bash
 Usage: @heroui/codemod [command]
 
-A CLI tool for migrating your codebase to HeroUI
+A CLI tool for migrating your codebase to heroui
 
 Arguments:
   codemod                Specify which codemod to run
@@ -51,7 +51,7 @@ Options:
   -h, --help             Display help for command
 
 Commands:
-  migrate [projectPath]  Migrate your codebase to use HeroUI
+  migrate [projectPath]  Migrate your codebase to use heroui
 ```
 
 ## Codemod Arguments
@@ -138,7 +138,7 @@ Example:
 
 ## Migrate Command
 
-Migrate your entire codebase from NextUI to HeroUI. You can choose which codemods to run during the migration process.
+Migrate your entire codebase from NextUI to heroui. You can choose which codemods to run during the migration process.
 
 ```bash
 heroui-codemod migrate [projectPath]
@@ -153,7 +153,7 @@ heroui-codemod migrate ./my-nextui-app
 Output:
 
 ```bash
-HeroUI Codemod v0.0.1
+heroui Codemod v0.0.1
 
 ┌   Starting to migrate nextui to heroUI
 │

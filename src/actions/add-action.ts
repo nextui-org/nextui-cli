@@ -44,7 +44,7 @@ export async function addAction(components: string[], options: AddActionOptions)
   const {
     addApp = false,
     all = false,
-    appPath = findFiles('**/App.(j|t)sx')[0],
+    appPath,
     beta = false,
     packagePath = resolver('package.json'),
     tailwindPath = findFiles('**/tailwind.config.(j|t)s')[0]

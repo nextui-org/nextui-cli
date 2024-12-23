@@ -218,7 +218,7 @@ export async function upgradeAction(components: string[], options: UpgradeAction
         upgradePackageList: result
       });
 
-      fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
+      fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf-8');
 
       Logger.newLine();
       Logger.success('✅ Upgrade version written to package.json');

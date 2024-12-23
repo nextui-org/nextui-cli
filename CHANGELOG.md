@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/nextui-org/nextui-cli/compare/v0.5.0...v0.5.1) (2024-12-23)
+
+### Bug Fixes
+
+- add action will upgrade to required min peerDep version ([#125](https://github.com/nextui-org/nextui-cli/issues/125)) ([9e0a96a](https://github.com/nextui-org/nextui-cli/commit/9e0a96a610a0425741eb6fd16fdf623bb240c49b))
+- catch pnpm error and give user choose fix or exit ([#123](https://github.com/nextui-org/nextui-cli/issues/123)) ([a4b18b3](https://github.com/nextui-org/nextui-cli/commit/a4b18b3e017743e25187ca26888f5afcaed8596a))
+
 # [0.5.0](https://github.com/nextui-org/nextui-cli/compare/v0.4.2...v0.5.0) (2024-12-08)
 
 ### Bug Fixes

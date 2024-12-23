@@ -59,8 +59,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       spinner.start('Migrating package.json...');
       await migrateJson(packagesJson);
       spinner.stop('Migrated package.json');
-      step++;
     }
+    step++;
   }
 
   /** ======================== 2. Migrate import nextui to heroUI ======================== */
@@ -79,8 +79,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       spinner.start('Migrating import nextui to heroui...');
       migrateImportPackageWithPaths(nextuiFiles);
       spinner.stop('Migrated import nextui to heroui');
-      step++;
     }
+    step++;
   }
 
   /** ======================== 3. Migrate NextUIProvider to HeroUIProvider ======================== */
@@ -96,8 +96,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       spinner.start('Migrating NextUIProvider to HeroUIProvider...');
       migrateNextuiProvider(nextuiFiles);
       spinner.stop('Migrated NextUIProvider to HeroUIProvider');
-      step++;
     }
+    step++;
   }
 
   /** ======================== 4. Migrate tailwindcss ======================== */
@@ -115,8 +115,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       spinner.start('Migrating tailwindcss...');
       migrateTailwindcss(tailwindcssFiles);
       spinner.stop('Migrated tailwindcss');
-      step++;
     }
+    step++;
   }
 
   /** ======================== 5. Migrate css variables ======================== */
@@ -132,8 +132,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       spinner.start('Migrating css variables...');
       migrateCssVariables(files);
       spinner.stop('Migrated css variables');
-      step++;
     }
+    step++;
   }
 
   /** ======================== 6. Migrate npmrc optional (Pnpm only) ======================== */
@@ -153,8 +153,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       spinner.start('Migrating npmrc...');
       migrateNpmrc(npmrcFiles);
       spinner.stop('Migrated npmrc');
-      step++;
     }
+    step++;
   }
 
   p.outro(chalk.green('✅ Migration completed!'));

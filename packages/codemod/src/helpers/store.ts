@@ -98,4 +98,5 @@ export function writeFileAndUpdateStore<K extends ExcludeStoreKey>(
 
   writeFileSync(path, data.rawContent, 'utf-8');
   updateStore(path, key, value);
+  key === 'parsedContent' && updateStore(path, 'rawContent', data.rawContent);
 }

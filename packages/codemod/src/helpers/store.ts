@@ -1,7 +1,7 @@
 import type {SAFE_ANY} from '@helpers/type';
 import type {Collection} from 'jscodeshift';
 
-import {readFileSync} from 'node:fs';
+import {readFileSync, writeFileSync} from 'node:fs';
 
 import {Logger} from '@helpers/logger';
 import {basename} from 'pathe';
@@ -16,6 +16,8 @@ export type StoreObject = {
 };
 
 export type StoreKey = keyof StoreObject;
+
+type ExcludeStoreKey = Exclude<StoreKey, 'filePath'>;
 
 /**
  * Used to temporarily store the data that parsed from the file
@@ -64,4 +66,36 @@ export function getStore<T extends StoreKey>(path: string, key: T): StoreObject[
   }
 
   return store[path]?.[key] as StoreObject[T];
+}
+
+export function updateStore<K extends ExcludeStoreKey>(
+  path: string,
+  key: K,
+  value: StoreObject[K]
+) {
+  if (!store[path]) {
+    store[path] = {
+      filePath: path,
+      [key]: value
+    } as SAFE_ANY;
+
+    return;
+  }
+
+  store[path]![key] = value as SAFE_ANY;
+}
+
+export function writeFileAndUpdateStore<K extends ExcludeStoreKey>(
+  path: string,
+  key: K,
+  parsedContent: StoreObject[K]
+) {
+  const data: Record<ExcludeStoreKey, SAFE_ANY> = {
+    parsedContent,
+    rawContent: typeof parsedContent === 'string' ? parsedContent : parsedContent?.toSource()
+  };
+  const value = data[key];
+
+  writeFileSync(path, data.rawContent, 'utf-8');
+  updateStore(path, key, value);
 }

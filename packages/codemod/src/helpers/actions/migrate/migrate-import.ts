@@ -1,9 +1,7 @@
-import {writeFileSync} from 'node:fs';
-
 import jscodeshift from 'jscodeshift';
 
 import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
-import {type StoreObject, getStore} from '../../store';
+import {type StoreObject, getStore, writeFileAndUpdateStore} from '../../store';
 
 /**
  * Migrate the import package will directly write the file
@@ -25,7 +23,7 @@ export function migrateImportPackageWithPaths(paths: string[]) {
 
       if (dirtyFlag) {
         // Write the modified content back to the file
-        writeFileSync(path, parsedContent.toSource(), 'utf-8');
+        writeFileAndUpdateStore(path, 'parsedContent', parsedContent);
       }
       // eslint-disable-next-line no-empty
     } catch {}

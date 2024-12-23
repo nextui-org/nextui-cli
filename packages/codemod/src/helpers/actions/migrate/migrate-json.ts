@@ -1,11 +1,9 @@
 import type {SAFE_ANY} from '@helpers/type';
 
-import {writeFileSync} from 'node:fs';
-
 import {Logger} from '@helpers/logger';
 
 import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
-import {getStore} from '../../store';
+import {getStore, writeFileAndUpdateStore} from '../../store';
 
 const DEFAULT_INDENT = 2;
 
@@ -25,7 +23,7 @@ export async function migrateJson(files: string[]) {
         if (dirtyFlag) {
           const replacedContent = content.replaceAll(NEXTUI_PREFIX, HEROUI_PREFIX);
 
-          writeFileSync(file, replacedContent, 'utf-8');
+          writeFileAndUpdateStore(file, 'rawContent', replacedContent);
         }
       })
     );

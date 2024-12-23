@@ -1,7 +1,5 @@
 import type {SAFE_ANY} from '@helpers/type';
 
-import {writeFileSync} from 'node:fs';
-
 import jscodeshift from 'jscodeshift';
 
 import {
@@ -10,7 +8,7 @@ import {
   NEXTUI_PLUGIN,
   NEXTUI_PREFIX
 } from '../../../constants/prefix';
-import {getStore} from '../../store';
+import {getStore, writeFileAndUpdateStore} from '../../store';
 
 import {migrateCallExpressionName, migrateImportName} from './migrate-common';
 import {migrateImportPackage} from './migrate-import';
@@ -57,7 +55,7 @@ export function migrateTailwindcss(paths: string[]) {
     });
 
     if (dirtyFlag) {
-      writeFileSync(path, parsedContent.toSource(), 'utf-8');
+      writeFileAndUpdateStore(path, 'parsedContent', parsedContent);
     }
   }
 }

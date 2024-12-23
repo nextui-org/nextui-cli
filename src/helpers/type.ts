@@ -35,6 +35,15 @@ export type RequiredKey<T, Key extends keyof T> = {
   [K in Key]-?: T[K];
 };
 
+/**
+ * @example PartialKey<{a: 1, b: 2}, a> => {a?: 1, b: 2}
+ */
+export type PartialKey<T, Key extends keyof T> = {
+  [K in keyof T as K extends Key ? never : K]: T[K];
+} & {
+  [K in Key]?: T[K];
+};
+
 export type ChalkColor =
   | 'black'
   | 'red'

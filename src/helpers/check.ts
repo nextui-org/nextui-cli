@@ -1,4 +1,4 @@
-import type {RequiredKey, SAFE_ANY} from './type';
+import type {PartialKey, RequiredKey, SAFE_ANY} from './type';
 import type {ProblemRecord} from 'src/actions/doctor-action';
 
 import {readFileSync} from 'node:fs';
@@ -124,7 +124,7 @@ export async function checkRequiredContentInstalled<
   dependenciesKeys: Set<string>,
   checkPeerDependenciesConfig?: T extends {peerDependencies: infer P}
     ? P extends true
-      ? Required<Omit<CheckPeerDependenciesConfig, 'beta'>>
+      ? PartialKey<Required<CheckPeerDependenciesConfig>, 'beta'>
       : T
     : T
 ): Promise<CheckResult> {

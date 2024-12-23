@@ -18,7 +18,7 @@ import {detect} from '@helpers/detect';
 import {fixPnpm, fixProvider, fixTailwind} from '@helpers/fix';
 import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
-import {findFiles} from '@helpers/utils';
+import {findFiles, strip} from '@helpers/utils';
 import {resolver} from 'src/constants/path';
 import {
   DOCS_PROVIDER_SETUP,
@@ -119,11 +119,13 @@ export async function addAction(components: string[], options: AddActionOptions)
 
   /** ======================== Step 1 Add dependencies required ======================== */
   if (all) {
-    const [, ...missingDependencies] = await checkRequiredContentInstalled(
+    let [, ...missingDependencies] = await checkRequiredContentInstalled(
       'all',
       allDependenciesKeys,
-      {beta}
+      {allDependencies, beta, packageNames: [NEXT_UI], peerDependencies: true}
     );
+
+    missingDependencies = missingDependencies.map((c) => strip(c));
 
     if (missingDependencies.length) {
       Logger.info(
@@ -138,15 +140,20 @@ export async function addAction(components: string[], options: AddActionOptions)
       );
     }
   } else {
-    const [, ..._missingDependencies] = await checkRequiredContentInstalled(
-      'partial',
-      allDependenciesKeys,
-      {beta}
-    );
     const mergedComponents = beta
       ? await getBetaComponents(components)
       : components.map((c) => store.nextUIComponentsMap[c]!.package);
-    const missingDependencies = [..._missingDependencies, ...mergedComponents];
+    const [, ..._missingDependencies] = await checkRequiredContentInstalled(
+      'partial',
+      allDependenciesKeys,
+      {
+        allDependencies,
+        beta,
+        packageNames: mergedComponents,
+        peerDependencies: true
+      }
+    );
+    const missingDependencies = [..._missingDependencies, ...mergedComponents].map((c) => strip(c));
 
     Logger.info(
       `Adding required dependencies: ${[...missingDependencies]

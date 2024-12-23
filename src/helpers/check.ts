@@ -124,7 +124,7 @@ export async function checkRequiredContentInstalled<
   dependenciesKeys: Set<string>,
   checkPeerDependenciesConfig?: T extends {peerDependencies: infer P}
     ? P extends true
-      ? Required<Omit<CheckPeerDependenciesConfig, 'beta'>>
+      ? Required<CheckPeerDependenciesConfig>
       : T
     : T
 ): Promise<CheckResult> {

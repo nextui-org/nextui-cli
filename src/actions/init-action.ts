@@ -152,7 +152,7 @@ export type GenerateOptions<T, Last = GetUnionLastValue<T>> = [T] extends [never
 async function getTableInfo(packageName?: string, projectName?: string, template?: string) {
   const options: GenerateOptions<Exclude<InitActionOptions['template'], undefined>> = [
     {
-      hint: 'A Next.js 14 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.',
+      hint: 'A Next.js 15 with app directory template pre-configured with NextUI (v2) and Tailwind CSS.',
       label: 'App',
       value: 'app'
     },

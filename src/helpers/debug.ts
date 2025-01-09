@@ -23,7 +23,7 @@ export function debugAddedPkg(components: string[], packagePath: string) {
   const {dependencies, packageJson} = getPackageInfo(packagePath);
 
   for (const component of components) {
-    const compData = store.nextUIComponentsMap[component];
+    const compData = store.heroUIComponentsMap[component];
 
     if (!compData) continue;
 
@@ -48,7 +48,7 @@ export function debugRemovedPkg(components: string[], packagePath: string) {
   const {dependencies, packageJson} = getPackageInfo(packagePath);
 
   for (const component of components) {
-    const compData = store.nextUIComponentsMap[component];
+    const compData = store.heroUIComponentsMap[component];
 
     if (!compData) continue;
     delete dependencies[compData.package];

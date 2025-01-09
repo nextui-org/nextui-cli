@@ -88,7 +88,7 @@
 ### Bug Fixes
 
 - add command error in tailwind ([#80](https://github.com/nextui-org/nextui-cli/issues/80)) ([455d6e0](https://github.com/nextui-org/nextui-cli/commit/455d6e03ed33f2bba18cb5cd113966af0a7dc69f))
-- upgrade command select option cannot select @nextui-org/react pkg ([#78](https://github.com/nextui-org/nextui-cli/issues/78)) ([93e5cdc](https://github.com/nextui-org/nextui-cli/commit/93e5cdc98299ec75d5720c0a6d44d08241c66dc7))
+- upgrade command select option cannot select @heroui/react pkg ([#78](https://github.com/nextui-org/nextui-cli/issues/78)) ([93e5cdc](https://github.com/nextui-org/nextui-cli/commit/93e5cdc98299ec75d5720c0a6d44d08241c66dc7))
 
 ### Features
 

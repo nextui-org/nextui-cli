@@ -155,7 +155,7 @@ Output:
 ```bash
 heroui Codemod v0.0.1
 
-┌   Starting to migrate nextui to heroUI
+┌   Starting to migrate nextui to heroui
 │
 ◇  1. Migrating "package.json"
 │
@@ -164,7 +164,7 @@ heroui Codemod v0.0.1
 │
 ◇  Migrated package.json
 │
-◇  2. Migrating import "nextui" to "heroUI"
+◇  2. Migrating import "nextui" to "heroui"
 │
 ◇  Do you want to migrate import nextui to heroui?
 │  Yes

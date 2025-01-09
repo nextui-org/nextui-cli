@@ -43,7 +43,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   );
   let step = 1;
 
-  p.intro(chalk.inverse(' Starting to migrate nextui to heroUI '));
+  p.intro(chalk.inverse(' Starting to migrate nextui to heroui '));
   const spinner = p.spinner();
 
   /** ======================== 1. Migrate package.json ======================== */
@@ -63,11 +63,11 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     step++;
   }
 
-  /** ======================== 2. Migrate import nextui to heroUI ======================== */
+  /** ======================== 2. Migrate import nextui to heroui ======================== */
   const runMigrateImportNextui = getCanRunCodemod(codemod, 'import-heroui');
 
   if (runMigrateImportNextui) {
-    p.log.step(`${step}. Migrating import "nextui" to "heroUI"`);
+    p.log.step(`${step}. Migrating import "nextui" to "heorui"`);
     const selectMigrateNextui = await confirmClack({
       message: 'Do you want to migrate import nextui to heroui?'
     });

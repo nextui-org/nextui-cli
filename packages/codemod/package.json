@@ -3,29 +3,30 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.0.1",
-  "homepage": "https://github.com/nextui-org/nextui-cli#readme",
+  "version": "0.0.2",
+  "homepage": "https://github.com/frontio-ai/heroui-cli#readme",
   "description": "A CLI tool that modifies your codebase to use the heroui",
   "keywords": [
     "UI",
     "CLI",
     "Tool",
+    "Frontio AI",
     "NextUI",
     "HeroUI",
     "Integration",
     "Modify Codebase"
   ],
   "author": {
-    "name": "NextUI",
-    "email": "support@nextui.org",
-    "url": "https://github.com/nextui-org"
+    "name": "Frontio AI",
+    "email": "support@frontio.ai",
+    "url": "https://github.com/frontio-ai"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nextui-org/nextui-cli.git"
+    "url": "https://github.com/frontio-ai/heroui-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/nextui-org/nextui-cli/issues"
+    "url": "https://github.com/frontio-ai/heroui-cli/issues"
   },
   "publishConfig": {
     "access": "public",

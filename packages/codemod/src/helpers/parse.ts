@@ -49,3 +49,11 @@ export function parseContent(path: string): Collection<SAFE_ANY> | undefined {
     return;
   }
 }
+
+export function safeParseJson(content: string) {
+  try {
+    return JSON.parse(content);
+  } catch {
+    return {};
+  }
+}

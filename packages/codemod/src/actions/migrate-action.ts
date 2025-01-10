@@ -44,7 +44,6 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   let step = 1;
 
   p.intro(chalk.inverse(' Starting to migrate nextui to heroui '));
-  const spinner = p.spinner();
 
   /** ======================== 1. Migrate package.json ======================== */
   const runMigratePackageJson = getCanRunCodemod(codemod, 'package-json-package-name');
@@ -56,9 +55,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     });
 
     if (selectMigrate) {
-      spinner.start('Migrating package.json...');
       await migrateJson(packagesJson);
-      spinner.stop('Migrated package.json');
     }
     step++;
   }
@@ -76,9 +73,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       // Store all the parsed content of the nextuiFiles
       storeParsedContent(nextuiFiles);
 
-      spinner.start('Migrating import nextui to heroui...');
       migrateImportPackageWithPaths(nextuiFiles);
-      spinner.stop('Migrated import nextui to heroui');
     }
     step++;
   }
@@ -93,9 +88,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     });
 
     if (selectMigrateNextuiProvider) {
-      spinner.start('Migrating NextUIProvider to HeroUIProvider...');
       migrateNextuiProvider(nextuiFiles);
-      spinner.stop('Migrated NextUIProvider to HeroUIProvider');
     }
     step++;
   }
@@ -112,9 +105,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     if (selectMigrateTailwindcss) {
       const tailwindcssFiles = files.filter((file) => /tailwind\.config\.[jt]s/.test(file));
 
-      spinner.start('Migrating tailwindcss...');
       migrateTailwindcss(tailwindcssFiles);
-      spinner.stop('Migrated tailwindcss');
     }
     step++;
   }
@@ -129,9 +120,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     });
 
     if (selectMigrateCssVariables) {
-      spinner.start('Migrating css variables...');
       migrateCssVariables(files);
-      spinner.stop('Migrated css variables');
     }
     step++;
   }
@@ -150,9 +139,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     });
 
     if (selectMigrateNpmrc) {
-      spinner.start('Migrating npmrc...');
       migrateNpmrc(npmrcFiles);
-      spinner.stop('Migrated npmrc');
     }
     step++;
   }

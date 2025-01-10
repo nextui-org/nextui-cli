@@ -3,6 +3,8 @@ import type {SAFE_ANY} from '@helpers/type';
 import {Logger} from '@helpers/logger';
 
 import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
+import {fetchPackageLatestVersion} from '../../https';
+import {safeParseJson} from '../../parse';
 import {getStore, writeFileAndUpdateStore} from '../../store';
 
 const DEFAULT_INDENT = 2;
@@ -13,17 +15,42 @@ export function detectIndent(content: string): number {
   return match ? match[1]?.length || DEFAULT_INDENT : DEFAULT_INDENT;
 }
 
+function filterHeroUiPkgs(pkgs: string[]) {
+  return pkgs.filter((pkg) => pkg.includes(HEROUI_PREFIX) || pkg.includes(NEXTUI_PREFIX));
+}
+
 export async function migrateJson(files: string[]) {
   try {
     await Promise.all(
-      files.map((file) => {
+      files.map(async (file) => {
         const content = getStore(file, 'rawContent');
         const dirtyFlag = content.includes(NEXTUI_PREFIX);
 
         if (dirtyFlag) {
           const replacedContent = content.replaceAll(NEXTUI_PREFIX, HEROUI_PREFIX);
+          const json = safeParseJson(replacedContent);
 
-          writeFileAndUpdateStore(file, 'rawContent', replacedContent);
+          try {
+            await Promise.all([
+              ...filterHeroUiPkgs(Object.keys(json.dependencies)).map(async (key) => {
+                const version = await fetchPackageLatestVersion(key);
+
+                json.dependencies[key] = version;
+              }),
+              ...filterHeroUiPkgs(Object.keys(json.devDependencies)).map(async (key) => {
+                const version = await fetchPackageLatestVersion(key);
+
+                json.devDependencies[key] = version;
+              })
+            ]);
+          } catch (error) {
+            Logger.warn(
+              `Migrate ${file} failed\n${error}\nYou need to manually migrate the rest of the packages.`
+            );
+          }
+          const indent = detectIndent(content);
+
+          writeFileAndUpdateStore(file, 'rawContent', JSON.stringify(json, null, indent));
         }
       })
     );

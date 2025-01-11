@@ -100,3 +100,9 @@ export function writeFileAndUpdateStore<K extends ExcludeStoreKey>(
   updateStore(path, key, value);
   key === 'parsedContent' && updateStore(path, 'rawContent', data.rawContent);
 }
+
+export const effectedFiles = new Set<string>();
+
+export function updateEffectedFiles(path: string) {
+  effectedFiles.add(path);
+}

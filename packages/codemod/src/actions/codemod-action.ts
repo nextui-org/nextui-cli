@@ -6,8 +6,8 @@ import {migrateAction} from './migrate-action';
 
 function printUsage() {
   Logger.grey('Usage: ');
-  Logger.log(`nextui [codemod]`);
-  Logger.log(`nextui migrate [projectPath]`);
+  Logger.log(`heroui [codemod]`);
+  Logger.log(`heroui migrate [projectPath]`);
   Logger.newLine();
   Logger.grey('Codemods:');
   Logger.log(`- ${codemods.join('\n- ')}`);

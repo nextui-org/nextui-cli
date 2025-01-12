@@ -4,15 +4,6 @@
       <h1 align="center">@heroui/codemod</h1>
   </a>
 </p>
-</br>
-<p align="center">
-  <a href="https://github.com/nextui-org/nextui-cli/blob/main/license">
-    <img src="https://img.shields.io/npm/l/@nextui-org/react?style=flat" alt="License">
-  </a>
-  <a href="https://www.npmjs.com/package/nextui-cli">
-    <img src="https://img.shields.io/npm/dm/nextui-cli.svg?style=flat-round" alt="npm downloads">
-  </a>
-</p>
 
 The CLI provides a comprehensive suite of tools to migrate your codebase from NextUI to heroui.
 

@@ -11,9 +11,9 @@ import {migrateAction} from './actions/migrate-action';
 import {DEBUG} from './helpers/debug';
 import {codemods} from './types';
 
-const nextui = new Command();
+const heroui = new Command();
 
-nextui
+heroui
   .name(pkg.name)
   .usage('[command]')
   .description(getCommandDescAndLog(`\nHeroUI Codemod v${pkg.version}\n`, pkg.description))
@@ -24,20 +24,20 @@ nextui
   .option('-d, --debug', 'Enable debug mode')
   .action(codemodAction);
 
-nextui
+heroui
   .command('migrate')
   .description('Migrates your codebase to use the heroui')
   .argument('[projectPath]', 'Path to the project to migrate')
   .action(migrateAction);
 
-nextui.hook('preAction', async (command) => {
+heroui.hook('preAction', async (command) => {
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const debug = options.includes('--debug') || options.includes('-d');
 
   DEBUG.enabled = debug;
 });
 
-nextui.parseAsync(process.argv).catch(async (reason) => {
+heroui.parseAsync(process.argv).catch(async (reason) => {
   Logger.newLine();
   Logger.error('Unexpected error. Please report it as a bug:');
   Logger.log(reason);

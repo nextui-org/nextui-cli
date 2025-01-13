@@ -1,5 +1,5 @@
 import {HEROUI_PROVIDER, NEXTUI_PROVIDER} from '../../../constants/prefix';
-import {getStore, updateEffectedFiles, writeFileAndUpdateStore} from '../../store';
+import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
 import {migrateByRegex} from './migrate-common';
 
@@ -26,7 +26,7 @@ export function migrateNextuiProvider(paths: string[]) {
       if (dirtyFlag) {
         // Write the modified content back to the file
         writeFileAndUpdateStore(path, 'rawContent', rawContent);
-        updateEffectedFiles(path);
+        updateAffectedFiles(path);
       }
       // eslint-disable-next-line no-empty
     } catch {}

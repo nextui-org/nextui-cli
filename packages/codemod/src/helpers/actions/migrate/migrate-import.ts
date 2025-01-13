@@ -4,7 +4,7 @@ import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
 import {
   type StoreObject,
   getStore,
-  updateEffectedFiles,
+  updateAffectedFiles,
   writeFileAndUpdateStore
 } from '../../store';
 
@@ -29,7 +29,7 @@ export function migrateImportPackageWithPaths(paths: string[]) {
       if (dirtyFlag) {
         // Write the modified content back to the file
         writeFileAndUpdateStore(path, 'parsedContent', parsedContent);
-        updateEffectedFiles(path);
+        updateAffectedFiles(path);
       }
       // eslint-disable-next-line no-empty
     } catch {}

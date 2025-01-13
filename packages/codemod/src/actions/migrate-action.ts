@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
 import {NEXTUI_PREFIX} from '../constants/prefix';
-import {lintEffectedFiles} from '../helpers/actions/lint-effected-files';
+import {lintAffectedFiles} from '../helpers/actions/lint-affected-files';
 import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
@@ -14,7 +14,7 @@ import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-p
 import {migrateNpmrc} from '../helpers/actions/migrate/migrate-npmrc';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
 import {findFiles} from '../helpers/find-files';
-import {effectedFiles, getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
+import {affectedFiles, getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
 import {transformPaths} from '../helpers/transform';
 import {getCanRunCodemod} from '../helpers/utils';
 
@@ -145,17 +145,17 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     step++;
   }
 
-  /** ======================== 7. Formatting effected files (Optional) ======================== */
-  const runFormatEffectedFiles = effectedFiles.size > 0;
+  /** ======================== 7. Formatting affected files (Optional) ======================== */
+  const runFormatAffectedFiles = affectedFiles.size > 0;
 
-  if (runFormatEffectedFiles) {
-    p.log.step(`${step}. Formatting effected files (Optional)`);
+  if (runFormatAffectedFiles) {
+    p.log.step(`${step}. Formatting affected files (Optional)`);
     const selectMigrateNpmrc = await confirmClack({
-      message: `Do you want to format effected files? (${effectedFiles.size})`
+      message: `Do you want to format affected files? (${affectedFiles.size})`
     });
 
     if (selectMigrateNpmrc) {
-      await lintEffectedFiles();
+      await lintAffectedFiles();
     }
     step++;
   }

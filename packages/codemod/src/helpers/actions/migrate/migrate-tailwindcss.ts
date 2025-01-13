@@ -8,7 +8,7 @@ import {
   NEXTUI_PLUGIN,
   NEXTUI_PREFIX
 } from '../../../constants/prefix';
-import {getStore, updateEffectedFiles, writeFileAndUpdateStore} from '../../store';
+import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
 import {migrateCallExpressionName, migrateImportName} from './migrate-common';
 import {migrateImportPackage} from './migrate-import';
@@ -56,7 +56,7 @@ export function migrateTailwindcss(paths: string[]) {
 
     if (dirtyFlag) {
       writeFileAndUpdateStore(path, 'parsedContent', parsedContent);
-      updateEffectedFiles(path);
+      updateAffectedFiles(path);
     }
   }
 }

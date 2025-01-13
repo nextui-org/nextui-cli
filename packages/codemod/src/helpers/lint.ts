@@ -8,11 +8,7 @@ async function tryImportPackage(packageName: string) {
   }
 }
 
-/**
- * Try linting a file with ESLint/Prettier
- * First try ESLint, if it fails, try Prettier.
- */
-export async function tryLintFile(filePaths: string[]) {
+export async function lintWithESLint(filePaths: string[]) {
   const eslintPkg = await tryImportPackage('eslint');
 
   if (eslintPkg) {
@@ -23,22 +19,39 @@ export async function tryLintFile(filePaths: string[]) {
     const result = await eslint.lintFiles(filePaths);
 
     await ESLint.outputFixes(result);
-  } else {
-    const prettier = await tryImportPackage('prettier');
-    const options = await prettier.resolveConfig(process.cwd());
+  }
+}
 
-    if (prettier) {
-      await Promise.all(
-        filePaths.map(async (filePath) => {
-          const rawContent = getStore(filePath, 'rawContent');
-          const formattedContent = await prettier.format(rawContent, {
-            options,
-            parser: 'typescript'
-          });
+export async function lintWithPrettier(filePaths: string[]) {
+  const prettier = await tryImportPackage('prettier');
+  const options = await prettier.resolveConfig(process.cwd());
 
-          writeFileAndUpdateStore(filePath, 'rawContent', formattedContent);
-        })
-      );
+  if (prettier) {
+    await Promise.all(
+      filePaths.map(async (filePath) => {
+        const rawContent = getStore(filePath, 'rawContent');
+        const formattedContent = await prettier.format(rawContent, {
+          options,
+          parser: 'typescript'
+        });
+
+        writeFileAndUpdateStore(filePath, 'rawContent', formattedContent);
+      })
+    );
+  }
+}
+
+/**
+ * Try linting a file with ESLint
+ */
+export async function tryLintFile(filePaths: string[], format = false) {
+  try {
+    if (format) {
+      await lintWithPrettier(filePaths);
+    } else {
+      await lintWithESLint(filePaths);
     }
+  } catch {
+    return;
   }
 }

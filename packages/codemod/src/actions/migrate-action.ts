@@ -159,7 +159,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     p.log.step(`${step}. Remaining files with "@nextui-org" (${remainingFiles.length})`);
     p.log.info(remainingFiles.join('\n'));
     const selectMigrateLeftFiles = await confirmClack({
-      message: 'Do you want to replace all remaining files with "@nextui-org" to "@heroui"?'
+      message: 'Do you want to replace all remaining instances of ‘@nextui-org’ with ‘@heroui’?'
     });
 
     if (selectMigrateLeftFiles) {

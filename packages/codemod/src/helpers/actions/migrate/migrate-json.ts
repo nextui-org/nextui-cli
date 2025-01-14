@@ -5,7 +5,7 @@ import {Logger} from '@helpers/logger';
 import {HEROUI_PREFIX, NEXTUI_PREFIX} from '../../../constants/prefix';
 import {fetchPackageLatestVersion} from '../../https';
 import {safeParseJson} from '../../parse';
-import {getStore, writeFileAndUpdateStore} from '../../store';
+import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
 const DEFAULT_INDENT = 2;
 
@@ -51,6 +51,7 @@ export async function migrateJson(files: string[]) {
           const indent = detectIndent(content);
 
           writeFileAndUpdateStore(file, 'rawContent', JSON.stringify(json, null, indent));
+          updateAffectedFiles(file);
         }
       })
     );

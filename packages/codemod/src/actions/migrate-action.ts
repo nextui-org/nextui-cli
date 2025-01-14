@@ -6,6 +6,7 @@ import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
 import {NEXTUI_PREFIX} from '../constants/prefix';
+import {lintAffectedFiles} from '../helpers/actions/lint-affected-files';
 import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
@@ -13,7 +14,8 @@ import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-p
 import {migrateNpmrc} from '../helpers/actions/migrate/migrate-npmrc';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
 import {findFiles} from '../helpers/find-files';
-import {getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
+import {getOptionsValue} from '../helpers/options';
+import {affectedFiles, getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
 import {transformPaths} from '../helpers/transform';
 import {getCanRunCodemod} from '../helpers/utils';
 
@@ -142,6 +144,28 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       migrateNpmrc(npmrcFiles);
     }
     step++;
+  }
+
+  const format = getOptionsValue('format');
+  /** ======================== 7. Formatting affected files (Optional) ======================== */
+  const runFormatAffectedFiles = affectedFiles.size > 0;
+
+  // If user using format option, we don't need to use eslint
+  if (runFormatAffectedFiles && !format) {
+    p.log.step(`${step}. Formatting affected files (Optional)`);
+    const selectMigrateNpmrc = await confirmClack({
+      message: `Do you want to format affected files? (${affectedFiles.size})`
+    });
+
+    if (selectMigrateNpmrc) {
+      await lintAffectedFiles();
+    }
+    step++;
+  }
+
+  // Directly linting affected files don't need to ask user
+  if (format) {
+    await lintAffectedFiles();
   }
 
   p.outro(chalk.green('✅ Migration completed!'));

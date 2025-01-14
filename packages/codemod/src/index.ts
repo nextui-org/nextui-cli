@@ -9,6 +9,7 @@ import pkg from '../package.json';
 import {codemodAction} from './actions/codemod-action';
 import {migrateAction} from './actions/migrate-action';
 import {DEBUG} from './helpers/debug';
+import {initOptions} from './helpers/options';
 import {codemods} from './types';
 
 const nextui = new Command();
@@ -22,6 +23,7 @@ nextui
   .argument('[codemod]', `Specify which codemod to run\nCodemods: ${codemods.join(', ')}`)
   .allowUnknownOption()
   .option('-d, --debug', 'Enable debug mode')
+  .option('-f, --format', 'Format the affected files with Prettier')
   .action(codemodAction);
 
 nextui
@@ -33,6 +35,9 @@ nextui
 nextui.hook('preAction', async (command) => {
   const options = (command as SAFE_ANY).rawArgs.slice(2);
   const debug = options.includes('--debug') || options.includes('-d');
+  const format = options.includes('--format') || options.includes('-f');
+
+  initOptions({format});
 
   DEBUG.enabled = debug;
 });

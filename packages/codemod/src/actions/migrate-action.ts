@@ -10,6 +10,7 @@ import {lintAffectedFiles} from '../helpers/actions/lint-affected-files';
 import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
+import {migrateLeftFiles} from '../helpers/actions/migrate/migrate-left-files';
 import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-provider';
 import {migrateNpmrc} from '../helpers/actions/migrate/migrate-npmrc';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
@@ -32,7 +33,7 @@ interface MigrateActionOptions {
 export async function migrateAction(projectPaths?: string[], options = {} as MigrateActionOptions) {
   const {codemod} = options;
   const transformedPaths = transformPaths(projectPaths);
-  const files = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json}'});
+  const files = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json,mjs,cjs}'});
 
   // Store the raw content of the files
   storePathsRawContent(files);
@@ -146,8 +147,23 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     step++;
   }
 
+  /** ======================== 7. Whether need to change left files with @nextui-org ======================== */
+  const remainingFiles = nextuiFiles.filter((file) => !affectedFiles.has(file));
+  const runCheckLeftFiles = remainingFiles.length > 0;
+
+  if (runCheckLeftFiles) {
+    p.log.step(`${step}. Remaining files with @nextui-org (${remainingFiles.length})`);
+    const selectMigrateLeftFiles = await confirmClack({
+      message: `Do you want to replace all remaining files with @nextui-org to @heroui?\n${remainingFiles.join('\n')}`
+    });
+
+    if (selectMigrateLeftFiles) {
+      migrateLeftFiles(remainingFiles);
+    }
+  }
+
   const format = getOptionsValue('format');
-  /** ======================== 7. Formatting affected files (Optional) ======================== */
+  /** ======================== 8. Formatting affected files (Optional) ======================== */
   const runFormatAffectedFiles = affectedFiles.size > 0;
 
   // If user using format option, we don't need to use eslint

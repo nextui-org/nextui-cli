@@ -188,5 +188,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     await lintAffectedFiles();
   }
 
+  p.note(`Reinstall the dependencies e.g. "pnpm install"`, 'Next steps');
+
   p.outro(chalk.green('✅ Migration completed!'));
 }

@@ -1,3 +1,4 @@
+import {getOptionsValue} from './options';
 import {getStore, writeFileAndUpdateStore} from './store';
 
 async function tryImportPackage(packageName: string) {
@@ -42,11 +43,11 @@ export async function lintWithPrettier(filePaths: string[]) {
 }
 
 /**
- * Try linting a file with ESLint
+ * Try linting a file with ESLint or Prettier
  */
-export async function tryLintFile(filePaths: string[], format = false) {
+export async function tryLintFile(filePaths: string[]) {
   try {
-    if (format) {
+    if (getOptionsValue('format')) {
       await lintWithPrettier(filePaths);
     } else {
       await lintWithESLint(filePaths);

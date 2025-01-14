@@ -1,11 +1,9 @@
 import {tryLintFile} from '../lint';
 import {affectedFiles} from '../store';
 
-export async function lintAffectedFiles(params?: {format: boolean}) {
-  const {format} = params || {};
-
+export async function lintAffectedFiles() {
   try {
-    await tryLintFile(Array.from(affectedFiles), format);
+    await tryLintFile(Array.from(affectedFiles));
   } catch (error) {
     return;
   }

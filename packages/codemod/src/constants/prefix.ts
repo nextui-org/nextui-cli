@@ -9,3 +9,5 @@ export const HEROUI_PLUGIN = 'heroui';
 
 export const NEXTUI_CSS_VARIABLES_PREFIX = '--nextui-';
 export const HEROUI_CSS_VARIABLES_PREFIX = '--heroui-';
+
+export const EXTRA_FILES = ['.storybook'];

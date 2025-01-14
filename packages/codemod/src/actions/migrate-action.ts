@@ -5,19 +5,20 @@ import {Logger} from '@helpers/logger';
 import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
-import {NEXTUI_PREFIX} from '../constants/prefix';
+import {EXTRA_FILES} from '../constants/prefix';
 import {lintAffectedFiles} from '../helpers/actions/lint-affected-files';
 import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
 import {migrateJson} from '../helpers/actions/migrate/migrate-json';
+import {migrateLeftFiles} from '../helpers/actions/migrate/migrate-left-files';
 import {migrateNextuiProvider} from '../helpers/actions/migrate/migrate-nextui-provider';
 import {migrateNpmrc} from '../helpers/actions/migrate/migrate-npmrc';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
 import {findFiles} from '../helpers/find-files';
 import {getOptionsValue} from '../helpers/options';
-import {affectedFiles, getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
+import {affectedFiles, storeParsedContent, storePathsRawContent} from '../helpers/store';
 import {transformPaths} from '../helpers/transform';
-import {getCanRunCodemod} from '../helpers/utils';
+import {filterNextuiFiles, getCanRunCodemod} from '../helpers/utils';
 
 process.on('SIGINT', () => {
   Logger.newLine();
@@ -32,7 +33,10 @@ interface MigrateActionOptions {
 export async function migrateAction(projectPaths?: string[], options = {} as MigrateActionOptions) {
   const {codemod} = options;
   const transformedPaths = transformPaths(projectPaths);
-  const files = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json}'});
+  const baseFiles = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json,mjs,cjs}'});
+  const dotFiles = await findFiles(transformedPaths, {dot: true});
+  const extraFiles = dotFiles.filter((file) => EXTRA_FILES.some((extra) => file.includes(extra)));
+  const files = [...baseFiles, ...extraFiles];
 
   // Store the raw content of the files
   storePathsRawContent(files);
@@ -40,9 +44,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   // All package.json
   const packagesJson = files.filter((file) => file.includes('package.json'));
   // All included nextui
-  const nextuiFiles = files.filter((file) =>
-    new RegExp(NEXTUI_PREFIX, 'g').test(getStore(file, 'rawContent'))
-  );
+  const nextuiFiles = filterNextuiFiles(files);
   let step = 1;
 
   p.intro(chalk.inverse(' Starting to migrate nextui to heroui '));
@@ -131,9 +133,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const runMigrateNpmrc = getCanRunCodemod(codemod, 'npmrc');
 
   if (runMigrateNpmrc) {
-    const npmrcFiles = (await findFiles(transformedPaths, {dot: true})).filter((path) =>
-      path.includes('.npmrc')
-    );
+    const npmrcFiles = dotFiles.filter((path) => path.includes('.npmrc'));
 
     p.log.step(`${step}. Migrating "npmrc" (Pnpm only)`);
     const selectMigrateNpmrc = await confirmClack({
@@ -146,8 +146,30 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     step++;
   }
 
+  /** ======================== 7. Whether need to change left files with @nextui-org ======================== */
+  const remainingNextuiFiles = filterNextuiFiles([...affectedFiles]);
+  const remainingFiles = [
+    ...nextuiFiles.filter((file) => !affectedFiles.has(file)),
+    ...remainingNextuiFiles
+  ];
+  const runCheckLeftFiles = remainingFiles.length > 0;
+
+  // If user not using individual codemod, we need to ask user to replace left files
+  if (runCheckLeftFiles && !codemod) {
+    p.log.step(`${step}. Remaining files with "@nextui-org" (${remainingFiles.length})`);
+    p.log.info(remainingFiles.join('\n'));
+    const selectMigrateLeftFiles = await confirmClack({
+      message: 'Do you want to replace all remaining instances of ‘@nextui-org’ with ‘@heroui’?'
+    });
+
+    if (selectMigrateLeftFiles) {
+      migrateLeftFiles(remainingFiles);
+    }
+    step++;
+  }
+
   const format = getOptionsValue('format');
-  /** ======================== 7. Formatting affected files (Optional) ======================== */
+  /** ======================== 8. Formatting affected files (Optional) ======================== */
   const runFormatAffectedFiles = affectedFiles.size > 0;
 
   // If user using format option, we don't need to use eslint
@@ -167,6 +189,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   if (format) {
     await lintAffectedFiles();
   }
+
+  p.note(`Reinstall the dependencies e.g. "pnpm install"`, 'Next steps');
 
   p.outro(chalk.green('✅ Migration completed!'));
 }

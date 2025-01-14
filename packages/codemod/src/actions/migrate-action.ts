@@ -5,7 +5,7 @@ import {Logger} from '@helpers/logger';
 import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
-import {NEXTUI_PREFIX} from '../constants/prefix';
+import {EXTRA_FILES, NEXTUI_PREFIX} from '../constants/prefix';
 import {lintAffectedFiles} from '../helpers/actions/lint-affected-files';
 import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
@@ -33,7 +33,10 @@ interface MigrateActionOptions {
 export async function migrateAction(projectPaths?: string[], options = {} as MigrateActionOptions) {
   const {codemod} = options;
   const transformedPaths = transformPaths(projectPaths);
-  const files = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json,mjs,cjs}'});
+  const baseFiles = await findFiles(transformedPaths, {ext: '{js,jsx,ts,tsx,json,mjs,cjs}'});
+  const dotFiles = await findFiles(transformedPaths, {dot: true});
+  const extraFiles = dotFiles.filter((file) => EXTRA_FILES.some((extra) => file.includes(extra)));
+  const files = [...baseFiles, ...extraFiles];
 
   // Store the raw content of the files
   storePathsRawContent(files);
@@ -132,9 +135,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const runMigrateNpmrc = getCanRunCodemod(codemod, 'npmrc');
 
   if (runMigrateNpmrc) {
-    const npmrcFiles = (await findFiles(transformedPaths, {dot: true})).filter((path) =>
-      path.includes('.npmrc')
-    );
+    const npmrcFiles = dotFiles.filter((path) => path.includes('.npmrc'));
 
     p.log.step(`${step}. Migrating "npmrc" (Pnpm only)`);
     const selectMigrateNpmrc = await confirmClack({
@@ -151,7 +152,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const remainingFiles = nextuiFiles.filter((file) => !affectedFiles.has(file));
   const runCheckLeftFiles = remainingFiles.length > 0;
 
-  if (runCheckLeftFiles) {
+  // If user not using individual codemod, we need to ask user to replace left files
+  if (runCheckLeftFiles && !codemod) {
     p.log.step(`${step}. Remaining files with @nextui-org (${remainingFiles.length})`);
     const selectMigrateLeftFiles = await confirmClack({
       message: `Do you want to replace all remaining files with @nextui-org to @heroui?\n${remainingFiles.join('\n')}`

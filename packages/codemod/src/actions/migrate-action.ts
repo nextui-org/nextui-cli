@@ -5,7 +5,7 @@ import {Logger} from '@helpers/logger';
 import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
 
-import {EXTRA_FILES, NEXTUI_PREFIX} from '../constants/prefix';
+import {EXTRA_FILES} from '../constants/prefix';
 import {lintAffectedFiles} from '../helpers/actions/lint-affected-files';
 import {migrateCssVariables} from '../helpers/actions/migrate/migrate-css-variables';
 import {migrateImportPackageWithPaths} from '../helpers/actions/migrate/migrate-import';
@@ -16,9 +16,9 @@ import {migrateNpmrc} from '../helpers/actions/migrate/migrate-npmrc';
 import {migrateTailwindcss} from '../helpers/actions/migrate/migrate-tailwindcss';
 import {findFiles} from '../helpers/find-files';
 import {getOptionsValue} from '../helpers/options';
-import {affectedFiles, getStore, storeParsedContent, storePathsRawContent} from '../helpers/store';
+import {affectedFiles, storeParsedContent, storePathsRawContent} from '../helpers/store';
 import {transformPaths} from '../helpers/transform';
-import {getCanRunCodemod} from '../helpers/utils';
+import {filterNextuiFiles, getCanRunCodemod} from '../helpers/utils';
 
 process.on('SIGINT', () => {
   Logger.newLine();
@@ -44,9 +44,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   // All package.json
   const packagesJson = files.filter((file) => file.includes('package.json'));
   // All included nextui
-  const nextuiFiles = files.filter((file) =>
-    new RegExp(NEXTUI_PREFIX, 'g').test(getStore(file, 'rawContent'))
-  );
+  const nextuiFiles = filterNextuiFiles(files);
   let step = 1;
 
   p.intro(chalk.inverse(' Starting to migrate nextui to heroui '));
@@ -149,7 +147,11 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   }
 
   /** ======================== 7. Whether need to change left files with @nextui-org ======================== */
-  const remainingFiles = nextuiFiles.filter((file) => !affectedFiles.has(file));
+  const remainingNextuiFiles = filterNextuiFiles([...affectedFiles]);
+  const remainingFiles = [
+    ...nextuiFiles.filter((file) => !affectedFiles.has(file)),
+    ...remainingNextuiFiles
+  ];
   const runCheckLeftFiles = remainingFiles.length > 0;
 
   // If user not using individual codemod, we need to ask user to replace left files

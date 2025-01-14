@@ -1,7 +1,7 @@
 <p align="center">
   <a href="https://heroui.com">
-      <img width="20%" src="https://raw.githubusercontent.com/frontio-ai/heroui/main/apps/docs/public/isotipo.png" alt="heroui" />
-      <h1 align="center">HeroUI CLI</h1>
+      <img width="20%" src="https://raw.githubusercontent.com/frontio-ai/heroui/main/apps/docs/public/isotipo.png" alt="heroui (previously nextui)" />
+      <h1 align="center">HeroUI CLI (Previously NextUI CLI)</h1>
   </a>
 </p>
 </br>

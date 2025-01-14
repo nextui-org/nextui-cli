@@ -1,7 +1,7 @@
 import {HEROUI_PROVIDER, NEXTUI_PROVIDER} from '../../../constants/prefix';
-import {getStore, writeFileAndUpdateStore} from '../../store';
+import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
-import {migrateImportName, migrateJSXElementName} from './migrate-common';
+import {migrateByRegex} from './migrate-common';
 
 /**
  * Migrate the NextUIProvider to HeroUIProvider will directly write the file
@@ -12,22 +12,21 @@ import {migrateImportName, migrateJSXElementName} from './migrate-common';
 export function migrateNextuiProvider(paths: string[]) {
   for (const path of paths) {
     try {
-      const parsedContent = getStore(path, 'parsedContent');
+      let rawContent = getStore(path, 'rawContent');
       let dirtyFlag = false;
 
-      if (!parsedContent) {
+      if (!rawContent) {
         continue;
       }
 
       // Replace JSX element NextUIProvider with HeroUIProvider
-      dirtyFlag = migrateJSXElementName(parsedContent, NEXTUI_PROVIDER, HEROUI_PROVIDER);
-
       // Replace NextUIProvider with HeroUIProvider in import statements
-      if (dirtyFlag) {
-        migrateImportName(parsedContent, NEXTUI_PROVIDER, HEROUI_PROVIDER);
+      ({dirtyFlag, rawContent} = migrateByRegex(rawContent, NEXTUI_PROVIDER, HEROUI_PROVIDER));
 
+      if (dirtyFlag) {
         // Write the modified content back to the file
-        writeFileAndUpdateStore(path, 'parsedContent', parsedContent);
+        writeFileAndUpdateStore(path, 'rawContent', rawContent);
+        updateAffectedFiles(path);
       }
       // eslint-disable-next-line no-empty
     } catch {}

@@ -1,5 +1,5 @@
 import {HEROUI_CSS_VARIABLES_PREFIX, NEXTUI_CSS_VARIABLES_PREFIX} from '../../../constants/prefix';
-import {getStore, writeFileAndUpdateStore} from '../../store';
+import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
 export function migrateCssVariables(files: string[]) {
   for (const file of files) {
@@ -13,6 +13,7 @@ export function migrateCssVariables(files: string[]) {
       );
 
       writeFileAndUpdateStore(file, 'rawContent', content);
+      updateAffectedFiles(file);
     }
   }
 }

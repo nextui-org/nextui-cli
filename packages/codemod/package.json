@@ -3,9 +3,9 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "homepage": "https://github.com/frontio-ai/heroui-cli#readme",
-  "description": "A CLI tool that modifies your codebase to use the heroui",
+  "description": "HeroUI Codemod provides transformations to help migrate your codebase from NextUI to HeroUI",
   "keywords": [
     "UI",
     "CLI",

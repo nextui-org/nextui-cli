@@ -50,8 +50,8 @@
     "lint:fix": "eslint . --max-warnings=0 --fix",
     "check:prettier": "prettier --check .",
     "check:types": "tsc --noEmit",
-    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s --commit-path packages/codemod",
-    "release": "bumpp --execute='pnpm run changelog' --all --tag='@heroui/codemodv%s'",
+    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s --commit-path .",
+    "release": "bumpp --execute='pnpm run changelog' --all --tag '@heroui/codemodv%s'",
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {

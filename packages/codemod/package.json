@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "homepage": "https://github.com/frontio-ai/heroui-cli#readme",
   "description": "HeroUI Codemod provides transformations to help migrate your codebase from NextUI to HeroUI",
   "keywords": [
@@ -51,7 +51,7 @@
     "check:prettier": "prettier --check .",
     "check:types": "tsc --noEmit",
     "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -s --commit-path packages/codemod",
-    "release": "bumpp --execute='pnpm run changelog' --all --tag='@heroui/codemodv%s'",
+    "release": "bumpp --execute='pnpm run changelog' --all --tag '@heroui/codemodv%s'",
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {

@@ -4,7 +4,7 @@ import {
   NEXTUI_PLUGIN,
   NEXTUI_PREFIX
 } from '../../../constants/prefix';
-import {getStore, writeFileAndUpdateStore} from '../../store';
+import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
 export function migrateLeftFiles(files: string[]) {
   for (const file of files) {
@@ -14,5 +14,6 @@ export function migrateLeftFiles(files: string[]) {
       .replaceAll(NEXTUI_PLUGIN, HEROUI_PLUGIN);
 
     writeFileAndUpdateStore(file, 'rawContent', replaceContent);
+    updateAffectedFiles(file);
   }
 }

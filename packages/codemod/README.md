@@ -1,15 +1,19 @@
 <p align="center">
-  <a href="https://nextui.org">
-      <img width="20%" src="https://raw.githubusercontent.com/nextui-org/nextui/main/apps/docs/public/isotipo.png" alt="nextui" />
+  <a href="https://heroui.com">
+      <img width="20%" src="https://raw.githubusercontent.com/frontio-ai/heroui/main/apps/docs/public/isotipo.png" alt="nextui" />
       <h1 align="center">@heroui/codemod</h1>
   </a>
 </p>
 
-The CLI provides a comprehensive suite of tools to migrate your codebase from NextUI to heroui.
+</br>
+
+The CLI provides a comprehensive suite of tools to migrate your codebase from NextUI to HeroUI.
 
 ## Quick Start
 
 > **Note**: The heroui CLI requires [Node.js](https://nodejs.org/en) _18.17.x_ or later
+>
+> **Note**: If running in monorepo, you need to run the command in the root of your monorepo
 
 You can start using @heroui/codemod in one of the following ways:
 
@@ -40,9 +44,10 @@ Options:
   -v, --version          Output the current version
   -d, --debug            Enable debug mode
   -h, --help             Display help for command
+  -f, --format           Format the affected files with Prettier
 
 Commands:
-  migrate [projectPath]  Migrate your codebase to use heroui
+  migrate [projectPath] Migrate your codebase to use heroui
 ```
 
 ## Codemod Arguments
@@ -132,7 +137,7 @@ Example:
 Migrate your entire codebase from NextUI to heroui. You can choose which codemods to run during the migration process.
 
 ```bash
-heroui-codemod migrate [projectPath]
+heroui-codemod migrate [projectPath] [--format]
 ```
 
 Example:

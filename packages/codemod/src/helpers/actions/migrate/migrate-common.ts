@@ -100,6 +100,20 @@ export function migrateJSXElementName(
   return dirtyFlag;
 }
 
+export function migrateByRegex(rawContent: string, match: string, replace: string) {
+  const regex = new RegExp(match, 'g');
+  const dirtyFlag = regex.test(rawContent);
+
+  if (dirtyFlag) {
+    rawContent = rawContent.replace(regex, replace);
+  }
+
+  return {
+    dirtyFlag,
+    rawContent
+  };
+}
+
 /**
  * Migrate the name of the CallExpression
  * @example

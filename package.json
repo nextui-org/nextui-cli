@@ -3,7 +3,7 @@
   "private": false,
   "type": "module",
   "license": "MIT",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "homepage": "https://github.com/frontio-ai/heroui-cli#readme",
   "description": "A CLI tool that unlocks seamless HeroUI integration (Previously NextUI CLI)",
   "keywords": [

@@ -1,3 +1,19 @@
+## [0.5.2](https://github.com/nextui-org/nextui-cli/compare/v0.5.1...v0.5.2) (2025-01-16)
+
+### Bug Fixes
+
+- codemod release ([#136](https://github.com/nextui-org/nextui-cli/issues/136)) ([33fa8e6](https://github.com/nextui-org/nextui-cli/commit/33fa8e6e0740deffc786e7de02a5f7873736114b))
+- migrate nextui provider change to use regex ([#133](https://github.com/nextui-org/nextui-cli/issues/133)) ([af02fbe](https://github.com/nextui-org/nextui-cli/commit/af02fbe776fe5194a7fa93bcb28c73e9d775ea12))
+
+### Features
+
+- add deprecated info in nextui-cli ([#132](https://github.com/nextui-org/nextui-cli/issues/132)) ([0d68eb9](https://github.com/nextui-org/nextui-cli/commit/0d68eb9b401d278852155ea04bb626adefda1024))
+- add format effected files ([#134](https://github.com/nextui-org/nextui-cli/issues/134)) ([a27371b](https://github.com/nextui-org/nextui-cli/commit/a27371b55b365cd9591fa87324fee0b9e1f306bf))
+- add reinstall prompt and retry fetch version ([#137](https://github.com/nextui-org/nextui-cli/issues/137)) ([f36839e](https://github.com/nextui-org/nextui-cli/commit/f36839ed559b28b502b10639009f60c0622b7e4c))
+- add remaining files replace prompt and dot files detected and end note ([#135](https://github.com/nextui-org/nextui-cli/issues/135)) ([d29c05a](https://github.com/nextui-org/nextui-cli/commit/d29c05a71ab781dfa88e9b64014f993516d50f28))
+- **codemod:** change package version to latest ([#131](https://github.com/nextui-org/nextui-cli/issues/131)) ([b3bf4a8](https://github.com/nextui-org/nextui-cli/commit/b3bf4a896ecab6ceb8ac985b8cad9833b688cfbe))
+- init heroui codemod package ([#124](https://github.com/nextui-org/nextui-cli/issues/124)) ([2ddf426](https://github.com/nextui-org/nextui-cli/commit/2ddf426948f2e8ea31b3d31e5bba0f4a327ad611))
+
 ## [0.5.1](https://github.com/nextui-org/nextui-cli/compare/v0.5.0...v0.5.1) (2024-12-23)
 
 ### Bug Fixes

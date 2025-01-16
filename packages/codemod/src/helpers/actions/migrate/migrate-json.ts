@@ -8,6 +8,7 @@ import {safeParseJson} from '../../parse';
 import {getStore, updateAffectedFiles, writeFileAndUpdateStore} from '../../store';
 
 const DEFAULT_INDENT = 2;
+const LATEST_VERSION = 'latest';
 
 export function detectIndent(content: string): number {
   const match = content.match(/^(\s+)/m);
@@ -33,14 +34,22 @@ export async function migrateJson(files: string[]) {
           try {
             await Promise.all([
               ...filterHeroUiPkgs(Object.keys(json.dependencies)).map(async (key) => {
-                const version = await fetchPackageLatestVersion(key);
+                try {
+                  const version = await fetchPackageLatestVersion(key);
 
-                json.dependencies[key] = version;
+                  json.dependencies[key] = version;
+                } catch (error) {
+                  json.dependencies[key] = LATEST_VERSION;
+                }
               }),
               ...filterHeroUiPkgs(Object.keys(json.devDependencies)).map(async (key) => {
-                const version = await fetchPackageLatestVersion(key);
+                try {
+                  const version = await fetchPackageLatestVersion(key);
 
-                json.devDependencies[key] = version;
+                  json.devDependencies[key] = version;
+                } catch (error) {
+                  json.devDependencies[key] = LATEST_VERSION;
+                }
               })
             ]);
           } catch (error) {

@@ -1,6 +1,7 @@
 import type {Codemods} from '../types';
 
 import * as p from '@clack/prompts';
+import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import chalk from 'chalk';
 import {confirmClack} from 'src/prompts/clack';
@@ -18,7 +19,7 @@ import {findFiles} from '../helpers/find-files';
 import {getOptionsValue} from '../helpers/options';
 import {affectedFiles, storeParsedContent, storePathsRawContent} from '../helpers/store';
 import {transformPaths} from '../helpers/transform';
-import {filterNextuiFiles, getCanRunCodemod} from '../helpers/utils';
+import {filterNextuiFiles, getCanRunCodemod, getInstallCommand} from '../helpers/utils';
 
 process.on('SIGINT', () => {
   Logger.newLine();
@@ -190,7 +191,32 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     await lintAffectedFiles();
   }
 
-  p.note(`Reinstall the dependencies e.g. "pnpm install"`, 'Next steps');
+  /** ======================== 9. Reinstall the dependencies ======================== */
+  // if package.json is affected, we need to ask user to reinstall the dependencies
+  const runReinstallDependencies = [...affectedFiles.keys()].some((file) =>
+    file.includes('package.json')
+  );
+
+  if (runReinstallDependencies) {
+    p.log.step(`${step}. Reinstalling the dependencies`);
+    const selectReinstallDependencies = await confirmClack({
+      message: 'Do you want to reinstall the dependencies?'
+    });
+
+    if (selectReinstallDependencies) {
+      const {cmd} = await getInstallCommand();
+
+      try {
+        await exec(cmd);
+      } catch {
+        p.log.error(`Reinstall dependencies error, you need to run it manually e.g. "${cmd}"`);
+      }
+    } else {
+      // If user not want to reinstall the dependencies automatically, we need to tell user to run it manually
+      p.note(`Reinstall the dependencies e.g. "pnpm install"`, 'Next steps');
+    }
+    step++;
+  }
 
   p.outro(chalk.green('✅ Migration completed!'));
 }

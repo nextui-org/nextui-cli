@@ -48,7 +48,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const nextuiFiles = filterNextuiFiles(files);
   let step = 1;
 
-  p.intro(chalk.inverse(' Starting to migrate nextui to heroui '));
+  p.intro(chalk.inverse('Starting to migrate NextUI to HeroUI'));
 
   /** ======================== 1. Migrate package.json ======================== */
   const runMigratePackageJson = getCanRunCodemod(codemod, 'package-json-package-name');
@@ -69,7 +69,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const runMigrateImportNextui = getCanRunCodemod(codemod, 'import-heroui');
 
   if (runMigrateImportNextui) {
-    p.log.step(`${step}. Migrating import "nextui" to "heorui"`);
+    p.log.step(`${step}. Migrating import "nextui" to "heroui"`);
     const selectMigrateNextui = await confirmClack({
       message: 'Do you want to migrate import nextui to heroui?'
     });
@@ -160,7 +160,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     p.log.step(`${step}. Remaining files with "@nextui-org" (${remainingFiles.length})`);
     p.log.info(remainingFiles.join('\n'));
     const selectMigrateLeftFiles = await confirmClack({
-      message: 'Do you want to replace all remaining instances of ‘@nextui-org’ with ‘@heroui’?'
+      message: 'Do you want to replace all remaining instances of "@nextui-org" with "@heroui"?'
     });
 
     if (selectMigrateLeftFiles) {
@@ -209,11 +209,11 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
       try {
         await exec(cmd);
       } catch {
-        p.log.error(`Reinstall dependencies error, you need to run it manually e.g. "${cmd}"`);
+        p.log.error(`Failed to reinstall dependencies. Please run "${cmd}" manually.`);
       }
     } else {
-      // If user not want to reinstall the dependencies automatically, we need to tell user to run it manually
-      p.note(`Reinstall the dependencies e.g. "pnpm install"`, 'Next steps');
+      // If user doesn't want to reinstall the dependencies automatically, tell them to run it manually
+      p.note(`Please reinstall the dependencies (e.g., "pnpm install")`, 'Next steps');
     }
     step++;
   }

@@ -5,7 +5,7 @@ import {Command} from 'commander';
 
 import {Logger, gradientString} from '@helpers/logger';
 import {findMostMatchText} from '@helpers/math-diff';
-import {outputBox} from '@helpers/output-info';
+import {outputBox, outputDeprecatedInfo} from '@helpers/output-info';
 import {getCommandDescAndLog} from '@helpers/utils';
 
 import pkg from '../package.json';
@@ -197,6 +197,8 @@ nextui.hook('preAction', async (command) => {
     });
     Logger.newLine();
   }
+
+  outputDeprecatedInfo();
 });
 
 nextui.parseAsync(process.argv).catch(async (reason) => {

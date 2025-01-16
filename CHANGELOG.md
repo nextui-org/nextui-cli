@@ -1,3 +1,5 @@
+## [0.5.3](https://github.com/frontio-ai/heroui-cli/compare/v0.5.2...v0.5.3) (2025-01-16)
+
 ## [0.5.2](https://github.com/nextui-org/nextui-cli/compare/v0.5.1...v0.5.2) (2025-01-16)
 
 ### Bug Fixes

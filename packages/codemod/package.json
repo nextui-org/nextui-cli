@@ -4,29 +4,29 @@
   "type": "module",
   "license": "MIT",
   "version": "1.2.1",
-  "homepage": "https://github.com/frontio-ai/heroui-cli#readme",
+  "homepage": "https://github.com/heroui-inc/heroui-cli#readme",
   "description": "HeroUI Codemod provides transformations to help migrate your codebase from NextUI to HeroUI",
   "keywords": [
     "UI",
     "CLI",
     "Tool",
-    "Frontio AI",
+    "HeroUI",
     "NextUI",
     "HeroUI",
     "Integration",
     "Modify Codebase"
   ],
   "author": {
-    "name": "Frontio AI",
-    "email": "support@frontio.ai",
-    "url": "https://github.com/frontio-ai"
+    "name": "HeroUI",
+    "email": "support@heroui.com",
+    "url": "https://github.com/heroui-inc"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/frontio-ai/heroui-cli.git"
+    "url": "https://github.com/heroui-inc/heroui-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/frontio-ai/heroui-cli/issues"
+    "url": "https://github.com/heroui-inc/heroui-cli/issues"
   },
   "publishConfig": {
     "access": "public",

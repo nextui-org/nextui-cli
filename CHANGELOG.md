@@ -1,14 +1,14 @@
-# [0.6.0](https://github.com/frontio-ai/heroui-cli/compare/v0.5.4...v0.6.0) (2025-01-18)
+# [0.6.0](https://github.com/heroui-inc/heroui-cli/compare/v0.5.4...v0.6.0) (2025-01-18)
 
 ### Bug Fixes
 
-- autocompleteMultiselect cancel exit when prompt yes ([#139](https://github.com/frontio-ai/heroui-cli/issues/139)) ([a736537](https://github.com/frontio-ai/heroui-cli/commit/a736537e030b011e933d8a5809fbecf973bcc01a))
-- codemod bin command ([45712d7](https://github.com/frontio-ai/heroui-cli/commit/45712d7f5f00c05db2a8fdb82ef2dca6281d4257))
-- **codemod:** npm migrate issue ([#140](https://github.com/frontio-ai/heroui-cli/issues/140)) ([4987cc8](https://github.com/frontio-ai/heroui-cli/commit/4987cc814fceb3a14cc111b155bdb6a0ff059a41))
+- autocompleteMultiselect cancel exit when prompt yes ([#139](https://github.com/heroui-inc/heroui-cli/issues/139)) ([a736537](https://github.com/heroui-inc/heroui-cli/commit/a736537e030b011e933d8a5809fbecf973bcc01a))
+- codemod bin command ([45712d7](https://github.com/heroui-inc/heroui-cli/commit/45712d7f5f00c05db2a8fdb82ef2dca6281d4257))
+- **codemod:** npm migrate issue ([#140](https://github.com/heroui-inc/heroui-cli/issues/140)) ([4987cc8](https://github.com/heroui-inc/heroui-cli/commit/4987cc814fceb3a14cc111b155bdb6a0ff059a41))
 
-## [0.5.4](https://github.com/frontio-ai/heroui-cli/compare/v0.5.3...v0.5.4) (2025-01-16)
+## [0.5.4](https://github.com/heroui-inc/heroui-cli/compare/v0.5.3...v0.5.4) (2025-01-16)
 
-## [0.5.3](https://github.com/frontio-ai/heroui-cli/compare/v0.5.2...v0.5.3) (2025-01-16)
+## [0.5.3](https://github.com/heroui-inc/heroui-cli/compare/v0.5.2...v0.5.3) (2025-01-16)
 
 ## [0.5.2](https://github.com/nextui-org/nextui-cli/compare/v0.5.1...v0.5.2) (2025-01-16)
 

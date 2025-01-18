@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://heroui.com">
-      <img width="20%" src="https://raw.githubusercontent.com/frontio-ai/heroui/main/apps/docs/public/isotipo.png" alt="nextui" />
+      <img width="20%" src="https://raw.githubusercontent.com/heroui-inc/heroui/main/apps/docs/public/isotipo.png" alt="nextui" />
       <h1 align="center">@heroui/codemod</h1>
   </a>
 </p>

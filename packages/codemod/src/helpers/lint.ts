@@ -20,6 +20,8 @@ export async function lintWithESLint(filePaths: string[]) {
     const result = await eslint.lintFiles(filePaths);
 
     await ESLint.outputFixes(result);
+
+    return result;
   }
 }
 

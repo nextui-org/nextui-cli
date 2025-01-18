@@ -1,6 +1,7 @@
 import type {Codemods} from '../types';
 
 import * as p from '@clack/prompts';
+import {LOCKS} from '@helpers/detect';
 import {exec} from '@helpers/exec';
 import {Logger} from '@helpers/logger';
 import chalk from 'chalk';
@@ -38,6 +39,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const dotFiles = await findFiles(transformedPaths, {dot: true});
   const extraFiles = dotFiles.filter((file) => EXTRA_FILES.some((extra) => file.includes(extra)));
   const files = [...baseFiles, ...extraFiles];
+  const {cmd, packageManager} = await getInstallCommand();
 
   // Store the raw content of the files
   storePathsRawContent(files);
@@ -133,7 +135,8 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   /** ======================== 6. Migrate npmrc optional (Pnpm only) ======================== */
   const runMigrateNpmrc = getCanRunCodemod(codemod, 'npmrc');
 
-  if (runMigrateNpmrc) {
+  // Pnpm only
+  if (runMigrateNpmrc && packageManager === 'pnpm') {
     const npmrcFiles = dotFiles.filter((path) => path.includes('.npmrc'));
 
     p.log.step(`${step}. Migrating "npmrc" (Pnpm only)`);
@@ -152,7 +155,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const remainingFiles = [
     ...nextuiFiles.filter((file) => !affectedFiles.has(file)),
     ...remainingNextuiFiles
-  ];
+  ].filter((file) => !Object.keys(LOCKS).some((lock) => file.includes(lock))); // should ignore lock files
   const runCheckLeftFiles = remainingFiles.length > 0;
 
   // If user not using individual codemod, we need to ask user to replace left files
@@ -204,8 +207,6 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
     });
 
     if (selectReinstallDependencies) {
-      const {cmd} = await getInstallCommand();
-
       try {
         await exec(cmd);
       } catch {

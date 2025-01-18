@@ -37,7 +37,7 @@
     {
       "name": "autocomplete",
       "package": "@heroui/autocomplete",
-      "version": "2.3.9",
+      "version": "2.3.10",
       "docs": "https://heroui.com/docs/components/autocomplete",
       "description": "An autocomplete combines a text input with a listbox, allowing users to filter a list of options to items matching a query.",
       "status": "updated",
@@ -313,7 +313,7 @@
     {
       "name": "input",
       "package": "@heroui/input",
-      "version": "2.4.8",
+      "version": "2.4.9",
       "docs": "https://heroui.com/docs/components/input",
       "description": "The input component is designed for capturing user input within a text field.",
       "status": "updated",
@@ -716,5 +716,5 @@
       }
     }
   ],
-  "version": "2.6.12"
+  "version": "2.6.13"
 }

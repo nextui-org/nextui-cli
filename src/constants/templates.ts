@@ -1,8 +1,8 @@
 import type {CheckType} from '@helpers/check';
 
-export const APP_REPO = 'https://codeload.github.com/frontio-ai/next-app-template/tar.gz/main';
-export const PAGES_REPO = 'https://codeload.github.com/frontio-ai/next-pages-template/tar.gz/main';
-export const VITE_REPO = 'https://codeload.github.com/frontio-ai/vite-template/tar.gz/main';
+export const APP_REPO = 'https://codeload.github.com/heroui-inc/next-app-template/tar.gz/main';
+export const PAGES_REPO = 'https://codeload.github.com/heroui-inc/next-pages-template/tar.gz/main';
+export const VITE_REPO = 'https://codeload.github.com/heroui-inc/vite-template/tar.gz/main';
 
 export const APP_DIR = 'next-app-template-main';
 export const PAGES_DIR = 'next-pages-template-main';

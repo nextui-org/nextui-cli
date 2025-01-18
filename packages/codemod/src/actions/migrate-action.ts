@@ -155,7 +155,7 @@ export async function migrateAction(projectPaths?: string[], options = {} as Mig
   const remainingFiles = [
     ...nextuiFiles.filter((file) => !affectedFiles.has(file)),
     ...remainingNextuiFiles
-  ].filter((file) => !Object.keys(LOCKS).some((lock) => file.includes(lock))); // should ignore lock files
+  ].filter((file) => !Object.keys(LOCKS).some((lock) => file.includes(lock))); // Should ignore lock files
   const runCheckLeftFiles = remainingFiles.length > 0;
 
   // If user not using individual codemod, we need to ask user to replace left files

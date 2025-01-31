@@ -9,7 +9,6 @@ import {type HeroUIComponents} from 'src/constants/component';
 import {
   DOCS_INSTALLED,
   DOCS_TAILWINDCSS_SETUP,
-  FRAMER_MOTION,
   HERO_UI,
   SYSTEM_UI,
   TAILWINDCSS,
@@ -111,7 +110,7 @@ interface CheckPeerDependenciesConfig {
 
 /**
  * Check if the required content is installed
- * @example return result and missing required [false, '@heroui/react', 'framer-motion']
+ * @example return result and missing required [false, '@heroui/react']
  * @param type
  * @param dependenciesKeys
  * @param checkPeerDependenciesConfig
@@ -141,25 +140,21 @@ export async function checkRequiredContentInstalled<
 
   if (type === 'all') {
     const hasAllComponents = dependenciesKeys.has(HERO_UI);
-    const hasFramerMotion = dependenciesKeys.has(FRAMER_MOTION);
     const hasTailwind = dependenciesKeys.has(TAILWINDCSS);
 
-    if (hasAllComponents && hasFramerMotion && !peerDependenciesList.length) {
+    if (hasAllComponents && !peerDependenciesList.length) {
       return [true];
     }
     !hasAllComponents && result.push(beta ? `${HERO_UI}@${store.betaVersion}` : HERO_UI);
-    !hasFramerMotion && result.push(FRAMER_MOTION);
     !hasTailwind && result.push(TAILWINDCSS);
   } else if (type === 'partial') {
-    const hasFramerMotion = dependenciesKeys.has(FRAMER_MOTION);
     const hasTailwind = dependenciesKeys.has(TAILWINDCSS);
     const hasSystemUI = dependenciesKeys.has(SYSTEM_UI);
     const hasThemeUI = dependenciesKeys.has(THEME_UI);
 
-    if (hasFramerMotion && hasSystemUI && hasThemeUI && !peerDependenciesList.length) {
+    if (hasSystemUI && hasThemeUI && !peerDependenciesList.length) {
       return [true];
     }
-    !hasFramerMotion && result.push(FRAMER_MOTION);
     const betaSystemUI = await getBetaVersionData(SYSTEM_UI);
     const betaThemeUI = await getBetaVersionData(THEME_UI);
 

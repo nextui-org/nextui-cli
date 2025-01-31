@@ -107,7 +107,7 @@ export async function doctorAction(options: DoctorActionOptions) {
 
   /** ======================== Check if the allComponents required dependencies installed ======================== */
   if (isAllComponents) {
-    // Check if framer-motion allComponents is installed
+    // Check if allComponents is installed
     let [isCorrectInstalled, ...missingDependencies] = await checkRequiredContentInstalled(
       'all',
       allDependenciesKeys,

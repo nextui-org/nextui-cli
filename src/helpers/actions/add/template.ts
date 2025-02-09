@@ -1,4 +1,8 @@
 export const templates = {
+  '.gitignore': {
+    content:
+      '# output\n/dist\n\n# ide\n/.idea\n\n# dependencies\n/node_modules\n/.pnp\n.pnp.js\n\n# testing\n/.swc\n/coverage\n__snapshots__\n\n\n# misc\n.DS_Store\n*.pem\n\n# logs\n*.log\n\n# debug\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n.pnpm-debug.log\n\n# local env files\n.env\n.env.local\n.env.development.local\n.env.test.local\n.env.production.local\n\n# typescript\n*.tsbuildinfo\n\n# lock\nyarn.lock\npackage-lock.json'
+  },
   '.npmrc': {
     content: 'public-hoist-pattern[]=*@heroui/*'
   },

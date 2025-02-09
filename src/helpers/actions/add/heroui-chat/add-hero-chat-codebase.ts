@@ -80,7 +80,7 @@ export async function addHeroChatCodebase(targets: string[], options: AddActionO
     const installCmd = `${packageManager} install`;
 
     try {
-      await exec(`cd ${directory} && ${installCmd} --force && npm run dev`);
+      await exec(`cd ${directory} && ${installCmd} && npm run dev`);
     } catch {
       p.log.error(`Failed to install dependencies. Please run "${installCmd}" manually.`);
     }

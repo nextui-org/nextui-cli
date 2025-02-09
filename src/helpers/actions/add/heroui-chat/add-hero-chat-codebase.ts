@@ -77,7 +77,8 @@ export async function addHeroChatCodebase(targets: string[], options: AddActionO
 
   if (isInstall) {
     const packageManager = await detect();
-    const installCmd = `${packageManager} install`;
+    const installCmd =
+      packageManager === 'pnpm' ? 'pnpm install --shamefully-hoist' : `${packageManager} install`;
 
     try {
       await exec(`cd ${directory} && ${installCmd} && npm run dev`);

@@ -6,6 +6,7 @@ import {
   cancel,
   confirm,
   isCancel,
+  multiselect,
   select,
   text
 } from '@clack/prompts';
@@ -28,6 +29,14 @@ export const textClack: typeof text = async (opts) => {
 
 export const selectClack: typeof select = async (opts) => {
   const result = await select(opts);
+
+  cancelClack(result);
+
+  return result;
+};
+
+export const multiselectClack: typeof multiselect = async (opts) => {
+  const result = await multiselect(opts);
 
   cancelClack(result);
 

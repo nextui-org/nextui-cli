@@ -8,6 +8,8 @@ import {exec} from '@helpers/exec';
 import {fetchRequest} from '@helpers/fetch';
 import {confirmClack, multiselectClack} from 'src/prompts/clack';
 
+import {templates} from '../template';
+
 import {CODEBASE_FILES} from './get-codebase-files';
 import {writeFilesWithMkdir} from './write-files';
 
@@ -63,6 +65,10 @@ export async function addHeroChatCodebase(targets: string[], options: AddActionO
     const fileContent = await response.text();
 
     writeFilesWithMkdir(directory, file, fileContent);
+  }
+  /** ======================== Add templates ======================== */
+  for (const [file, value] of Object.entries(templates)) {
+    writeFilesWithMkdir(directory, file, value.content);
   }
 
   const isInstall = await confirmClack({

@@ -1,3 +1,4 @@
+import {basename} from 'node:path';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 
@@ -46,7 +47,7 @@ export async function downloadTemplate(root: string, url: string) {
 }
 
 export async function fetchRequest(url: string, options?: RequestInit) {
-  const text = `Fetching ${url}`;
+  const text = `Fetching ${basename(url)}`;
   const spinner = ora({
     discardStdin: false,
     spinner: {

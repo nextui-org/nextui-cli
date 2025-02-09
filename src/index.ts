@@ -3,7 +3,7 @@ import type {CommandName, SAFE_ANY} from '@helpers/type';
 import chalk from 'chalk';
 import {Command} from 'commander';
 
-import {isAddingHeroChatCodebase} from '@helpers/actions/add/add-hero-chat-codebase';
+import {isAddingHeroChatCodebase} from '@helpers/actions/add/heroui-chat/add-hero-chat-codebase';
 import {Logger, gradientString} from '@helpers/logger';
 import {findMostMatchText} from '@helpers/math-diff';
 import {outputBox} from '@helpers/output-info';

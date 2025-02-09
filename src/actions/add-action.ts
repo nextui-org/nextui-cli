@@ -9,7 +9,7 @@ import {
   type AddActionOptions,
   addHeroChatCodebase,
   isAddingHeroChatCodebase
-} from '@helpers/actions/add/add-hero-chat-codebase';
+} from '@helpers/actions/add/heroui-chat/add-hero-chat-codebase';
 import {getBetaComponents} from '@helpers/beta';
 import {
   checkApp,

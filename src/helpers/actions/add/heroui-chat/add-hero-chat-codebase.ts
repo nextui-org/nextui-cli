@@ -3,8 +3,10 @@ import fs from 'node:fs';
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
 
+import {detect} from '@helpers/detect';
+import {exec} from '@helpers/exec';
 import {fetchRequest} from '@helpers/fetch';
-import {multiselectClack} from 'src/prompts/clack';
+import {confirmClack, multiselectClack} from 'src/prompts/clack';
 
 import {CODEBASE_FILES} from './get-codebase-files';
 import {writeFilesWithMkdir} from './write-files';
@@ -63,7 +65,22 @@ export async function addHeroChatCodebase(targets: string[], options: AddActionO
     writeFilesWithMkdir(directory, file, fileContent);
   }
 
-  p.note(`Cd to ${directory}\nRun \`pnpm install\` to start!`, 'Next steps');
+  const isInstall = await confirmClack({
+    message: 'Do you want to install the dependencies?'
+  });
+
+  if (isInstall) {
+    const packageManager = await detect();
+    const installCmd = `${packageManager} install`;
+
+    try {
+      await exec(`cd ${directory} && ${installCmd} && npm run dev`);
+    } catch {
+      p.log.error(`Failed to install dependencies. Please run "${installCmd}" manually.`);
+    }
+  } else {
+    p.note(`Cd to ${directory}\nRun \`pnpm install\` to start!`, 'Next steps');
+  }
 
   p.outro(chalk.green('✅ Hero Chat codebase added successfully!'));
 }

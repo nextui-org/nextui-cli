@@ -2,6 +2,7 @@ import fs from 'node:fs';
 
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
+import {resolve} from 'pathe';
 
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
@@ -25,6 +26,7 @@ export interface AddActionOptions {
 }
 
 const httpRegex = /^https?:\/\//;
+const APP_FILE = 'App.tsx';
 
 export function isAddingHeroChatCodebase(targets: string[]) {
   return targets.some((target) => httpRegex.test(target));
@@ -32,8 +34,16 @@ export function isAddingHeroChatCodebase(targets: string[]) {
 
 export async function addHeroChatCodebase(targets: string[], options: AddActionOptions) {
   const {all} = options;
-  const directory = options.directory ?? `${process.cwd()}/hero-chat`;
-  const baseStorageUrl = targets[0];
+  const directory = options.directory
+    ? resolve(process.cwd(), options.directory)
+    : `${process.cwd()}/components/ui`;
+  const url = targets[0];
+  const parsedUrl = new URL(url!);
+  const baseStorageUrl = parsedUrl.origin + parsedUrl.pathname;
+  const params = parsedUrl.search.slice(1);
+  const chatTitle = params.split('=')[1];
+  const chatTitleFile = chatTitle ? `${chatTitle}.tsx` : undefined;
+
   const ifExists = fs.existsSync(directory);
   let filesToAdd: string[] = [];
 
@@ -58,14 +68,38 @@ export async function addHeroChatCodebase(targets: string[], options: AddActionO
   }
 
   /** ======================== Add files ======================== */
-  for (const file of filesToAdd) {
+  if (filesToAdd.length === 1 && filesToAdd.includes(APP_FILE)) {
+    // Only add App.tsx then doesn't need to add the src folder
+    const file = filesToAdd[0];
     const filePath = `${baseStorageUrl}/${file}`;
     const response = await fetchRequest(filePath);
 
     const fileContent = await response.text();
 
-    writeFilesWithMkdir(directory, file, fileContent);
+    writeFilesWithMkdir(directory, chatTitleFile || APP_FILE, fileContent);
+  } else {
+    for (let file of filesToAdd) {
+      const filePath = `${baseStorageUrl}/${file}`;
+      const response = await fetchRequest(filePath);
+
+      let fileContent = await response.text();
+
+      if (chatTitleFile) {
+        // Update App.tsx to chatTitle
+        if (file.includes(APP_FILE)) {
+          file = file.replace(APP_FILE, chatTitleFile);
+        }
+        // Update main.tsx import
+        if (file.includes('main.tsx')) {
+          fileContent = fileContent.replace(/from '.\/App\.tsx'/, `from './${chatTitleFile}'`);
+          fileContent = fileContent.replace(/from '.\/App'/, `from './${chatTitle}'`);
+        }
+      }
+
+      writeFilesWithMkdir(directory, file, fileContent);
+    }
   }
+
   /** ======================== Add templates ======================== */
   for (const [file, value] of Object.entries(templates)) {
     writeFilesWithMkdir(directory, file, value.content);

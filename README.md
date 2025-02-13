@@ -130,7 +130,7 @@ heroui add [targets...] [options]
 
 #### Add Options
 
-- `-a --all` [boolean] Add all components, hero chat codebase (default: `false`)
+- `-a --all` [boolean] Add all components (default: `false`)
 - `-p --packagePath` [string] The path to the package.json file
 - `-tw --tailwindPath` [string] The path to the tailwind.config file file
 - `-app --appPath` [string] The path to the App.tsx file

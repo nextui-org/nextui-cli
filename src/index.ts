@@ -94,7 +94,7 @@ heroui
   .command('add')
   .description('1. Adds components to your project\n2. Adds hero chat codebase to your project')
   .argument('[targets...]', 'Names of components, hero chat codebase url to add')
-  .option('-a --all [boolean]', 'Add all components, hero chat codebase', false)
+  .option('-a --all [boolean]', 'Add all components', false)
   .option('-p --packagePath [string]', 'Specify the path to the package.json file')
   .option('-tw --tailwindPath [string]', 'Specify the path to the tailwind.config.js file')
   .option('-app --appPath [string]', 'Specify the path to the App.tsx file')

@@ -1,5 +1,7 @@
 import type {SAFE_ANY} from '@helpers/type';
 
+import {readdirSync, statSync} from 'node:fs';
+
 import {
   type ConfirmOptions,
   spinner as _spinner,
@@ -11,6 +13,7 @@ import {
   text
 } from '@clack/prompts';
 import chalk from 'chalk';
+import {join} from 'pathe';
 
 export const cancelClack = (value: SAFE_ANY) => {
   if (isCancel(value)) {
@@ -75,4 +78,33 @@ export const confirmClack = async (opts: ConfirmOptions) => {
   cancelClack(result);
 
   return result;
+};
+
+export const getDirectoryClack = async () => {
+  const currentDirectories = readdirSync(process.cwd()).filter((dir) =>
+    statSync(join(process.cwd(), dir)).isDirectory()
+  );
+  const options = currentDirectories
+    .map((dir) => ({
+      label: dir,
+      value: dir
+    }))
+    .filter(
+      (dir) =>
+        !['node_modules', 'dist', 'build', 'output', /^\./].some((ignore) => {
+          if (typeof ignore === 'string') {
+            return dir.value.includes(ignore);
+          }
+
+          return ignore.test(dir.value);
+        })
+    );
+  const result = options.length
+    ? await selectClack({
+        message: 'Please select the directory to add the codebase',
+        options
+      })
+    : 'src';
+
+  return result as string;
 };

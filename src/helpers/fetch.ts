@@ -46,8 +46,12 @@ export async function downloadTemplate(root: string, url: string) {
   );
 }
 
-export async function fetchRequest(url: string, options?: RequestInit) {
-  const text = `Fetching ${basename(url)}`;
+export async function fetchRequest(
+  url: string,
+  options?: RequestInit & {fetchInfo?: string}
+): Promise<Response> {
+  const {fetchInfo, ...rest} = options ?? {};
+  const text = `Fetching ${fetchInfo ?? basename(url)}`;
   const spinner = ora({
     discardStdin: false,
     spinner: {
@@ -73,10 +77,10 @@ export async function fetchRequest(url: string, options?: RequestInit) {
     return await retry(
       async () => {
         const response = await fetch(url, {
-          ...options,
+          ...rest,
           headers: {
             Accept: 'application/json',
-            ...options?.headers
+            ...rest?.headers
           }
         });
 

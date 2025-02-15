@@ -1,5 +1,3 @@
-import type {SAFE_ANY} from '@helpers/type';
-
 import fs from 'node:fs';
 import {join} from 'node:path';
 
@@ -9,13 +7,13 @@ import {resolve} from 'pathe';
 
 import {detect} from '@helpers/detect';
 import {exec} from '@helpers/exec';
-import {fetchRequest} from '@helpers/fetch';
 import {Logger} from '@helpers/logger';
 import {getPackageInfo} from '@helpers/package';
 import {confirmClack, getDirectoryClack} from 'src/prompts/clack';
 
+import {fetchPackage} from './fetch-package';
 import {getBaseStorageUrl} from './get-base-storage-url';
-import {getRelatedImports} from './get-related-imports';
+import {fetchAllRelatedFiles} from './get-related-imports';
 import {writeFilesWithMkdir} from './write-files';
 
 export interface AddActionOptions {
@@ -31,18 +29,20 @@ export interface AddActionOptions {
 
 const httpRegex = /^https?:\/\//;
 const APP_FILE = 'App.tsx';
+const ROOT_FILE = 'src/App.tsx';
 
 export function isAddingHeroChatCodebase(targets: string[]) {
   return targets.some((target) => httpRegex.test(target));
 }
 
 export async function addHeroChatCodebase(targets: string[], options: AddActionOptions) {
+  p.intro(chalk.cyan('Starting to add Hero Chat codebase'));
+
   const directory = resolve(process.cwd(), options.directory ?? (await getDirectoryClack()));
   const {chatTitle, url} = await getBaseStorageUrl(targets[0]!);
   const chatTitleFile = chatTitle ? `${chatTitle}.tsx` : undefined;
 
   const ifExists = fs.existsSync(directory);
-  const filesToAdd: string[] = ['src/App.tsx'];
 
   if (!ifExists) {
     Logger.error(`Directory ${directory} does not exist`);
@@ -50,39 +50,25 @@ export async function addHeroChatCodebase(targets: string[], options: AddActionO
   }
 
   /** ======================== Add files ======================== */
-  const rootFile = filesToAdd[0];
-  const filePath = `${url}/${rootFile}`;
-  const response = await fetchRequest(filePath);
-  let pkgContent: SAFE_ANY;
+  const filePath = `${url}/${ROOT_FILE}`;
 
-  const fileContent = await response.text();
-  const relatedImports = getRelatedImports(fileContent);
-  const relatedImportsPath = relatedImports.map(
-    (importPath) => `src/${importPath.replace('./', '')}.tsx`
-  );
-
-  writeFilesWithMkdir(directory, `${chatTitleFile || APP_FILE}`, fileContent);
-
-  // Add related imports
-  await Promise.all([
-    ...relatedImportsPath.map(async (relatedPath) => {
-      const filePath = `${url}/${relatedPath}`;
-      const response = await fetchRequest(filePath);
-      const fileContent = await response.text();
-
-      writeFilesWithMkdir(directory, relatedPath.replace('src/', ''), fileContent);
-    }),
-    // Fetch package.json
-    (async () => {
-      const pkgFile = `${url}/package.json`;
-      const response = await fetchRequest(pkgFile);
-
-      try {
-        pkgContent = JSON.parse(await response.text());
-        // eslint-disable-next-line no-empty
-      } catch {}
-    })()
+  const [relatedFiles, pkgContent] = await Promise.all([
+    fetchAllRelatedFiles({fetchBaseUrl: url, filePath}),
+    fetchPackage(`${url}/package.json`)
   ]);
+
+  for (const relatedFile of relatedFiles) {
+    if (relatedFile.fileName.includes(APP_FILE)) {
+      writeFilesWithMkdir(directory, `${chatTitleFile || APP_FILE}`, relatedFile.fileContent);
+      continue;
+    }
+
+    writeFilesWithMkdir(
+      directory,
+      `${relatedFile.filePath.replace('src/', '')}`,
+      relatedFile.fileContent
+    );
+  }
 
   /** ======================== Check if the project missing dependencies ======================== */
   if (pkgContent) {
